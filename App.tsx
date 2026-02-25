@@ -15,9 +15,20 @@ import { Impressum } from './components/Impressum';
 // Animation types for unique section entrances
 type SectionAnimation = 'slide-up' | 'slide-left' | 'slide-right' | 'zoom-in' | 'flip-up' | 'fade-blur';
 
+// Animation presets — all values as inline styles to avoid CSS class resolution issues in production
+const ANIMATION_PRESETS: Record<SectionAnimation, { transform?: string; filter?: string }> = {
+    'slide-up': { transform: 'translateY(80px)' },
+    'slide-left': { transform: 'translateX(-100px)' },
+    'slide-right': { transform: 'translateX(100px)' },
+    'zoom-in': { transform: 'scale(0.85)', filter: 'blur(8px)' },
+    'flip-up': { transform: 'perspective(800px) rotateX(15deg) translateY(60px)' },
+    'fade-blur': { filter: 'blur(15px)' },
+};
+
 // Section wrapper that reveals on scroll with a unique animation per section
 const SectionReveal: React.FC<{ children: React.ReactNode; className?: string; animation?: SectionAnimation }> = ({ children, className = '', animation = 'slide-up' }) => {
     const ref = useRef<HTMLDivElement>(null);
+    const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
         const el = ref.current;
@@ -25,11 +36,7 @@ const SectionReveal: React.FC<{ children: React.ReactNode; className?: string; a
 
         const observer = new IntersectionObserver(
             ([entry]) => {
-                if (entry.isIntersecting) {
-                    el.classList.add('visible');
-                } else {
-                    el.classList.remove('visible');
-                }
+                setIsVisible(entry.isIntersecting);
             },
             { threshold: 0.01, rootMargin: '0px 0px -20px 0px' }
         );
@@ -38,8 +45,22 @@ const SectionReveal: React.FC<{ children: React.ReactNode; className?: string; a
         return () => observer.unobserve(el);
     }, []);
 
+    const preset = ANIMATION_PRESETS[animation];
+    const hiddenStyle: React.CSSProperties = {
+        opacity: 0,
+        transform: preset.transform || 'none',
+        filter: preset.filter || 'none',
+        transition: 'opacity 1.6s cubic-bezier(0.16, 1, 0.3, 1), transform 1.6s cubic-bezier(0.16, 1, 0.3, 1), filter 1.6s cubic-bezier(0.16, 1, 0.3, 1)',
+    };
+    const visibleStyle: React.CSSProperties = {
+        opacity: 1,
+        transform: 'none',
+        filter: 'none',
+        transition: hiddenStyle.transition,
+    };
+
     return (
-        <div ref={ref} className={`section-reveal anim-${animation} ${className}`}>
+        <div ref={ref} className={className} style={isVisible ? visibleStyle : hiddenStyle}>
             {children}
         </div>
     );

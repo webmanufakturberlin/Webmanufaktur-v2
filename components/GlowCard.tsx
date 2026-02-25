@@ -57,14 +57,18 @@ export const GlowCard: React.FC<GlowCardProps> = ({
       onMouseLeave={handleMouseLeave}
       role="article"
       className={`
-        card-3d relative rounded-[2rem] border border-gray-200 bg-white backdrop-blur-xl overflow-hidden 
+        relative rounded-[2rem] border border-gray-200 bg-white backdrop-blur-xl overflow-hidden 
         shadow-md
         group
         hover:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12),0_0_40px_rgba(99,102,241,0.08)]
-        border-l-[3px] border-l-transparent hover:border-l-indigo-400 transition-all duration-500
+        border-l-[3px] border-l-transparent hover:border-l-indigo-400
         ${className}
       `}
-      style={{ transition: 'transform 0.4s cubic-bezier(0.03, 0.98, 0.52, 0.99), box-shadow 0.5s ease' }}
+      style={{
+        transition: 'transform 0.4s cubic-bezier(0.03, 0.98, 0.52, 0.99), box-shadow 0.5s ease, border-color 0.5s ease',
+        transformStyle: 'preserve-3d',
+        willChange: 'transform',
+      }}
     >
       {/* 1. Rotating Border Beam Effect (Visible on Hover) */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-0">

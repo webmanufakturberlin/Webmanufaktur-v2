@@ -60,11 +60,11 @@ export const Reveal: React.FC<RevealProps> = ({
   return (
     <div ref={ref} className={`${width === '100%' ? 'w-full' : ''} ${className} relative overflow-hidden md:overflow-visible`}>
       <div
-        className={`transition-all duration-[1200ms] ${isVisible ? 'opacity-100' : 'opacity-0'}`}
         style={{
+          opacity: isVisible ? 1 : 0,
           transform: getTransform(),
           filter: getFilter(),
-          transitionTimingFunction: 'cubic-bezier(0.25, 1, 0.3, 1)',
+          transition: 'all 1200ms cubic-bezier(0.25, 1, 0.3, 1)',
           transitionDelay: `${delay}s`,
           willChange: isVisible ? 'auto' : 'transform, opacity, filter',
         }}
