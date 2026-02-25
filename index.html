@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="WebManufaktur Berlin — Premium web design, content strategy, and AI integration agency. Engineering high-performance digital infrastructure for ambitious brands." />
+  <meta name="theme-color" content="#ffffff" />
+  <title>WebManufaktur Berlin | Design &amp; Content</title>
+
+  <!-- Preconnect for Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            canvas: '#ffffff',
+            ink: '#050505',
+            subtle: '#f3f4f6',
+            accent: '#3b82f6',
+            'brand-blue': '#2563EB',
+            'brand-purple': '#7C3AED',
+            'brand-orange': '#F97316',
+          },
+          animation: {
+            'blob': 'blob 20s infinite',
+            'float': 'float 10s ease-in-out infinite',
+            'slide-up': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'grid-shimmer': 'gridShimmer 8s linear infinite',
+            'drift': 'drift 15s linear infinite',
+            'beam': 'beam 2s linear infinite',
+            'spin-slow': 'spin 15s linear infinite',
+            'spin-reverse-slow': 'spinReverse 20s linear infinite',
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'fade-in': 'fadeIn 0.3s ease-out forwards',
+          },
+          keyframes: {
+            blob: {
+              '0%': { transform: 'translate(0px, 0px) scale(1)' },
+              '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+              '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+              '100%': { transform: 'translate(0px, 0px) scale(1)' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-20px)' },
+            },
+            slideUp: {
+              '0%': { transform: 'translateY(40px)', opacity: 0 },
+              '100%': { transform: 'translateY(0)', opacity: 1 },
+            },
+            gridShimmer: {
+              '0%': { backgroundPosition: '0% 0%' },
+              '100%': { backgroundPosition: '100% 100%' },
+            },
+            drift: {
+              '0%': { transform: 'translate(0, 0)' },
+              '100%': { transform: 'translate(100px, -100px)' },
+            },
+            beam: {
+              '0%': { transform: 'translateX(-100%)' },
+              '100%': { transform: 'translateX(100%)' },
+            },
+            spinReverse: {
+              '0%': { transform: 'rotate(0deg)' },
+              '100%': { transform: 'rotate(-360deg)' },
+            },
+            fadeIn: {
+              '0%': { opacity: 0, transform: 'translateY(-4px)' },
+              '100%': { opacity: 1, transform: 'translateY(0)' },
+            },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Structured Grid with Shimmer capability */
+    .bg-grid-light {
+      background-size: 60px 60px;
+      background-image: linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+      mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+    }
+
+    /* Shimmer Mask */
+    .shimmer-mask {
+      mask-image: linear-gradient(60deg, black 40%, rgba(0, 0, 0, 0.2) 50%, black 60%);
+      mask-size: 200% 200%;
+      animation: gridShimmer 8s linear infinite;
+    }
+
+    /* Screen reader only — keeps element in accessibility tree */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>

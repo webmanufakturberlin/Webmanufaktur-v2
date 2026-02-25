@@ -1,0 +1,354 @@
+/* === Base Reset & Globals === */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #ffffff;
+  color: #050505;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* === Selection Highlight === */
+::selection {
+  background-color: #050505;
+  color: #ffffff;
+}
+
+/* === Global Focus-Visible Styles === */
+*:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remove outline for mouse clicks, keep for keyboard */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* === Scrollbar === */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* === Reduced Motion === */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* === Rainbow Gradient Animation === */
+@keyframes rainbow-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) skewX(-12deg);
+  }
+
+  100% {
+    transform: translateX(200%) skewX(-12deg);
+  }
+}
+
+@keyframes logo-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.4), 0 0 20px rgba(99, 102, 241, 0.1);
+  }
+
+  50% {
+    box-shadow: 0 0 16px rgba(147, 51, 234, 0.6), 0 0 40px rgba(147, 51, 234, 0.2);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float-gentle {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes ball-orbit {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  25% {
+    transform: translate(-80px, -60px) scale(1.05);
+  }
+
+  50% {
+    transform: translate(20px, -100px) scale(0.95);
+  }
+
+  75% {
+    transform: translate(80px, -40px) scale(1.02);
+  }
+}
+
+@keyframes gridShimmer {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 300px 300px;
+  }
+}
+
+/* TV Tower orbiting ball — rotates around sphere center */
+@keyframes tv-ball-orbit {
+  0% {
+    transform: rotate(0deg) translateX(35px);
+  }
+
+  100% {
+    transform: rotate(360deg) translateX(35px);
+  }
+}
+
+/* Red blinking dot — pulses brightness */
+@keyframes red-blink {
+
+  0%,
+  100% {
+    opacity: 1;
+    r: 6;
+  }
+
+  50% {
+    opacity: 0.3;
+    r: 4;
+  }
+}
+
+/* Red ping — expands outward like radar */
+@keyframes red-ping {
+  0% {
+    opacity: 0.6;
+    r: 6;
+  }
+
+  75%,
+  100% {
+    opacity: 0;
+    r: 20;
+  }
+}
+
+/* === Rainbow Button === */
+.rainbow-btn {
+  position: relative;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7, #d946ef, #ec4899, #f43f5e, #f97316, #eab308, #22c55e, #06b6d4, #3b82f6, #6366f1);
+  background-size: 400% 400%;
+  animation: rainbow-shift 6s ease infinite;
+  border: none;
+  color: white;
+  overflow: hidden;
+}
+
+.rainbow-btn::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: rgba(0, 0, 0, 0.85);
+  border-radius: inherit;
+  z-index: 0;
+  transition: background 0.4s ease;
+}
+
+.rainbow-btn:hover::before {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.rainbow-btn>* {
+  position: relative;
+  z-index: 1;
+}
+
+/* Shimmer sweep on hover */
+.rainbow-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transform: translateX(-100%) skewX(-12deg);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.rainbow-btn:hover::after {
+  animation: shimmer 1.2s ease forwards;
+}
+
+/* === Navbar Rainbow Button (Compact) === */
+.rainbow-btn-sm {
+  position: relative;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7, #d946ef, #ec4899, #f43f5e, #f97316, #eab308, #22c55e, #06b6d4, #3b82f6, #6366f1);
+  background-size: 400% 400%;
+  animation: rainbow-shift 6s ease infinite;
+  border: none;
+  color: white;
+  overflow: hidden;
+}
+
+.rainbow-btn-sm::before {
+  content: '';
+  position: absolute;
+  inset: 1.5px;
+  background: #0a0a0a;
+  border-radius: inherit;
+  z-index: 0;
+  transition: background 0.3s ease;
+}
+
+.rainbow-btn-sm:hover::before {
+  background: rgba(10, 10, 10, 0.8);
+}
+
+.rainbow-btn-sm>* {
+  position: relative;
+  z-index: 1;
+}
+
+.rainbow-btn-sm::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  transform: translateX(-100%) skewX(-12deg);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.rainbow-btn-sm:hover::after {
+  animation: shimmer 1s ease forwards;
+}
+
+/* === Section Scroll Reveal — slower, more elegant === */
+.section-reveal {
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 1.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.section-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger children */
+.section-reveal:nth-child(2) {
+  transition-delay: 0.1s;
+}
+
+.section-reveal:nth-child(3) {
+  transition-delay: 0.2s;
+}
+
+.section-reveal:nth-child(4) {
+  transition-delay: 0.3s;
+}
+
+.section-reveal:nth-child(5) {
+  transition-delay: 0.35s;
+}
+
+.section-reveal:nth-child(6) {
+  transition-delay: 0.4s;
+}
+
+.section-reveal:nth-child(7) {
+  transition-delay: 0.45s;
+}
+
+/* === Enhanced Card Hover === */
+.card-3d {
+  transition: transform 0.4s cubic-bezier(0.03, 0.98, 0.52, 0.99),
+    box-shadow 0.4s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.card-3d:hover {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15),
+    0 0 30px rgba(99, 102, 241, 0.08);
+}
+
+/* === Logo Animation === */
+.logo-mark {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7, #ec4899);
+  background-size: 300% 300%;
+  animation: rainbow-shift 8s ease infinite, logo-pulse 3s ease-in-out infinite;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+}
+
+.logo-mark:hover {
+  transform: scale(1.1) rotate(8deg);
+}
