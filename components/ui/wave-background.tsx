@@ -99,9 +99,9 @@ export function Waves({
         })
         pathsRef.current = []
 
-        // Use smaller spacing to generate more lines and points for smoother results
-        const xGap = 8  // Reduced horizontal spacing
-        const yGap = 8  // Reduced vertical spacing for denser points
+        // Use larger spacing to drastically reduce the number of SVG DOM elements for better performance
+        const xGap = 48  // Increased horizontal spacing
+        const yGap = 48  // Increased vertical spacing
 
         const oWidth = width + 200
         const oHeight = height + 30
