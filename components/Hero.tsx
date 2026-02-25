@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowRight, Terminal, Braces, Hash, ChevronDown } from 'lucide-react';
+import { ArrowRight, Terminal, ChevronDown } from 'lucide-react';
 import { useI18n } from '../i18n';
 import { Waves } from './ui/wave-background';
 
@@ -17,139 +17,162 @@ export const Hero: React.FC = () => {
     };
 
     return (
-        /* NO overflow-hidden so balls are never clipped */
         <section className="relative z-10 flex flex-col items-center justify-center min-h-[100vh] bg-transparent text-ink">
 
-            {/* WAVES BACKGROUND - Interactive noise waves behind the skyline */}
+            {/* WAVES BACKGROUND */}
             <div className="absolute inset-0 z-[1] opacity-20 pointer-events-none select-none">
-                <Waves
-                    strokeColor="#334155"
-                    backgroundColor="transparent"
-                />
+                <Waves strokeColor="#334155" backgroundColor="transparent" />
             </div>
 
-            {/* 1. BERLIN SKYLINE — Brandenburg Gate moved further right to avoid button overlap */}
-            <div className="absolute bottom-0 left-0 w-full h-[55vh] md:h-[70vh] z-[2] pointer-events-none select-none flex items-end overflow-hidden" aria-hidden="true">
-                <svg className="w-full h-full" preserveAspectRatio="xMidYBottom slice" viewBox="0 0 1920 800" aria-hidden="true" role="img">
+            {/* BERLIN SKYLINE — animated silhouette with code theme, bottom 35% only */}
+            <div className="absolute bottom-0 left-0 w-full h-[35vh] md:h-[40vh] z-[2] pointer-events-none select-none flex items-end overflow-hidden" aria-hidden="true">
+                <svg className="w-full h-full" preserveAspectRatio="xMidYMax slice" viewBox="0 0 1920 500" aria-hidden="true">
                     <defs>
                         <linearGradient id="skyline-gradient" x1="0" x2="0" y1="0" y2="1">
-                            <stop offset="0%" stopColor="#2563EB" stopOpacity="0.6" />
-                            <stop offset="100%" stopColor="#2563EB" stopOpacity="0.05" />
+                            <stop offset="0%" stopColor="#2563EB" stopOpacity="0.5" />
+                            <stop offset="100%" stopColor="#2563EB" stopOpacity="0.08" />
                         </linearGradient>
-                        <pattern id="binary-grid" width="30" height="30" patternUnits="userSpaceOnUse">
-                            <rect x="0" y="0" width="1" height="1" fill="#2563EB" opacity="0.3" />
-                            <text x="5" y="20" fontSize="8" fill="#2563EB" opacity="0.15" fontFamily="monospace">10</text>
-                        </pattern>
+                        <linearGradient id="skyline-fill" x1="0" x2="0" y1="0" y2="1">
+                            <stop offset="0%" stopColor="#2563EB" stopOpacity="0.06" />
+                            <stop offset="100%" stopColor="#2563EB" stopOpacity="0.01" />
+                        </linearGradient>
+                        {/* 3D ball gradient for Fernsehturm sphere */}
+                        <radialGradient id="ball-3d" cx="35%" cy="30%" r="65%">
+                            <stop offset="0%" stopColor="#666" />
+                            <stop offset="40%" stopColor="#333" />
+                            <stop offset="100%" stopColor="#000" />
+                        </radialGradient>
                     </defs>
 
-                    {/* Distant City Blocks */}
-                    <path d="M0 800 L0 650 L150 650 L150 800 M350 800 L350 600 L500 600 L500 800 M1500 800 L1500 680 L1700 680 L1700 800" fill="url(#binary-grid)" opacity="0.3" />
+                    {/* ── Continuous Berlin skyline path ── */}
+                    <path
+                        d="M0 500 L0 420 L60 420 L60 380 L90 380 L90 350 L120 350 L120 380 L160 380 L160 320 L200 320 L200 350 L240 350 L240 300 L280 300 L280 340 L320 340 L320 420 L380 420 L380 360 L400 360 L400 310 L420 310 L420 280 L440 280 L440 310 L460 310 L460 350 L500 350 L500 380 L540 380 L540 360 L580 360 L580 330 L600 330 L600 290 L620 290 L620 330 L660 330 L660 370 L700 370 L700 340 L740 340 L740 300 L760 300 L760 340 L800 340 L800 380 L840 380 L840 350 L860 350 L860 310 L890 310 L890 280 L920 280 L920 250 L940 250 L940 210 L950 190 L960 210 L960 250 L980 250 L980 280 L1010 280 L1010 310 L1040 310 L1040 350 L1080 350 L1080 380 L1120 380 L1120 340 L1160 340 L1160 290 L1180 290 L1180 330 L1220 330 L1220 370 L1260 370 L1260 340 L1300 340 L1300 310 L1330 310 L1330 370 L1370 370 L1370 400 L1410 400 L1410 360 L1440 360 L1440 330 L1480 330 L1480 370 L1520 370 L1520 400 L1560 400 L1560 420 L1600 420 L1600 380 L1640 380 L1640 350 L1680 350 L1680 390 L1720 390 L1720 420 L1760 420 L1760 400 L1800 400 L1800 430 L1840 430 L1840 450 L1920 450 L1920 500 Z"
+                        fill="url(#skyline-fill)"
+                        stroke="url(#skyline-gradient)"
+                        strokeWidth="1.5"
+                        opacity="0.8"
+                    >
+                        {/* Draw-in animation */}
+                        <animate attributeName="stroke-dashoffset" from="8000" to="0" dur="4s" fill="freeze" />
+                        <animate attributeName="stroke-dasharray" values="8000;0" dur="0.01s" fill="freeze" />
+                    </path>
 
-                    {/* VICTORY COLUMN (Siegessäule) — FAR LEFT */}
-                    <g transform="translate(200, 450)">
-                        <rect x="-40" y="300" width="80" height="50" fill="url(#binary-grid)" stroke="#2563EB" strokeWidth="1" opacity="0.4" />
-                        <rect x="-12" y="80" width="24" height="220" fill="none" stroke="url(#skyline-gradient)" strokeWidth="2" />
-                        <rect x="-18" y="60" width="36" height="20" fill="url(#binary-grid)" stroke="#2563EB" strokeWidth="1" />
-                        <circle cx="0" cy="35" r="20" fill="none" stroke="#f97316" strokeWidth="1.5" />
-                        <path d="M-10 35 L10 35 M0 25 L0 45" stroke="#f97316" strokeWidth="1" opacity="0.6" />
+                    {/* ── Brandenburg Gate accent (around x=940) ── */}
+                    <g transform="translate(920, 220)" opacity="0.6">
+                        <rect x="0" y="30" width="8" height="60" fill="none" stroke="#2563EB" strokeWidth="1.5" />
+                        <rect x="15" y="30" width="8" height="60" fill="none" stroke="#2563EB" strokeWidth="1.5" />
+                        <rect x="30" y="30" width="8" height="60" fill="none" stroke="#2563EB" strokeWidth="1.5" />
+                        <rect x="45" y="30" width="8" height="60" fill="none" stroke="#2563EB" strokeWidth="1.5" />
+                        <rect x="-5" y="15" width="58" height="15" fill="none" stroke="#2563EB" strokeWidth="1" />
+                        <path d="M20 15 L27 0 L34 15" fill="none" stroke="#2563EB" strokeWidth="1.5" />
                     </g>
 
-                    {/* REICHSTAG DOME — center-left, below buttons */}
-                    <g transform="translate(550, 620)">
-                        <rect x="-120" y="80" width="240" height="100" fill="url(#binary-grid)" stroke="#2563EB" strokeWidth="1" opacity="0.2" />
-                        <path d="M-70 80 A 70 70 0 0 1 70 80" fill="none" stroke="url(#skyline-gradient)" strokeWidth="2" />
-                        <path d="M0 80 L0 10 M-35 75 L15 30 M35 75 L-15 30" stroke="#2563EB" strokeWidth="1" opacity="0.3" />
-                    </g>
+                    {/* ── Fernsehturm — far right ── */}
+                    <g transform="translate(1750, 20)">
+                        {/* Main shaft */}
+                        <path d="M0 480 L0 180" stroke="url(#skyline-gradient)" strokeWidth="6" />
+                        {/* Support lines */}
+                        <path d="M-10 480 L-3 180 M10 480 L3 180" stroke="#2563EB" strokeWidth="1.5" opacity="0.5" strokeDasharray="10 5" />
 
-                    {/* BRANDENBURG GATE — center-right, well separated from TV Tower */}
-                    <g transform="translate(950, 500)">
-                        <rect x="20" y="100" width="25" height="200" fill="none" stroke="url(#skyline-gradient)" strokeWidth="2" />
-                        <rect x="70" y="100" width="25" height="200" fill="none" stroke="url(#skyline-gradient)" strokeWidth="2" />
-                        <rect x="120" y="100" width="25" height="200" fill="none" stroke="url(#skyline-gradient)" strokeWidth="2" />
-                        <rect x="170" y="100" width="25" height="200" fill="none" stroke="url(#skyline-gradient)" strokeWidth="2" />
-                        <rect x="220" y="100" width="25" height="200" fill="none" stroke="url(#skyline-gradient)" strokeWidth="2" />
-                        <rect x="0" y="50" width="265" height="50" fill="url(#binary-grid)" stroke="#2563EB" strokeWidth="1" strokeOpacity="0.3" />
-                        <path d="M110 50 L132 10 L154 50" fill="none" stroke="#2563EB" strokeWidth="2" />
-                        <circle cx="132" cy="10" r="8" fill="#2563EB" opacity="0.2" />
-                    </g>
-
-                    {/* TV TOWER (Fernsehturm) — far right, clear of text */}
-                    <g transform="translate(1700, 50)">
-                        <path d="M0 750 L0 250" stroke="url(#skyline-gradient)" strokeWidth="6" />
-                        <path d="M-15 750 L-5 250 M15 750 L5 250" stroke="#2563EB" strokeWidth="1" opacity="0.3" strokeDasharray="10 5" />
+                        {/* Sphere assembly */}
                         <g>
-                            {/* Outer sphere */}
-                            <circle cx="0" cy="250" r="60" fill="white" stroke="url(#skyline-gradient)" strokeWidth="3" />
-                            <path d="M-60 250 L60 250 M-45 220 L45 220 M-45 280 L45 280" stroke="#2563EB" strokeWidth="1" opacity="0.4" />
-                            {/* Spinning dashed ring — SVG native animation */}
-                            <circle cx="0" cy="250" r="40" stroke="#2563EB" strokeWidth="1" strokeDasharray="4 4">
-                                <animateTransform attributeName="transform" type="rotate" from="0 0 250" to="360 0 250" dur="8s" repeatCount="indefinite" />
+                            <circle cx="0" cy="180" r="45" fill="white" stroke="url(#skyline-gradient)" strokeWidth="3.5" />
+                            <path d="M-45 180 L45 180 M-35 160 L35 160 M-35 200 L35 200" stroke="#2563EB" strokeWidth="1.2" opacity="0.4" />
+                            {/* Spinning dashed ring */}
+                            <circle cx="0" cy="180" r="32" stroke="#2563EB" strokeWidth="1" strokeDasharray="4 4">
+                                <animateTransform attributeName="transform" type="rotate" from="0 0 180" to="360 0 180" dur="8s" repeatCount="indefinite" />
                             </circle>
-                            {/* ORBITING BLACK BALL — SVG native rotation around sphere center */}
-                            <circle cx="35" cy="250" r="14" fill="#111">
-                                <animateTransform attributeName="transform" type="rotate" from="0 0 250" to="360 0 250" dur="4s" repeatCount="indefinite" />
-                            </circle>
+                            {/* 3D rotating ball */}
+                            <g>
+                                <circle cx="0" cy="180" r="28" fill="url(#ball-3d)" />
+                                <ellipse cx="-7" cy="170" rx="9" ry="6" fill="white" opacity="0.25" />
+                                <g opacity="0.15">
+                                    <ellipse cx="0" cy="180" rx="28" ry="8" fill="none" stroke="white" strokeWidth="0.8">
+                                        <animateTransform attributeName="transform" type="rotate" from="0 0 180" to="360 0 180" dur="6s" repeatCount="indefinite" />
+                                    </ellipse>
+                                    <ellipse cx="0" cy="180" rx="8" ry="28" fill="none" stroke="white" strokeWidth="0.8">
+                                        <animateTransform attributeName="transform" type="rotate" from="0 0 180" to="360 0 180" dur="6s" repeatCount="indefinite" />
+                                    </ellipse>
+                                </g>
+                            </g>
                         </g>
-                        <line x1="0" y1="190" x2="0" y2="120" stroke="url(#skyline-gradient)" strokeWidth="4" />
-                        <line x1="0" y1="120" x2="0" y2="60" stroke="#ef4444" strokeWidth="2" strokeDasharray="4 2" />
-                        <line x1="0" y1="60" x2="0" y2="0" stroke="url(#skyline-gradient)" strokeWidth="1" />
-                        {/* Red blinking dot — SVG native pulse animation */}
-                        <circle cx="0" cy="0" r="6" fill="#ef4444">
+
+                        {/* Antenna */}
+                        <line x1="0" y1="135" x2="0" y2="80" stroke="url(#skyline-gradient)" strokeWidth="3" />
+                        <line x1="0" y1="80" x2="0" y2="30" stroke="#ef4444" strokeWidth="2" strokeDasharray="4 2" />
+                        <line x1="0" y1="30" x2="0" y2="0" stroke="url(#skyline-gradient)" strokeWidth="1" />
+                        {/* Red blinking dot */}
+                        <circle cx="0" cy="0" r="5" fill="#ef4444">
                             <animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite" />
                         </circle>
-                        <circle cx="0" cy="0" r="6" fill="#ef4444" opacity="0.6">
-                            <animate attributeName="r" values="6;20;6" dur="1.5s" repeatCount="indefinite" />
+                        <circle cx="0" cy="0" r="5" fill="#ef4444" opacity="0.6">
+                            <animate attributeName="r" values="5;16;5" dur="1.5s" repeatCount="indefinite" />
                             <animate attributeName="opacity" values="0.6;0;0.6" dur="1.5s" repeatCount="indefinite" />
                         </circle>
                     </g>
 
-                    {/* Foreground */}
-                    <path d="M0 750 L1920 750" stroke="#2563EB" strokeWidth="2" opacity="0.5" />
-                    <rect x="0" y="750" width="1920" height="50" fill="url(#binary-grid)" opacity="0.2" />
+                    {/* ── Code-themed overlays on buildings ── */}
+                    <g opacity="0.35" fontFamily="monospace" fontSize="11" fill="#2563EB">
+                        {/* Terminal brackets */}
+                        <text x="180" y="340">&lt;/&gt;</text>
+                        <text x="580" y="310">&#123; &#125;</text>
+                        <text x="1160" y="310">fn()</text>
+                        <text x="1400" y="380">[ ]</text>
+
+                        {/* Blinking cursors */}
+                        <text x="320" y="360" opacity="0.6">
+                            ▌
+                            <animate attributeName="opacity" values="0.6;0;0.6" dur="1s" repeatCount="indefinite" />
+                        </text>
+                        <text x="760" y="320" opacity="0.6">
+                            ▌
+                            <animate attributeName="opacity" values="0;0.6;0" dur="1.2s" repeatCount="indefinite" />
+                        </text>
+
+                        {/* Circuit connection dots */}
+                        <circle cx="450" cy="370" r="3" fill="#2563EB" opacity="0.5">
+                            <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" />
+                        </circle>
+                        <circle cx="850" cy="340" r="3" fill="#2563EB" opacity="0.5">
+                            <animate attributeName="opacity" values="1;0.5;1" dur="2.5s" repeatCount="indefinite" />
+                        </circle>
+                        <circle cx="1250" cy="360" r="3" fill="#2563EB" opacity="0.5">
+                            <animate attributeName="opacity" values="0.5;1;0.5" dur="1.8s" repeatCount="indefinite" />
+                        </circle>
+
+                        {/* Horizontal circuit lines */}
+                        <line x1="453" y1="370" x2="847" y2="340" stroke="#2563EB" strokeWidth="0.5" opacity="0.25" strokeDasharray="4 6">
+                            <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="3s" repeatCount="indefinite" />
+                        </line>
+                        <line x1="853" y1="340" x2="1247" y2="360" stroke="#2563EB" strokeWidth="0.5" opacity="0.25" strokeDasharray="4 6">
+                            <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="3.5s" repeatCount="indefinite" />
+                        </line>
+                    </g>
+
+                    {/* ── Window lights (random dots on buildings) ── */}
+                    <g opacity="0.3">
+                        {[
+                            [110, 370], [130, 365], [180, 335], [250, 315], [270, 325],
+                            [410, 295], [430, 305], [600, 305], [610, 315],
+                            [740, 315], [755, 325], [860, 325], [870, 335],
+                            [1130, 355], [1170, 305], [1310, 325], [1450, 345],
+                        ].map(([x, y], i) => (
+                            <rect key={i} x={x} y={y} width="4" height="4" fill="#2563EB" opacity="0.6">
+                                <animate attributeName="opacity" values="0.6;0.2;0.6" dur={`${2 + (i % 3)}s`} repeatCount="indefinite" />
+                            </rect>
+                        ))}
+                    </g>
+
+                    {/* Ground line */}
+                    <path d="M0 500 L1920 500" stroke="#2563EB" strokeWidth="1.5" opacity="0.4" />
                 </svg>
             </div>
 
-            {/* 2. FLOATING BLACK BALL — z-30 above everything, BIG orbit motion */}
-            <div className="absolute z-[30] pointer-events-none" aria-hidden="true"
-                style={{
-                    top: '12%',
-                    right: '15%',
-                    width: '90px',
-                    height: '90px',
-                    borderRadius: '50%',
-                    background: 'radial-gradient(circle at 30% 30%, #555, #000)',
-                    boxShadow: '0 25px 80px rgba(0,0,0,0.35), inset 0 -10px 25px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05)',
-                    animation: 'ball-orbit 6s ease-in-out infinite',
-                }}
-            />
-            <div className="absolute z-[30] pointer-events-none" aria-hidden="true"
-                style={{
-                    bottom: '25%',
-                    left: '6%',
-                    width: '45px',
-                    height: '45px',
-                    borderRadius: '50%',
-                    background: 'radial-gradient(circle at 30% 30%, #666, #111)',
-                    boxShadow: '0 15px 40px rgba(0,0,0,0.25), inset 0 -5px 12px rgba(0,0,0,0.4)',
-                    animation: 'ball-orbit 10s ease-in-out infinite 3s',
-                }}
-            />
-
-            {/* 3. FLOATING SYMBOLS */}
-            <div className="absolute inset-0 pointer-events-none z-[3]" aria-hidden="true">
-                <div className="absolute top-[12%] left-[4%] opacity-[0.08] text-gray-400" style={{ animation: 'float-gentle 20s ease-in-out infinite' }}>
-                    <Hash size={140} strokeWidth={0.4} aria-hidden="true" />
-                </div>
-                <div className="absolute top-[18%] right-[8%] opacity-[0.06] text-indigo-300" style={{ animation: 'float-gentle 25s ease-in-out infinite 5s' }}>
-                    <Braces size={110} strokeWidth={0.4} aria-hidden="true" />
-                </div>
-            </div>
-
-            {/* 4. MAIN HERO CONTENT — fly-in animation */}
+            {/* MAIN HERO CONTENT — fly-in animation */}
             <div className="flex flex-col items-center justify-center px-6 md:px-12 max-w-[1400px] mx-auto w-full relative z-[16]">
                 <div className="flex flex-col items-center text-center">
 
-                    {/* Badge — fades in */}
+                    {/* Badge */}
                     <div className={`inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-white/90 backdrop-blur-md border border-blue-100 mb-10 shadow-lg shadow-blue-900/5 cursor-default transition-all duration-1000 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: '0.6s' }}>
                         <span className="relative flex h-2 w-2" aria-hidden="true">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
@@ -160,24 +183,38 @@ export const Hero: React.FC = () => {
                         </span>
                     </div>
 
-                    {/* Headline — flies in from below */}
-                    <div className={`relative mb-8 transition-all duration-[1200ms] ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`} style={{ transitionDelay: '0.1s', transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }}>
-                        <h1 className="text-4xl sm:text-6xl md:text-9xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-gray-900 to-gray-600 leading-[0.9] select-none">
-                            {t('hero.headline1')} <br />
-                            <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 pb-2">
+                    {/* Headline — cinematic split fly-in */}
+                    <div className="relative mb-8">
+                        <h1 className="text-4xl sm:text-6xl md:text-9xl font-black tracking-tighter leading-[0.9] select-none">
+                            <span
+                                className="block text-transparent bg-clip-text bg-gradient-to-b from-gray-900 to-gray-600"
+                                style={{
+                                    opacity: 0,
+                                    animation: loaded ? 'hero-fly-left 3s cubic-bezier(0.16, 1, 0.3, 1) forwards' : 'none',
+                                }}
+                            >
+                                {t('hero.headline1')}
+                            </span>
+                            <span
+                                className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 pb-2"
+                                style={{
+                                    opacity: 0,
+                                    animation: loaded ? 'hero-fly-right 3s cubic-bezier(0.16, 1, 0.3, 1) 1s forwards' : 'none',
+                                }}
+                            >
                                 {t('hero.headline2')}
                             </span>
                         </h1>
                     </div>
 
-                    {/* Subtext — blurs to visible */}
+                    {/* Subtext */}
                     <div className={`transition-all duration-[1400ms] ${loaded ? 'opacity-100 blur-0' : 'opacity-0 blur-md'}`} style={{ transitionDelay: '0.5s' }}>
                         <p className="max-w-2xl text-lg sm:text-xl md:text-2xl text-gray-500 leading-relaxed mb-10 mx-auto font-light">
                             {t('hero.subtext')}
                         </p>
                     </div>
 
-                    {/* Buttons — fixed min-width so they don't shift on language change */}
+                    {/* Buttons */}
                     <div className={`flex flex-col sm:flex-row items-center gap-6 mb-12 transition-all duration-1000 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{ transitionDelay: '0.7s' }}>
                         <button
                             onClick={scrollToContact}

@@ -25,7 +25,7 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
         {
             title: t('features.webdev.title'),
             desc: t('features.webdev.desc'),
-            icon: <Code2 className="text-blue-600 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110" size={32} aria-hidden="true" />,
+            icon: <Code2 className="text-blue-600 transition-all duration-700 group-hover:rotate-[360deg] group-hover:scale-125" size={32} aria-hidden="true" />,
             colSpan: "md:col-span-2",
             gradient: "rgba(37, 99, 235, 0.15)",
             detailTitle: t('features.webdev.detailTitle'),
@@ -38,7 +38,7 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
         {
             title: t('features.content.title'),
             desc: t('features.content.desc'),
-            icon: <PenTool className="text-purple-600 transition-transform duration-500 group-hover:-rotate-12 group-hover:scale-110" size={32} aria-hidden="true" />,
+            icon: <PenTool className="text-purple-600 transition-all duration-700 group-hover:-rotate-45 group-hover:scale-125 group-hover:translate-x-1 group-hover:-translate-y-1" size={32} aria-hidden="true" />,
             colSpan: "md:col-span-1",
             gradient: "rgba(124, 58, 237, 0.15)",
             detailTitle: t('features.content.detailTitle'),
@@ -64,7 +64,7 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
         {
             title: t('features.seo.title'),
             desc: t('features.seo.desc'),
-            icon: <Search className="text-green-600 transition-transform duration-500 group-hover:scale-125" size={32} aria-hidden="true" />,
+            icon: <Search className="text-green-600 transition-all duration-500 group-hover:scale-150 group-hover:rotate-12" size={32} aria-hidden="true" />,
             colSpan: "md:col-span-1",
             gradient: "rgba(22, 163, 74, 0.15)",
             detailTitle: t('features.seo.detailTitle'),
@@ -77,7 +77,7 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
         {
             title: t('features.brand.title'),
             desc: t('features.brand.desc'),
-            icon: <Globe className="text-pink-600 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110" size={32} aria-hidden="true" />,
+            icon: <Globe className="text-pink-600 transition-all duration-1000 group-hover:rotate-[360deg] group-hover:scale-125" size={32} aria-hidden="true" />,
             colSpan: "md:col-span-1",
             gradient: "rgba(219, 39, 119, 0.15)",
             detailTitle: t('features.brand.detailTitle'),

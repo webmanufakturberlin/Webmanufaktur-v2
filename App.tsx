@@ -10,9 +10,13 @@ import { ImpactData } from './components/ImpactData';
 import { ServiceDetail } from './components/ServiceDetail';
 import { Navbar } from './components/Navbar';
 import { AboutUs } from './components/AboutUs';
+import { Impressum } from './components/Impressum';
 
-// Section wrapper that reveals on scroll
-const SectionReveal: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => {
+// Animation types for unique section entrances
+type SectionAnimation = 'slide-up' | 'slide-left' | 'slide-right' | 'zoom-in' | 'flip-up' | 'fade-blur';
+
+// Section wrapper that reveals on scroll with a unique animation per section
+const SectionReveal: React.FC<{ children: React.ReactNode; className?: string; animation?: SectionAnimation }> = ({ children, className = '', animation = 'slide-up' }) => {
     const ref = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -23,9 +27,11 @@ const SectionReveal: React.FC<{ children: React.ReactNode; className?: string }>
             ([entry]) => {
                 if (entry.isIntersecting) {
                     el.classList.add('visible');
+                } else {
+                    el.classList.remove('visible');
                 }
             },
-            { threshold: 0.08, rootMargin: '0px 0px -60px 0px' }
+            { threshold: 0.01, rootMargin: '0px 0px -20px 0px' }
         );
 
         observer.observe(el);
@@ -33,19 +39,35 @@ const SectionReveal: React.FC<{ children: React.ReactNode; className?: string }>
     }, []);
 
     return (
-        <div ref={ref} className={`section-reveal ${className}`}>
+        <div ref={ref} className={`section-reveal anim-${animation} ${className}`}>
             {children}
         </div>
     );
 };
 
+// Gradient divider between sections
+const SectionDivider: React.FC = () => (
+    <div className="section-divider" aria-hidden="true" />
+);
+
+// Card wrapper that lifts sections off the background
+const SectionCard: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
+    <div className={`mx-4 md:mx-8 my-6 rounded-3xl bg-white/90 backdrop-blur-sm shadow-[0_4px_30px_rgba(0,0,0,0.04)] border border-gray-100/50 overflow-hidden ${className}`}>
+        {children}
+    </div>
+);
+
 const App: React.FC = () => {
-    const [currentView, setCurrentView] = useState<'home' | 'service' | 'about'>('home');
+    const [currentView, setCurrentView] = useState<'home' | 'service' | 'about' | 'impressum'>('home');
     const [selectedService, setSelectedService] = useState<ServiceData | null>(null);
 
     const scrollPositionRef = useRef(0);
 
     const handleNavigate = (id: string) => {
+        if (id === 'impressum') {
+            handleImpressum();
+            return;
+        }
         if (currentView !== 'home') {
             setCurrentView('home');
             setTimeout(() => {
@@ -64,6 +86,12 @@ const App: React.FC = () => {
     const handleAbout = () => {
         scrollPositionRef.current = window.scrollY;
         setCurrentView('about');
+        window.scrollTo({ top: 0, behavior: 'auto' });
+    };
+
+    const handleImpressum = () => {
+        scrollPositionRef.current = window.scrollY;
+        setCurrentView('impressum');
         window.scrollTo({ top: 0, behavior: 'auto' });
     };
 
@@ -93,6 +121,15 @@ const App: React.FC = () => {
         );
     }
 
+    if (currentView === 'impressum') {
+        return (
+            <>
+                <Navbar onNavigate={handleNavigate} currentView={currentView} onHome={handleHome} onAbout={handleAbout} />
+                <Impressum onBack={handleHome} onNavigate={handleNavigate} />
+            </>
+        );
+    }
+
     if (currentView === 'service' && selectedService) {
         return (
             <>
@@ -110,45 +147,78 @@ const App: React.FC = () => {
             <main className="flex flex-col">
                 <Hero />
 
-                {/* Floating content container — lifts off the background */}
-                <div className="relative z-20 -mt-6 rounded-t-[2.5rem] bg-white shadow-[0_-20px_60px_rgba(0,0,0,0.06)] overflow-hidden">
+                {/* Floating content container with grid background */}
+                <div className="relative z-20 -mt-6 rounded-t-[2.5rem] shadow-[0_-20px_60px_rgba(0,0,0,0.06)] overflow-hidden"
+                    style={{
+                        backgroundImage: 'linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px)',
+                        backgroundSize: '60px 60px',
+                        backgroundColor: 'rgb(249, 250, 251)',
+                    }}
+                >
 
-                    <SectionReveal>
-                        <div id="journal">
-                            <ImpactData />
-                        </div>
+                    {/* Section 1: ImpactData — slides up (classic) */}
+                    <SectionReveal animation="slide-up">
+                        <SectionCard>
+                            <div id="journal">
+                                <ImpactData />
+                            </div>
+                        </SectionCard>
                     </SectionReveal>
 
-                    <SectionReveal>
-                        <div id="work">
-                            <Features onNavigate={handleServiceClick} />
-                        </div>
+                    <SectionDivider />
+
+                    {/* Section 2: Features — slides in from left */}
+                    <SectionReveal animation="slide-left">
+                        <SectionCard>
+                            <div id="work">
+                                <Features onNavigate={handleServiceClick} />
+                            </div>
+                        </SectionCard>
                     </SectionReveal>
 
                     <div id="solutions" aria-hidden="true"></div>
+                    <SectionDivider />
 
-                    <SectionReveal>
-                        <div id="methodology">
-                            <Process />
-                        </div>
+                    {/* Section 3: Process — zooms in from small + blurred */}
+                    <SectionReveal animation="zoom-in">
+                        <SectionCard>
+                            <div id="methodology">
+                                <Process />
+                            </div>
+                        </SectionCard>
                     </SectionReveal>
 
-                    <SectionReveal>
-                        <div id="ai-lab">
-                            <BusinessAI />
-                        </div>
+                    <SectionDivider />
+
+                    {/* Section 4: BusinessAI — slides in from right */}
+                    <SectionReveal animation="slide-right">
+                        <SectionCard>
+                            <div id="ai-lab">
+                                <BusinessAI />
+                            </div>
+                        </SectionCard>
                     </SectionReveal>
 
-                    <SectionReveal>
-                        <div id="company">
-                            <Proof />
-                        </div>
+                    <SectionDivider />
+
+                    {/* Section 5: Proof — 3D flip from below */}
+                    <SectionReveal animation="flip-up">
+                        <SectionCard>
+                            <div id="company">
+                                <Proof />
+                            </div>
+                        </SectionCard>
                     </SectionReveal>
 
-                    <SectionReveal>
-                        <div id="contact">
-                            <CTA />
-                        </div>
+                    <SectionDivider />
+
+                    {/* Section 6: CTA — cinematic fade-blur reveal */}
+                    <SectionReveal animation="fade-blur">
+                        <SectionCard>
+                            <div id="contact">
+                                <CTA onNavigate={handleNavigate} />
+                            </div>
+                        </SectionCard>
                     </SectionReveal>
 
                 </div>

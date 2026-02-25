@@ -125,23 +125,27 @@ body {
   }
 }
 
-@keyframes ball-orbit {
-
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
+@keyframes hero-fly-left {
+  from {
+    opacity: 0;
+    transform: translateX(-120px) scale(0.92);
   }
 
-  25% {
-    transform: translate(-80px, -60px) scale(1.05);
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes hero-fly-right {
+  from {
+    opacity: 0;
+    transform: translateX(120px) scale(0.92);
   }
 
-  50% {
-    transform: translate(20px, -100px) scale(0.95);
-  }
-
-  75% {
-    transform: translate(80px, -40px) scale(1.02);
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
   }
 }
 
@@ -155,16 +159,7 @@ body {
   }
 }
 
-/* TV Tower orbiting ball — rotates around sphere center */
-@keyframes tv-ball-orbit {
-  0% {
-    transform: rotate(0deg) translateX(35px);
-  }
 
-  100% {
-    transform: rotate(360deg) translateX(35px);
-  }
-}
 
 /* Red blinking dot — pulses brightness */
 @keyframes red-blink {
@@ -290,42 +285,51 @@ body {
   animation: shimmer 1s ease forwards;
 }
 
-/* === Section Scroll Reveal — slower, more elegant === */
+/* === Section Scroll Reveal — per-section animation variants === */
 .section-reveal {
   opacity: 0;
-  transform: translateY(60px);
   transition: opacity 1.6s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transform 1.6s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.section-reveal.anim-slide-up {
+  transform: translateY(80px);
+}
+
+.section-reveal.anim-slide-left {
+  transform: translateX(-100px);
+}
+
+.section-reveal.anim-slide-right {
+  transform: translateX(100px);
+}
+
+.section-reveal.anim-zoom-in {
+  transform: scale(0.85);
+  filter: blur(8px);
+}
+
+.section-reveal.anim-flip-up {
+  transform: perspective(800px) rotateX(15deg) translateY(60px);
+}
+
+.section-reveal.anim-fade-blur {
+  filter: blur(15px);
 }
 
 .section-reveal.visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
+  filter: none;
 }
 
-/* Stagger children */
-.section-reveal:nth-child(2) {
-  transition-delay: 0.1s;
-}
-
-.section-reveal:nth-child(3) {
-  transition-delay: 0.2s;
-}
-
-.section-reveal:nth-child(4) {
-  transition-delay: 0.3s;
-}
-
-.section-reveal:nth-child(5) {
-  transition-delay: 0.35s;
-}
-
-.section-reveal:nth-child(6) {
-  transition-delay: 0.4s;
-}
-
-.section-reveal:nth-child(7) {
-  transition-delay: 0.45s;
+/* Section divider — gradient line between sections */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #e5e7eb 30%, #d1d5db 50%, #e5e7eb 70%, transparent 100%);
+  max-width: 80%;
+  margin: 0 auto;
 }
 
 /* === Enhanced Card Hover === */

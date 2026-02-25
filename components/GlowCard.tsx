@@ -24,9 +24,9 @@ export const GlowCard: React.FC<GlowCardProps> = ({
     const centerY = rect.height / 2;
 
     // 3D tilt calculation
-    const tiltX = ((y - centerY) / centerY) * -4;
-    const tiltY = ((x - centerX) / centerX) * 4;
-    divRef.current.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.02)`;
+    const tiltX = ((y - centerY) / centerY) * -8;
+    const tiltY = ((x - centerX) / centerX) * 8;
+    divRef.current.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.03)`;
 
     // Dynamic border glow
     if (borderRef.current) {
@@ -57,9 +57,11 @@ export const GlowCard: React.FC<GlowCardProps> = ({
       onMouseLeave={handleMouseLeave}
       role="article"
       className={`
-        card-3d relative rounded-[2rem] border border-gray-100/60 bg-white/80 backdrop-blur-xl overflow-hidden 
+        card-3d relative rounded-[2rem] border border-gray-200 bg-white backdrop-blur-xl overflow-hidden 
+        shadow-md
         group
         hover:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12),0_0_40px_rgba(99,102,241,0.08)]
+        border-l-[3px] border-l-transparent hover:border-l-indigo-400 transition-all duration-500
         ${className}
       `}
       style={{ transition: 'transform 0.4s cubic-bezier(0.03, 0.98, 0.52, 0.99), box-shadow 0.5s ease' }}
@@ -89,7 +91,7 @@ export const GlowCard: React.FC<GlowCardProps> = ({
       />
 
       {/* Content Container */}
-      <div className="relative h-full z-20 bg-white/50 group-hover:bg-white/20 transition-colors duration-500 rounded-[2rem]">
+      <div className="relative h-full z-20 bg-white/70 group-hover:bg-white/20 transition-colors duration-500 rounded-[2rem]">
         {children}
       </div>
     </div>
