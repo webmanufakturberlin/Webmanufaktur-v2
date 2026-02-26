@@ -37,7 +37,7 @@ const ParallaxCard: React.FC<ParallaxCardProps> = ({ children, speed = 0, classN
         };
 
         rafId = requestAnimationFrame(updatePosition);
-        return () => cancelAnimationFrame(rafId);
+        return () => { if (rafId) cancelAnimationFrame(rafId); };
     }, [speed]);
 
     return <div ref={ref} className={`${className} will-change-transform`}>{children}</div>;

@@ -172,6 +172,12 @@ const translations: Record<string, Record<Lang, string>> = {
     'about.value3.desc': { en: 'Your success is our success. We invest in long-term relationships.', de: 'Ihr Erfolg ist unser Erfolg. Wir investieren in langfristige Beziehungen.' },
     'about.back': { en: '← Back to Home', de: '← Zurück zur Startseite' },
 
+    // Service Detail
+    'serviceDetail.back': { en: 'Back to Overview', de: 'Zurück zur Übersicht' },
+    'serviceDetail.capabilities': { en: 'Key Capabilities', de: 'Kernkompetenzen' },
+    'serviceDetail.start': { en: 'Start a', de: 'Starte ein' },
+    'serviceDetail.project': { en: 'Project', de: 'Projekt' },
+
     // Tech stack
     'tech.react': { en: 'React', de: 'React' },
     'tech.nextjs': { en: 'Next.js', de: 'Next.js' },

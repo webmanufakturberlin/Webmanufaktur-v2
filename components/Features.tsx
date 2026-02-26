@@ -3,15 +3,16 @@ import { GlowCard } from './GlowCard';
 import { Code2, PenTool, Cpu, Globe, Search } from 'lucide-react';
 import { Reveal } from './Reveal';
 import { useI18n } from '../i18n';
+import { motion } from 'framer-motion';
 
 export interface ServiceData {
     title: string;
     desc: string;
-    icon: React.ReactNode;
     colSpan: string;
     gradient: string;
     detailTitle: string;
     detailContent: string[];
+    renderIcon: (isHovered: boolean) => React.ReactNode;
 }
 
 interface FeaturesProps {
@@ -20,12 +21,12 @@ interface FeaturesProps {
 
 export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
     const { t } = useI18n();
+    const [hoveredIdx, setHoveredIdx] = React.useState<number | null>(null);
 
     const services: ServiceData[] = [
         {
             title: t('features.webdev.title'),
             desc: t('features.webdev.desc'),
-            icon: <Code2 className="text-blue-600 transition-all duration-700 group-hover:rotate-[360deg] group-hover:scale-125" size={32} aria-hidden="true" />,
             colSpan: "md:col-span-2",
             gradient: "rgba(37, 99, 235, 0.15)",
             detailTitle: t('features.webdev.detailTitle'),
@@ -33,12 +34,24 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
                 "We utilize a modern stack (Next.js, TypeScript, Tailwind) to ensure pixel-perfect implementation and lightning-fast load times.",
                 "Our development process includes rigorous accessibility testing (WCAG 2.1) and performance optimization (Core Web Vitals).",
                 "From complex SaaS dashboards to immersive marketing sites, we build architectures that grow with your business."
-            ]
+            ],
+            renderIcon: (isHovered) => (
+                <motion.div
+                    initial={{ rotate: 0, y: 0, scale: 1 }}
+                    animate={isHovered ? {
+                        y: [0, -4, 0, 4, 0],
+                        rotate: [0, -5, 5, -5, 0],
+                        scale: [1, 1.1, 1]
+                    } : { rotate: 0, y: 0, scale: 1 }}
+                    transition={isHovered ? { duration: 1.5, repeat: Infinity, ease: "easeInOut" } : { duration: 0.3 }}
+                >
+                    <Code2 className="text-blue-600" size={32} aria-hidden="true" />
+                </motion.div>
+            )
         },
         {
             title: t('features.content.title'),
             desc: t('features.content.desc'),
-            icon: <PenTool className="text-purple-600 transition-all duration-700 group-hover:-rotate-45 group-hover:scale-125 group-hover:translate-x-1 group-hover:-translate-y-1" size={32} aria-hidden="true" />,
             colSpan: "md:col-span-1",
             gradient: "rgba(124, 58, 237, 0.15)",
             detailTitle: t('features.content.detailTitle'),
@@ -46,12 +59,24 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
                 "Content is the interface. We craft compelling narratives that guide users through the conversion funnel.",
                 "Our services include UX writing, SEO-driven blog strategy, and technical documentation.",
                 "We define your brand voice guidelines to ensure consistency across all touchpoints."
-            ]
+            ],
+            renderIcon: (isHovered) => (
+                <motion.div
+                    initial={{ rotate: 0, x: 0, y: 0 }}
+                    animate={isHovered ? {
+                        x: [0, 8, -4, 6, 0],
+                        y: [0, -6, 4, -4, 0],
+                        rotate: [0, 15, -10, 10, 0]
+                    } : { rotate: 0, x: 0, y: 0 }}
+                    transition={isHovered ? { duration: 2, repeat: Infinity, ease: "easeInOut" } : { duration: 0.3 }}
+                >
+                    <PenTool className="text-purple-600" size={32} aria-hidden="true" />
+                </motion.div>
+            )
         },
         {
             title: t('features.ai.title'),
             desc: t('features.ai.desc'),
-            icon: <Cpu className="text-orange-500 transition-transform duration-500 group-hover:rotate-180 group-hover:scale-110" size={32} aria-hidden="true" />,
             colSpan: "md:col-span-1",
             gradient: "rgba(249, 115, 22, 0.15)",
             detailTitle: t('features.ai.detailTitle'),
@@ -59,12 +84,23 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
                 "We integrate LLMs like Gemini and GPT-4 directly into your business logic.",
                 "Custom chatbots for customer support, automated content generation, and data analysis agents.",
                 "Secure, enterprise-grade implementation with a focus on data privacy and reliability."
-            ]
+            ],
+            renderIcon: (isHovered) => (
+                <motion.div
+                    initial={{ scale: 1, rotate: 0 }}
+                    animate={isHovered ? {
+                        scale: [1, 1.2, 0.9, 1.15, 1],
+                        rotate: [0, -10, 10, -5, 0]
+                    } : { scale: 1, rotate: 0 }}
+                    transition={isHovered ? { duration: 1.2, repeat: Infinity, ease: "easeInOut" } : { duration: 0.3 }}
+                >
+                    <Cpu className="text-orange-500" size={32} aria-hidden="true" />
+                </motion.div>
+            )
         },
         {
             title: t('features.seo.title'),
             desc: t('features.seo.desc'),
-            icon: <Search className="text-green-600 transition-all duration-500 group-hover:scale-150 group-hover:rotate-12" size={32} aria-hidden="true" />,
             colSpan: "md:col-span-1",
             gradient: "rgba(22, 163, 74, 0.15)",
             detailTitle: t('features.seo.detailTitle'),
@@ -72,12 +108,24 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
                 "We optimize the technical foundation of your site to ensure search engines can crawl and index it efficiently.",
                 "Keyword strategy based on intent modeling and competitor gap analysis.",
                 "Continuous monitoring and optimization of Core Web Vitals to maintain top rankings."
-            ]
+            ],
+            renderIcon: (isHovered) => (
+                <motion.div
+                    initial={{ x: 0, y: 0, rotate: 0 }}
+                    animate={isHovered ? {
+                        x: [0, 10, -5, 8, -8, 0],
+                        y: [0, -10, 10, 5, -5, 0],
+                        rotate: [0, 45, -20, 30, -10, 0]
+                    } : { x: 0, y: 0, rotate: 0 }}
+                    transition={isHovered ? { duration: 3, repeat: Infinity, ease: "linear" } : { duration: 0.5 }}
+                >
+                    <Search className="text-green-600" size={32} aria-hidden="true" />
+                </motion.div>
+            )
         },
         {
             title: t('features.brand.title'),
             desc: t('features.brand.desc'),
-            icon: <Globe className="text-pink-600 transition-all duration-1000 group-hover:rotate-[360deg] group-hover:scale-125" size={32} aria-hidden="true" />,
             colSpan: "md:col-span-1",
             gradient: "rgba(219, 39, 119, 0.15)",
             detailTitle: t('features.brand.detailTitle'),
@@ -85,7 +133,19 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
                 "We create comprehensive design systems that ensure visual consistency.",
                 "Logo design, typography selection, and color palette creation tailored to your market positioning.",
                 "Brand guidelines that empower your team to create on-brand assets independently."
-            ]
+            ],
+            renderIcon: (isHovered) => (
+                <motion.div
+                    initial={{ rotate: 0, scale: 1 }}
+                    animate={isHovered ? {
+                        rotate: 360,
+                        scale: [1, 1.1, 1]
+                    } : { rotate: 0, scale: 1 }}
+                    transition={isHovered ? { duration: 2, repeat: Infinity, ease: "linear" } : { duration: 0.5, ease: "easeOut" }}
+                >
+                    <Globe className="text-pink-600" size={32} aria-hidden="true" />
+                </motion.div>
+            )
         },
     ];
 
@@ -140,10 +200,12 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
                             <GlowCard
                                 className="p-10 h-full flex flex-col justify-between group cursor-pointer bg-white/40 backdrop-blur-2xl border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] hover:bg-white/60 hover:border-white/80 hover:shadow-[0_8px_32px_0_rgba(31,38,135,0.15)]"
                                 gradientColor={service.gradient}
+                                onMouseEnter={() => setHoveredIdx(idx)}
+                                onMouseLeave={() => setHoveredIdx(null)}
                             >
                                 <div>
-                                    <div className="w-16 h-16 bg-gradient-to-br from-white to-gray-50 rounded-2xl flex items-center justify-center mb-8 border border-white shadow-sm group-hover:shadow-lg group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-indigo-50 group-hover:to-purple-50 transition-all duration-500">
-                                        {service.icon}
+                                    <div className="w-16 h-16 bg-gradient-to-br from-white to-gray-50 rounded-2xl flex items-center justify-center mb-8 border border-white shadow-sm group-hover:shadow-lg group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-indigo-50 group-hover:to-purple-50 transition-all duration-500 overflow-visible">
+                                        {service.renderIcon(hoveredIdx === idx)}
                                     </div>
                                     <h3 className="text-2xl sm:text-3xl font-bold mb-4 text-ink group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-purple-600 transition-all duration-300 tracking-tight">{service.title}</h3>
                                     <p className="text-gray-600 leading-relaxed text-base sm:text-lg font-medium group-hover:text-gray-700 transition-colors">{service.desc}</p>

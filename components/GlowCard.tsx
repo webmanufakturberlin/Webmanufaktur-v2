@@ -4,12 +4,16 @@ interface GlowCardProps {
   children: React.ReactNode;
   className?: string;
   gradientColor?: string;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
 export const GlowCard: React.FC<GlowCardProps> = ({
   children,
   className = '',
-  gradientColor = 'rgba(59, 130, 246, 0.15)'
+  gradientColor = 'rgba(59, 130, 246, 0.15)',
+  onMouseEnter,
+  onMouseLeave
 }) => {
   const divRef = useRef<HTMLDivElement>(null);
   const borderRef = useRef<HTMLDivElement>(null);
@@ -38,16 +42,18 @@ export const GlowCard: React.FC<GlowCardProps> = ({
     }
   }, [gradientColor]);
 
-  const handleMouseEnter = useCallback(() => {
+  const handleMouseEnter = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (glowRef.current) glowRef.current.style.opacity = '1';
-  }, []);
+    if (onMouseEnter) onMouseEnter();
+  }, [onMouseEnter]);
 
-  const handleMouseLeave = useCallback(() => {
+  const handleMouseLeave = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (glowRef.current) glowRef.current.style.opacity = '0';
     if (divRef.current) {
       divRef.current.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
     }
-  }, []);
+    if (onMouseLeave) onMouseLeave();
+  }, [onMouseLeave]);
 
   return (
     <div

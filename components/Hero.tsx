@@ -90,7 +90,7 @@ export const Hero: React.FC = () => {
             </div>
 
             {/* Scroll indicator */}
-            <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-[16] flex flex-col items-center gap-2 animate-bounce" style={{ animationDuration: '2s' }}>
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[16] flex flex-col items-center gap-2 animate-bounce pointer-events-none" style={{ animationDuration: '2s' }}>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{t('hero.scroll')}</span>
                 <ChevronDown size={20} className="text-gray-400" />
             </div>

@@ -165,7 +165,7 @@ const App: React.FC = () => {
 
                         <SectionReveal variant="standard" sectionId="impressum-footer">
                             <footer className="py-12 px-6 flex flex-col items-center gap-4 text-gray-400">
-                                <p className="text-xs font-mono uppercase tracking-[0.3em]">© 2026 Webmanufaktur Berlin</p>
+                                <p className="text-xs font-mono uppercase tracking-[0.3em]">© {new Date().getFullYear()} Webmanufaktur Berlin</p>
                             </footer>
                         </SectionReveal>
                     </div>

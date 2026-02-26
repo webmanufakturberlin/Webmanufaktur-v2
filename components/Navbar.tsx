@@ -103,11 +103,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView, onHome,
                     {/* RIGHT ACTIONS */}
                     <div className="flex items-center gap-3 z-50 relative">
                         {/* Language Toggle */}
-                        <div className="flex items-center bg-gray-100 rounded-full p-0.5 text-xs font-bold">
+                        <div className="flex items-center bg-gray-100 rounded-full p-0.5 text-xs font-bold" role="group" aria-label="Language selection">
                             <button
                                 onClick={() => setLang('de')}
                                 className={`px-3 py-1.5 rounded-full transition-all duration-300 ${lang === 'de' ? 'bg-white text-ink shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
                                 aria-label="Deutsch"
+                                aria-pressed={lang === 'de'}
                             >
                                 DE
                             </button>
@@ -115,6 +116,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView, onHome,
                                 onClick={() => setLang('en')}
                                 className={`px-3 py-1.5 rounded-full transition-all duration-300 ${lang === 'en' ? 'bg-white text-ink shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
                                 aria-label="English"
+                                aria-pressed={lang === 'en'}
                             >
                                 EN
                             </button>
@@ -152,7 +154,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView, onHome,
                             )}
                         </div>
 
-                        <a href="#login" className="hidden sm:block text-sm font-medium text-gray-500 hover:text-black transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-md px-2 py-1">
+                        <a href="#login" onClick={(e) => e.preventDefault()} className="hidden sm:block text-sm font-medium text-gray-500 hover:text-black transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-md px-2 py-1">
                             {t('nav.login')}
                         </a>
                         <button
@@ -179,7 +181,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView, onHome,
                             <div className="col-span-1">
                                 <h3 className="font-bold text-lg mb-4 text-ink">{t('mega.solutions.title')}</h3>
                                 <p className="text-gray-500 text-sm leading-relaxed mb-6">{t('mega.solutions.desc')}</p>
-                                <a href="#" className="text-sm font-bold text-blue-600 flex items-center gap-1 hover:gap-2 transition-all focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md">
+                                <a href="#features" onClick={() => { setHoveredItem(null); onNavigate('features'); }} className="text-sm font-bold text-blue-600 flex items-center gap-1 hover:gap-2 transition-all focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md">
                                     {t('mega.solutions.viewAll')} <ArrowRight size={14} aria-hidden="true" />
                                 </a>
                             </div>
@@ -192,7 +194,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView, onHome,
                                     { icon: Code, titleKey: 'mega.api', descKey: 'mega.api.desc' },
                                     { icon: LineChart, titleKey: 'mega.audit', descKey: 'mega.audit.desc' },
                                 ].map((item, i) => (
-                                    <a key={i} href="#" className="group p-4 rounded-xl hover:bg-gray-50 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500" role="menuitem">
+                                    <a key={i} href="#features" onClick={() => { setHoveredItem(null); onNavigate('features'); }} className="group p-4 rounded-xl hover:bg-gray-50 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500" role="menuitem">
                                         <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                                             <item.icon size={20} aria-hidden="true" />
                                         </div>
@@ -238,9 +240,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView, onHome,
                                 <div className="relative z-10">
                                     <h4 className="font-bold text-xl mb-2">{t('mega.method.ailab.title')}</h4>
                                     <p className="text-gray-400 text-sm mb-6">{t('mega.method.ailab.desc')}</p>
-                                    <button className="px-4 py-2 bg-white text-black text-sm font-bold rounded-lg hover:bg-blue-50 transition-colors active:scale-95 focus-visible:ring-2 focus-visible:ring-blue-500">
+                                    <a href="#business" onClick={() => { setHoveredItem(null); onNavigate('business'); }} className="inline-block px-4 py-2 bg-white text-black text-sm font-bold rounded-lg hover:bg-blue-50 transition-colors active:scale-95 focus-visible:ring-2 focus-visible:ring-blue-500">
                                         {t('mega.method.ailab.btn')}
-                                    </button>
+                                    </a>
                                 </div>
                                 <div className="absolute right-0 bottom-0 opacity-20 transform translate-x-10 translate-y-10 group-hover:translate-x-5 group-hover:translate-y-5 transition-transform duration-700" aria-hidden="true">
                                     <Zap size={150} />

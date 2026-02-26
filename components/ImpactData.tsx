@@ -53,15 +53,17 @@ const AnimatedClock: React.FC<{ hovered: boolean }> = ({ hovered }) => (
             <motion.div
                 className="absolute w-0.5 h-2 bg-blue-600 rounded-full origin-bottom"
                 style={{ bottom: '50%' }}
+                initial={{ rotate: 0 }}
                 animate={hovered ? { rotate: 360 } : { rotate: 0 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                transition={hovered ? { duration: 2, repeat: Infinity, ease: "linear" } : { duration: 0.5, ease: "easeOut" }}
             />
             {/* Minute hand */}
             <motion.div
                 className="absolute w-0.5 h-2.5 bg-blue-600 rounded-full origin-bottom"
                 style={{ bottom: '50%' }}
+                initial={{ rotate: 0 }}
                 animate={hovered ? { rotate: 360 } : { rotate: 0 }}
-                transition={{ duration: 0.5, repeat: Infinity, ease: "linear" }}
+                transition={hovered ? { duration: 0.5, repeat: Infinity, ease: "linear" } : { duration: 0.5, ease: "easeOut" }}
             />
             {/* Center dot */}
             <div className="w-1 h-1 bg-blue-600 rounded-full z-10" />
@@ -103,7 +105,7 @@ export const ImpactData: React.FC = () => {
                             <p className="text-gray-500 leading-relaxed mb-6 font-light text-lg">
                                 {t('impact.desc')}
                             </p>
-                            <a href="https://captology.stanford.edu/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-ink underline decoration-gray-300 underline-offset-4 hover:decoration-blue-500 transition-all hover:text-blue-600 focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md">
+                            <a href="https://credibility.stanford.edu/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-ink underline decoration-gray-300 underline-offset-4 hover:decoration-blue-500 transition-all hover:text-blue-600 focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md">
                                 {t('impact.source')} <ExternalLink size={12} aria-hidden="true" />
                             </a>
                         </Reveal>

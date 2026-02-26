@@ -240,8 +240,8 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
                 <p>© {new Date().getFullYear()} WebManufaktur Berlin.</p>
                 <div className="flex gap-6 mt-4 md:mt-0">
                     <a href="#" onClick={(e) => { e.preventDefault(); onNavigate?.('impressum'); }} className="hover:text-ink transition-colors hover:underline decoration-blue-500 underline-offset-4 focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md px-1 cursor-pointer">{t('cta.imprint')}</a>
-                    <a href="#" className="hover:text-ink transition-colors hover:underline decoration-purple-500 underline-offset-4 focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md px-1">{t('cta.privacy')}</a>
-                    <a href="#" className="hover:text-ink transition-colors hover:underline decoration-orange-500 underline-offset-4 focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md px-1">LinkedIn</a>
+                    <a href="#" onClick={(e) => { e.preventDefault(); }} className="hover:text-ink transition-colors hover:underline decoration-purple-500 underline-offset-4 focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md px-1">{t('cta.privacy')}</a>
+                    <a href="#" onClick={(e) => { e.preventDefault(); }} className="hover:text-ink transition-colors hover:underline decoration-orange-500 underline-offset-4 focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md px-1">LinkedIn</a>
                 </div>
             </div>
         </footer>
