@@ -125,40 +125,6 @@ body {
   }
 }
 
-@keyframes hero-slide-left {
-  from {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes hero-slide-right {
-  from {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.animate-hero-right {
-  opacity: 0;
-  animation: hero-slide-right 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-hero-left {
-  opacity: 0;
-  animation: hero-slide-left 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
 @keyframes gridShimmer {
   0% {
     background-position: 0 0;
@@ -168,6 +134,7 @@ body {
     background-position: 300px 300px;
   }
 }
+
 
 
 
@@ -296,61 +263,7 @@ body {
 }
 
 /* === Section Scroll Reveal — 6 Unique Animation Variants === */
-.section-reveal {
-  opacity: 0;
-  transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 1.4s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 1.4s cubic-bezier(0.16, 1, 0.3, 1),
-    clip-path 1.4s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform, opacity, filter, clip-path;
-}
-
-/* 1. ImpactData: "The 3D Unfold" */
-.section-reveal.anim-3d-unfold {
-  transform: perspective(1200px) rotateX(-20deg) translateY(100px) scale(0.9);
-  transform-origin: bottom center;
-}
-
-/* 2. Features: "The Glass Materialize" */
-.section-reveal.anim-glass {
-  transform: scale(1.1);
-  filter: blur(30px);
-}
-
-/* 3. Process: "The Diagonal Spring" */
-.section-reveal.anim-diagonal-spring {
-  transform: translate(80px, 80px);
-  /* Uses a custom bouncy bezier curve overrides the default */
-  transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* 4. BusinessAI: "The Horizon Expand" */
-.section-reveal.anim-horizon-expand {
-  transform: scaleY(0.01);
-  transform-origin: center;
-  filter: blur(10px);
-}
-
-/* 5. Proof: "The Deep Dive" */
-.section-reveal.anim-deep-dive {
-  transform: scale(0.3) translateZ(-500px);
-  filter: brightness(0.5);
-}
-
-/* 6. CTA: "The Magnetic Drop" */
-.section-reveal.anim-magnetic-drop {
-  transform: translateY(-80px);
-  transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
-  /* Bouncy drop */
-}
-
-/* The Trigger Class */
-.section-reveal.visible {
-  opacity: 1;
-  transform: none;
-  filter: none;
-  clip-path: none;
-}
+/* Section reveal managed by Framer Motion in App.tsx */
 
 /* Section divider — gradient line between sections */
 .section-divider {

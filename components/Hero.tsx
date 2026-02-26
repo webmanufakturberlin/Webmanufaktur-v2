@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ArrowRight, Terminal, ChevronDown } from 'lucide-react';
 import { useI18n } from '../i18n';
 import { Waves } from './ui/wave-background';
+import { motion } from 'framer-motion';
 
 export const Hero: React.FC = () => {
     const { t } = useI18n();
@@ -186,16 +187,22 @@ export const Hero: React.FC = () => {
                     {/* Headline — cinematic split fly-in */}
                     <div className="relative mb-8">
                         <h1 className="text-4xl sm:text-6xl md:text-9xl font-black tracking-tighter leading-[0.9] select-none">
-                            <span
-                                className={`block text-transparent bg-clip-text bg-gradient-to-b from-gray-900 to-gray-600 transition-all ease-out duration-[2000ms] ${loaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[150px]'}`}
+                            <motion.span
+                                initial={{ x: '100%', opacity: 0 }}
+                                animate={{ x: 0, opacity: 1 }}
+                                transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
+                                className="block text-transparent bg-clip-text bg-gradient-to-b from-gray-900 to-gray-600"
                             >
                                 {t('hero.headline1')}
-                            </span>
-                            <span
-                                className={`relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 pb-2 transition-all ease-out duration-[3000ms] ${loaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-[150px]'}`}
+                            </motion.span>
+                            <motion.span
+                                initial={{ x: '-100%', opacity: 0 }}
+                                animate={{ x: 0, opacity: 1 }}
+                                transition={{ duration: 3, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+                                className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 pb-2"
                             >
                                 {t('hero.headline2')}
-                            </span>
+                            </motion.span>
                         </h1>
                     </div>
 

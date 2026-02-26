@@ -12,53 +12,51 @@ import { Navbar } from './components/Navbar';
 import { AboutUs } from './components/AboutUs';
 import { Impressum } from './components/Impressum';
 
+import { motion } from 'framer-motion';
+
 // Animation types for unique section entrances
 type SectionAnimation = '3d-unfold' | 'glass' | 'diagonal-spring' | 'horizon-expand' | 'deep-dive' | 'magnetic-drop';
 
-const ANIMATION_STYLES: Record<SectionAnimation, { hidden: string; visible: string }> = {
-    '3d-unfold': { hidden: 'opacity-0 translate-y-24 scale-[0.9]', visible: 'opacity-100 translate-y-0 scale-100' },
-    'glass': { hidden: 'opacity-0 scale-[1.05] blur-xl', visible: 'opacity-100 scale-100 blur-0' },
-    'diagonal-spring': { hidden: 'opacity-0 translate-x-[120px] translate-y-[120px]', visible: 'opacity-100 translate-x-0 translate-y-0' },
-    'horizon-expand': { hidden: 'opacity-0 scale-y-0 blur-md', visible: 'opacity-100 scale-y-100 blur-0' },
-    'deep-dive': { hidden: 'opacity-0 scale-[0.5]', visible: 'opacity-100 scale-100' },
-    'magnetic-drop': { hidden: 'opacity-0 -translate-y-24', visible: 'opacity-100 translate-y-0' },
+const ANIMATION_VARIANTS: Record<SectionAnimation, any> = {
+    '3d-unfold': {
+        hidden: { opacity: 0, rotateX: 90, scale: 0.8, y: 100 },
+        visible: { opacity: 1, rotateX: 0, scale: 1, y: 0, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } }
+    },
+    'glass': {
+        hidden: { opacity: 0, filter: 'blur(30px)', scale: 1.1 },
+        visible: { opacity: 1, filter: 'blur(0px)', scale: 1, transition: { duration: 1.5, ease: "easeOut" } }
+    },
+    'diagonal-spring': {
+        hidden: { opacity: 0, x: 200, y: 200 },
+        visible: { opacity: 1, x: 0, y: 0, transition: { type: "spring", stiffness: 60, damping: 15 } }
+    },
+    'horizon-expand': {
+        hidden: { opacity: 0, scaleY: 0, filter: 'blur(10px)' },
+        visible: { opacity: 1, scaleY: 1, filter: 'blur(0px)', transition: { duration: 1, ease: "anticipate" } }
+    },
+    'deep-dive': {
+        hidden: { opacity: 0, scale: 0.3, z: -500 },
+        visible: { opacity: 1, scale: 1, z: 0, transition: { duration: 1.4, ease: [0.16, 1, 0.3, 1] } }
+    },
+    'magnetic-drop': {
+        hidden: { opacity: 0, y: -200 },
+        visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 80, damping: 12 } }
+    }
 };
 
 // Section wrapper that reveals on scroll with a unique animation per section
 const SectionReveal: React.FC<{ children: React.ReactNode; className?: string; animation?: SectionAnimation }> = ({ children, className = '', animation = '3d-unfold' }) => {
-    const ref = useRef<HTMLDivElement>(null);
-    const [isVisible, setIsVisible] = useState(false);
-
-    useEffect(() => {
-        const el = ref.current;
-        if (!el) return;
-
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                // Reversible animations: true when entering, false when leaving
-                setIsVisible(entry.isIntersecting);
-            },
-            { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
-        );
-
-        observer.observe(el);
-        return () => observer.unobserve(el);
-    }, []);
-
-    const styles = ANIMATION_STYLES[animation];
-    const isBouncy = animation === 'magnetic-drop' || animation === 'diagonal-spring';
-
     return (
-        <div
-            ref={ref}
-            className={`transition-all duration-[1400ms] origin-center ${isVisible ? styles.visible : styles.hidden} ${className}`}
-            style={{
-                willChange: 'transform, opacity, filter',
-                transitionTimingFunction: isBouncy ? 'cubic-bezier(0.34, 1.56, 0.64, 1)' : 'cubic-bezier(0.16, 1, 0.3, 1)'
-            }}
+        <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+            variants={ANIMATION_VARIANTS[animation]}
+            className={className}
+            style={{ perspective: '1200px' }}
         >
             {children}
-        </div>
+        </motion.div>
     );
 };
 
