@@ -187,22 +187,12 @@ export const Hero: React.FC = () => {
                     <div className="relative mb-8">
                         <h1 className="text-4xl sm:text-6xl md:text-9xl font-black tracking-tighter leading-[0.9] select-none">
                             <span
-                                className="block text-transparent bg-clip-text bg-gradient-to-b from-gray-900 to-gray-600"
-                                style={{
-                                    opacity: 0,
-                                    // WE CODE kommt seeehr langsam von rechts
-                                    animation: loaded ? 'hero-fly-right 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' : 'none',
-                                }}
+                                className={`block text-transparent bg-clip-text bg-gradient-to-b from-gray-900 to-gray-600 transition-all ease-out duration-[2000ms] ${loaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[150px]'}`}
                             >
                                 {t('hero.headline1')}
                             </span>
                             <span
-                                className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 pb-2"
-                                style={{
-                                    opacity: 0,
-                                    // VISION kommt noch langsamer von links
-                                    animation: loaded ? 'hero-fly-left 3.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' : 'none',
-                                }}
+                                className={`relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 pb-2 transition-all ease-out duration-[3000ms] ${loaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-[150px]'}`}
                             >
                                 {t('hero.headline2')}
                             </span>

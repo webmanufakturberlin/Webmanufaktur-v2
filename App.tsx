@@ -15,6 +15,15 @@ import { Impressum } from './components/Impressum';
 // Animation types for unique section entrances
 type SectionAnimation = '3d-unfold' | 'glass' | 'diagonal-spring' | 'horizon-expand' | 'deep-dive' | 'magnetic-drop';
 
+const ANIMATION_STYLES: Record<SectionAnimation, { hidden: string; visible: string }> = {
+    '3d-unfold': { hidden: 'opacity-0 translate-y-24 scale-[0.9]', visible: 'opacity-100 translate-y-0 scale-100' },
+    'glass': { hidden: 'opacity-0 scale-[1.05] blur-xl', visible: 'opacity-100 scale-100 blur-0' },
+    'diagonal-spring': { hidden: 'opacity-0 translate-x-[120px] translate-y-[120px]', visible: 'opacity-100 translate-x-0 translate-y-0' },
+    'horizon-expand': { hidden: 'opacity-0 scale-y-0 blur-md', visible: 'opacity-100 scale-y-100 blur-0' },
+    'deep-dive': { hidden: 'opacity-0 scale-[0.5]', visible: 'opacity-100 scale-100' },
+    'magnetic-drop': { hidden: 'opacity-0 -translate-y-24', visible: 'opacity-100 translate-y-0' },
+};
+
 // Section wrapper that reveals on scroll with a unique animation per section
 const SectionReveal: React.FC<{ children: React.ReactNode; className?: string; animation?: SectionAnimation }> = ({ children, className = '', animation = '3d-unfold' }) => {
     const ref = useRef<HTMLDivElement>(null);
@@ -36,10 +45,17 @@ const SectionReveal: React.FC<{ children: React.ReactNode; className?: string; a
         return () => observer.unobserve(el);
     }, []);
 
+    const styles = ANIMATION_STYLES[animation];
+    const isBouncy = animation === 'magnetic-drop' || animation === 'diagonal-spring';
+
     return (
         <div
             ref={ref}
-            className={`section-reveal anim-${animation} ${isVisible ? 'visible' : ''} ${className}`}
+            className={`transition-all duration-[1400ms] origin-center ${isVisible ? styles.visible : styles.hidden} ${className}`}
+            style={{
+                willChange: 'transform, opacity, filter',
+                transitionTimingFunction: isBouncy ? 'cubic-bezier(0.34, 1.56, 0.64, 1)' : 'cubic-bezier(0.16, 1, 0.3, 1)'
+            }}
         >
             {children}
         </div>
