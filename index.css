@@ -285,43 +285,60 @@ body {
   animation: shimmer 1s ease forwards;
 }
 
-/* === Section Scroll Reveal — per-section animation variants === */
+/* === Section Scroll Reveal — 6 Unique Animation Variants === */
 .section-reveal {
   opacity: 0;
-  transition: opacity 1.6s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 1.6s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+    clip-path 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity, filter, clip-path;
 }
 
-.section-reveal.anim-slide-up {
-  transform: translateY(80px);
+/* 1. ImpactData: "The 3D Unfold" */
+.section-reveal.anim-3d-unfold {
+  transform: perspective(1200px) rotateX(-20deg) translateY(100px) scale(0.9);
+  transform-origin: bottom center;
 }
 
-.section-reveal.anim-slide-left {
-  transform: translateX(-100px);
+/* 2. Features: "The Glass Materialize" */
+.section-reveal.anim-glass {
+  transform: scale(1.1);
+  filter: blur(30px);
 }
 
-.section-reveal.anim-slide-right {
-  transform: translateX(100px);
+/* 3. Process: "The Diagonal Spring" */
+.section-reveal.anim-diagonal-spring {
+  transform: translate(80px, 80px);
+  /* Uses a custom bouncy bezier curve overrides the default */
+  transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.section-reveal.anim-zoom-in {
-  transform: scale(0.85);
-  filter: blur(8px);
+/* 4. BusinessAI: "The Horizon Expand" */
+.section-reveal.anim-horizon-expand {
+  transform: scaleY(0.01);
+  transform-origin: center;
+  filter: blur(10px);
 }
 
-.section-reveal.anim-flip-up {
-  transform: perspective(800px) rotateX(15deg) translateY(60px);
+/* 5. Proof: "The Deep Dive" */
+.section-reveal.anim-deep-dive {
+  transform: scale(0.3) translateZ(-500px);
+  filter: brightness(0.5);
 }
 
-.section-reveal.anim-fade-blur {
-  filter: blur(15px);
+/* 6. CTA: "The Magnetic Drop" */
+.section-reveal.anim-magnetic-drop {
+  transform: translateY(-80px);
+  transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy drop */
 }
 
+/* The Trigger Class */
 .section-reveal.visible {
   opacity: 1;
   transform: none;
   filter: none;
+  clip-path: none;
 }
 
 /* Section divider — gradient line between sections */

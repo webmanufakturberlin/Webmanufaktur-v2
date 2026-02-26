@@ -13,20 +13,10 @@ import { AboutUs } from './components/AboutUs';
 import { Impressum } from './components/Impressum';
 
 // Animation types for unique section entrances
-type SectionAnimation = 'slide-up' | 'slide-left' | 'slide-right' | 'zoom-in' | 'flip-up' | 'fade-blur';
-
-// Animation presets — all values as inline styles to avoid CSS class resolution issues in production
-const ANIMATION_PRESETS: Record<SectionAnimation, { transform?: string; filter?: string }> = {
-    'slide-up': { transform: 'translateY(80px)' },
-    'slide-left': { transform: 'translateX(-100px)' },
-    'slide-right': { transform: 'translateX(100px)' },
-    'zoom-in': { transform: 'scale(0.85)', filter: 'blur(8px)' },
-    'flip-up': { transform: 'perspective(800px) rotateX(15deg) translateY(60px)' },
-    'fade-blur': { filter: 'blur(15px)' },
-};
+type SectionAnimation = '3d-unfold' | 'glass' | 'diagonal-spring' | 'horizon-expand' | 'deep-dive' | 'magnetic-drop';
 
 // Section wrapper that reveals on scroll with a unique animation per section
-const SectionReveal: React.FC<{ children: React.ReactNode; className?: string; animation?: SectionAnimation }> = ({ children, className = '', animation = 'slide-up' }) => {
+const SectionReveal: React.FC<{ children: React.ReactNode; className?: string; animation?: SectionAnimation }> = ({ children, className = '', animation = '3d-unfold' }) => {
     const ref = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
 
@@ -36,31 +26,21 @@ const SectionReveal: React.FC<{ children: React.ReactNode; className?: string; a
 
         const observer = new IntersectionObserver(
             ([entry]) => {
+                // Reversible animations: true when entering, false when leaving
                 setIsVisible(entry.isIntersecting);
             },
-            { threshold: 0.01, rootMargin: '0px 0px -20px 0px' }
+            { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
         );
 
         observer.observe(el);
         return () => observer.unobserve(el);
     }, []);
 
-    const preset = ANIMATION_PRESETS[animation];
-    const hiddenStyle: React.CSSProperties = {
-        opacity: 0,
-        transform: preset.transform || 'none',
-        filter: preset.filter || 'none',
-        transition: 'opacity 1.6s cubic-bezier(0.16, 1, 0.3, 1), transform 1.6s cubic-bezier(0.16, 1, 0.3, 1), filter 1.6s cubic-bezier(0.16, 1, 0.3, 1)',
-    };
-    const visibleStyle: React.CSSProperties = {
-        opacity: 1,
-        transform: 'none',
-        filter: 'none',
-        transition: hiddenStyle.transition,
-    };
-
     return (
-        <div ref={ref} className={className} style={isVisible ? visibleStyle : hiddenStyle}>
+        <div
+            ref={ref}
+            className={`section-reveal anim-${animation} ${isVisible ? 'visible' : ''} ${className}`}
+        >
             {children}
         </div>
     );
@@ -177,8 +157,8 @@ const App: React.FC = () => {
                     }}
                 >
 
-                    {/* Section 1: ImpactData — slides up (classic) */}
-                    <SectionReveal animation="slide-up">
+                    {/* Section 1: ImpactData — The 3D Unfold */}
+                    <SectionReveal animation="3d-unfold">
                         <SectionCard>
                             <div id="journal">
                                 <ImpactData />
@@ -188,8 +168,8 @@ const App: React.FC = () => {
 
                     <SectionDivider />
 
-                    {/* Section 2: Features — slides in from left */}
-                    <SectionReveal animation="slide-left">
+                    {/* Section 2: Features — The Glass Materialize */}
+                    <SectionReveal animation="glass">
                         <SectionCard>
                             <div id="work">
                                 <Features onNavigate={handleServiceClick} />
@@ -200,8 +180,8 @@ const App: React.FC = () => {
                     <div id="solutions" aria-hidden="true"></div>
                     <SectionDivider />
 
-                    {/* Section 3: Process — zooms in from small + blurred */}
-                    <SectionReveal animation="zoom-in">
+                    {/* Section 3: Process — The Diagonal Spring */}
+                    <SectionReveal animation="diagonal-spring">
                         <SectionCard>
                             <div id="methodology">
                                 <Process />
@@ -211,8 +191,8 @@ const App: React.FC = () => {
 
                     <SectionDivider />
 
-                    {/* Section 4: BusinessAI — slides in from right */}
-                    <SectionReveal animation="slide-right">
+                    {/* Section 4: BusinessAI — The Horizon Expand */}
+                    <SectionReveal animation="horizon-expand">
                         <SectionCard>
                             <div id="ai-lab">
                                 <BusinessAI />
@@ -222,8 +202,8 @@ const App: React.FC = () => {
 
                     <SectionDivider />
 
-                    {/* Section 5: Proof — 3D flip from below */}
-                    <SectionReveal animation="flip-up">
+                    {/* Section 5: Proof — The Deep Dive */}
+                    <SectionReveal animation="deep-dive">
                         <SectionCard>
                             <div id="company">
                                 <Proof />
@@ -233,8 +213,8 @@ const App: React.FC = () => {
 
                     <SectionDivider />
 
-                    {/* Section 6: CTA — cinematic fade-blur reveal */}
-                    <SectionReveal animation="fade-blur">
+                    {/* Section 6: CTA — The Magnetic Drop */}
+                    <SectionReveal animation="magnetic-drop">
                         <SectionCard>
                             <div id="contact">
                                 <CTA onNavigate={handleNavigate} />

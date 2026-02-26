@@ -190,7 +190,8 @@ export const Hero: React.FC = () => {
                                 className="block text-transparent bg-clip-text bg-gradient-to-b from-gray-900 to-gray-600"
                                 style={{
                                     opacity: 0,
-                                    animation: loaded ? 'hero-fly-left 3s cubic-bezier(0.16, 1, 0.3, 1) forwards' : 'none',
+                                    // WE CODE kommt seeehr langsam von rechts
+                                    animation: loaded ? 'hero-fly-right 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' : 'none',
                                 }}
                             >
                                 {t('hero.headline1')}
@@ -199,7 +200,8 @@ export const Hero: React.FC = () => {
                                 className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 pb-2"
                                 style={{
                                     opacity: 0,
-                                    animation: loaded ? 'hero-fly-right 3s cubic-bezier(0.16, 1, 0.3, 1) 1s forwards' : 'none',
+                                    // VISION kommt noch langsamer von links
+                                    animation: loaded ? 'hero-fly-left 3.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' : 'none',
                                 }}
                             >
                                 {t('hero.headline2')}
