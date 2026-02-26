@@ -1,244 +1,177 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Background } from './components/Background';
-import { Hero } from './components/Hero';
+import React, { useState, useCallback } from 'react';
+import { ImpactData } from './components/ImpactData';
 import { Features, ServiceData } from './components/Features';
 import { Process } from './components/Process';
-import { BusinessAI } from './components/StylistAI';
-import { Proof } from './components/Proof';
+import { Hero } from './components/Hero';
 import { CTA } from './components/CTA';
-import { ImpactData } from './components/ImpactData';
-import { ServiceDetail } from './components/ServiceDetail';
 import { Navbar } from './components/Navbar';
 import { AboutUs } from './components/AboutUs';
 import { Impressum } from './components/Impressum';
+import { BusinessAI } from './components/StylistAI';
+import { Reveal } from './components/Reveal';
+import { ServiceDetail } from './components/ServiceDetail';
+import LivingVineBackground from './components/ui/living-vine-background';
+import { motion, useInView } from 'framer-motion';
 
-import { motion } from 'framer-motion';
+// --- Animation Components ---
 
-// Animation types for unique section entrances
-type SectionAnimation = '3d-unfold' | 'glass' | 'diagonal-spring' | 'horizon-expand' | 'deep-dive' | 'magnetic-drop';
-
-const ANIMATION_VARIANTS: Record<SectionAnimation, any> = {
+const ANIMATION_VARIANTS = {
+    standard: {
+        hidden: { opacity: 0, y: 40, x: 0 },
+        visible: { opacity: 1, y: 0, x: 0 }
+    },
     '3d-unfold': {
-        hidden: { opacity: 0, rotateX: 90, scale: 0.8, y: 100 },
-        visible: { opacity: 1, rotateX: 0, scale: 1, y: 0, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } }
+        hidden: { opacity: 0, rotateX: -45, y: 100, x: 0 },
+        visible: { opacity: 1, rotateX: 0, y: 0, x: 0 }
     },
-    'glass': {
-        hidden: { opacity: 0, filter: 'blur(30px)', scale: 1.1 },
-        visible: { opacity: 1, filter: 'blur(0px)', scale: 1, transition: { duration: 1.5, ease: "easeOut" } }
-    },
-    'diagonal-spring': {
-        hidden: { opacity: 0, x: 200, y: 200 },
-        visible: { opacity: 1, x: 0, y: 0, transition: { type: "spring", stiffness: 60, damping: 15 } }
+    glass: {
+        hidden: { opacity: 0, backdropFilter: 'blur(30px)', scale: 0.95, x: 0 },
+        visible: { opacity: 1, backdropFilter: 'blur(0px)', scale: 1, x: 0 }
     },
     'horizon-expand': {
-        hidden: { opacity: 0, scaleY: 0, filter: 'blur(10px)' },
-        visible: { opacity: 1, scaleY: 1, filter: 'blur(0px)', transition: { duration: 1, ease: "anticipate" } }
-    },
-    'deep-dive': {
-        hidden: { opacity: 0, scale: 0.3, z: -500 },
-        visible: { opacity: 1, scale: 1, z: 0, transition: { duration: 1.4, ease: [0.16, 1, 0.3, 1] } }
-    },
-    'magnetic-drop': {
-        hidden: { opacity: 0, y: -200 },
-        visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 80, damping: 12 } }
+        hidden: { opacity: 0, scaleX: 0.8, y: 50, x: 0 },
+        visible: { opacity: 1, scaleX: 1, y: 0, x: 0 }
     }
 };
 
-// Section wrapper that reveals on scroll with a unique animation per section
-const SectionReveal: React.FC<{ children: React.ReactNode; className?: string; animation?: SectionAnimation }> = ({ children, className = '', animation = '3d-unfold' }) => {
+const SectionReveal: React.FC<{
+    children: React.ReactNode;
+    variant?: keyof typeof ANIMATION_VARIANTS;
+    className?: string;
+    sectionId?: string;
+}> = ({ children, variant = 'standard', className = "", sectionId }) => {
+    const ref = React.useRef(null);
+    const isInView = useInView(ref, { once: true, amount: 0.2 });
+    const selectedVariant = ANIMATION_VARIANTS[variant];
+
     return (
         <motion.div
+            ref={ref}
+            id={sectionId}
             initial="hidden"
-            whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
-            variants={ANIMATION_VARIANTS[animation]}
+            animate={isInView ? "visible" : "hidden"}
+            variants={selectedVariant}
+            transition={{
+                duration: 1.2,
+                ease: [0.16, 1, 0.3, 1],
+                opacity: { duration: 0.8 }
+            }}
             className={className}
-            style={{ perspective: '1200px' }}
+            style={variant !== 'standard' ? { perspective: '2000px' } : {}}
         >
             {children}
         </motion.div>
     );
 };
 
-// Gradient divider between sections
 const SectionDivider: React.FC = () => (
-    <div className="section-divider" aria-hidden="true" />
+    <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-200 to-transparent opacity-50" aria-hidden="true" />
 );
 
-// Card wrapper that lifts sections off the background
-const SectionCard: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
-    <div className={`mx-4 md:mx-8 my-6 rounded-3xl bg-white/90 backdrop-blur-sm shadow-[0_4px_30px_rgba(0,0,0,0.04)] border border-gray-100/50 overflow-hidden ${className}`}>
-        {children}
-    </div>
-);
+// --- Main App Component ---
 
 const App: React.FC = () => {
-    const [currentView, setCurrentView] = useState<'home' | 'service' | 'about' | 'impressum'>('home');
+    const [currentView, setCurrentView] = useState<'home' | 'service-detail' | 'about' | 'impressum'>('home');
     const [selectedService, setSelectedService] = useState<ServiceData | null>(null);
 
-    const scrollPositionRef = useRef(0);
-
-    const handleNavigate = (id: string) => {
-        if (id === 'impressum') {
-            handleImpressum();
-            return;
-        }
-        if (currentView !== 'home') {
+    const handleNavigate = useCallback((id: string) => {
+        if (id === 'about') {
+            setCurrentView('about');
+        } else if (id === 'impressum') {
+            setCurrentView('impressum');
+        } else {
             setCurrentView('home');
             setTimeout(() => {
-                document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+                const element = document.getElementById(id);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }
             }, 100);
-        } else {
-            document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
         }
-    };
+    }, []);
 
-    const handleHome = () => {
+    const handleHome = useCallback(() => {
         setCurrentView('home');
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+    }, []);
 
-    const handleAbout = () => {
-        scrollPositionRef.current = window.scrollY;
+    const handleAbout = useCallback(() => {
         setCurrentView('about');
-        window.scrollTo({ top: 0, behavior: 'auto' });
-    };
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
 
-    const handleImpressum = () => {
-        scrollPositionRef.current = window.scrollY;
-        setCurrentView('impressum');
-        window.scrollTo({ top: 0, behavior: 'auto' });
-    };
-
-    const handleServiceClick = (service: ServiceData) => {
-        scrollPositionRef.current = window.scrollY;
+    const handleServiceClick = useCallback((service: ServiceData) => {
         setSelectedService(service);
-        setCurrentView('service');
-    };
+        setCurrentView('service-detail');
+        window.scrollTo(0, 0);
+    }, []);
 
-    const handleBack = () => {
+    const handleBack = useCallback(() => {
         setCurrentView('home');
-        setSelectedService(null);
-        setTimeout(() => {
-            window.scrollTo({
-                top: scrollPositionRef.current,
-                behavior: 'auto'
-            });
-        }, 0);
-    };
-
-    if (currentView === 'about') {
-        return (
-            <>
-                <Navbar onNavigate={handleNavigate} currentView={currentView} onHome={handleHome} onAbout={handleAbout} />
-                <AboutUs onBack={handleHome} />
-            </>
-        );
-    }
-
-    if (currentView === 'impressum') {
-        return (
-            <>
-                <Navbar onNavigate={handleNavigate} currentView={currentView} onHome={handleHome} onAbout={handleAbout} />
-                <Impressum onBack={handleHome} onNavigate={handleNavigate} />
-            </>
-        );
-    }
-
-    if (currentView === 'service' && selectedService) {
-        return (
-            <>
-                <ServiceDetail service={selectedService} onBack={handleBack} />
-            </>
-        );
-    }
+        window.scrollTo(0, 0);
+    }, []);
 
     return (
-        <div className="min-h-screen text-ink selection:bg-black selection:text-white font-sans">
-            <Background />
-
+        <LivingVineBackground className="min-h-screen text-ink selection:bg-black selection:text-white font-sans">
             <Navbar onNavigate={handleNavigate} currentView={currentView} onHome={handleHome} onAbout={handleAbout} />
 
-            <main className="flex flex-col">
-                <Hero />
+            {currentView === 'service-detail' && selectedService ? (
+                <ServiceDetail service={selectedService} onBack={handleBack} />
+            ) : currentView === 'about' ? (
+                <AboutUs onBack={handleHome} />
+            ) : currentView === 'impressum' ? (
+                <Impressum onBack={handleHome} onNavigate={handleNavigate} />
+            ) : (
+                <main className="flex flex-col">
+                    <Hero />
 
-                {/* Floating content container with grid background */}
-                <div className="relative z-20 -mt-6 rounded-t-[2.5rem] shadow-[0_-20px_60px_rgba(0,0,0,0.06)] overflow-hidden"
-                    style={{
-                        backgroundImage: 'linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px)',
-                        backgroundSize: '60px 60px',
-                        backgroundColor: 'rgb(249, 250, 251)',
-                    }}
-                >
+                    {/* Content Container */}
+                    <div className="relative z-20 -mt-6 rounded-t-[2.5rem] shadow-[0_-20px_60px_rgba(0,0,0,0.06)] overflow-hidden"
+                        style={{
+                            backgroundImage: 'linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px)',
+                            backgroundSize: '60px 60px',
+                            backgroundColor: 'rgb(249, 250, 251)',
+                        }}
+                    >
+                        <SectionReveal variant="3d-unfold" sectionId="impact">
+                            <ImpactData />
+                        </SectionReveal>
 
-                    {/* Section 1: ImpactData — The 3D Unfold */}
-                    <SectionReveal animation="3d-unfold">
-                        <SectionCard>
-                            <div id="journal">
-                                <ImpactData />
-                            </div>
-                        </SectionCard>
-                    </SectionReveal>
+                        <SectionDivider />
 
-                    <SectionDivider />
+                        <SectionReveal variant="glass" sectionId="features">
+                            <Features onNavigate={handleServiceClick} />
+                        </SectionReveal>
 
-                    {/* Section 2: Features — The Glass Materialize */}
-                    <SectionReveal animation="glass">
-                        <SectionCard>
-                            <div id="work">
-                                <Features onNavigate={handleServiceClick} />
-                            </div>
-                        </SectionCard>
-                    </SectionReveal>
+                        <SectionDivider />
 
-                    <div id="solutions" aria-hidden="true"></div>
-                    <SectionDivider />
+                        <SectionReveal variant="standard" sectionId="work">
+                            <Process />
+                        </SectionReveal>
 
-                    {/* Section 3: Process — The Diagonal Spring */}
-                    <SectionReveal animation="diagonal-spring">
-                        <SectionCard>
-                            <div id="methodology">
-                                <Process />
-                            </div>
-                        </SectionCard>
-                    </SectionReveal>
+                        <SectionDivider />
 
-                    <SectionDivider />
+                        <SectionReveal variant="horizon-expand" sectionId="business">
+                            <BusinessAI />
+                        </SectionReveal>
 
-                    {/* Section 4: BusinessAI — The Horizon Expand */}
-                    <SectionReveal animation="horizon-expand">
-                        <SectionCard>
-                            <div id="ai-lab">
-                                <BusinessAI />
-                            </div>
-                        </SectionCard>
-                    </SectionReveal>
+                        <SectionDivider />
 
-                    <SectionDivider />
+                        <SectionReveal variant="standard" sectionId="contact">
+                            <CTA onNavigate={handleNavigate} />
+                        </SectionReveal>
 
-                    {/* Section 5: Proof — The Deep Dive */}
-                    <SectionReveal animation="deep-dive">
-                        <SectionCard>
-                            <div id="company">
-                                <Proof />
-                            </div>
-                        </SectionCard>
-                    </SectionReveal>
+                        <SectionDivider />
 
-                    <SectionDivider />
-
-                    {/* Section 6: CTA — The Magnetic Drop */}
-                    <SectionReveal animation="magnetic-drop">
-                        <SectionCard>
-                            <div id="contact">
-                                <CTA onNavigate={handleNavigate} />
-                            </div>
-                        </SectionCard>
-                    </SectionReveal>
-
-                </div>
-            </main>
-        </div>
+                        <SectionReveal variant="standard" sectionId="impressum-footer">
+                            <footer className="py-12 px-6 flex flex-col items-center gap-4 text-gray-400">
+                                <p className="text-xs font-mono uppercase tracking-[0.3em]">© 2026 Webmanufaktur Berlin</p>
+                            </footer>
+                        </SectionReveal>
+                    </div>
+                </main>
+            )}
+        </LivingVineBackground>
     );
 };
 

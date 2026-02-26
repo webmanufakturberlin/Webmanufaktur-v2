@@ -1,7 +1,8 @@
 import React, { useRef, useCallback, useState } from 'react';
-import { TrendingUp, Clock, Eye, ExternalLink } from 'lucide-react';
+import { ArrowUpRight, Clock, Eye, ExternalLink, TrendingUp } from 'lucide-react';
 import { Reveal } from './Reveal';
 import { useI18n } from '../i18n';
+import { motion } from 'framer-motion';
 
 // Magnetic hover card — card follows mouse slightly
 const MagnetCard: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => {
@@ -28,54 +29,55 @@ const MagnetCard: React.FC<{ children: React.ReactNode; className?: string }> = 
     );
 };
 
-// Animated SVG graph that grows like a stock ticker on hover
-const AnimatedGraph: React.FC<{ hovered: boolean }> = ({ hovered }) => (
+// Animated Arrow that shoots up on hover
+const AnimatedArrow: React.FC<{ hovered: boolean }> = ({ hovered }) => (
     <div className="mb-4 bg-purple-50 w-12 h-12 rounded-xl flex items-center justify-center group-hover:bg-purple-100 transition-all duration-500 overflow-hidden">
-        {hovered ? (
-            <svg width="28" height="24" viewBox="0 0 28 24" fill="none" className="text-purple-600">
-                <polyline
-                    points="2,20 6,16 10,18 14,10 18,12 22,4 26,6"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    fill="none"
-                    strokeDasharray="60"
-                    strokeDashoffset="0"
-                    style={{ animation: 'graph-draw 1s ease-out forwards' }}
-                />
-            </svg>
-        ) : (
-            <TrendingUp size={24} className="text-purple-600" />
-        )}
+        <motion.div
+            animate={hovered ? {
+                x: [0, 25, -25, 0],
+                y: [0, -25, 25, 0],
+                opacity: [1, 0, 0, 1]
+            } : {}}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+        >
+            <ArrowUpRight size={24} className="text-purple-600" />
+        </motion.div>
     </div>
 );
 
-// Animated clock with spinning hands on hover
+// Animated clock with spinning hands via Framer Motion
 const AnimatedClock: React.FC<{ hovered: boolean }> = ({ hovered }) => (
     <div className="mb-4 bg-blue-50 w-12 h-12 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-all duration-500">
-        {hovered ? (
-            <svg width="24" height="24" viewBox="0 0 24 24" className="text-blue-600">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
-                {/* Hour hand */}
-                <line x1="12" y1="12" x2="12" y2="7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
-                    style={{ transformOrigin: '12px 12px', animation: 'clock-spin 2s linear infinite' }} />
-                {/* Minute hand */}
-                <line x1="12" y1="12" x2="17" y2="12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
-                    style={{ transformOrigin: '12px 12px', animation: 'clock-spin 0.5s linear infinite' }} />
-                {/* Center dot */}
-                <circle cx="12" cy="12" r="1.5" fill="currentColor" />
-            </svg>
-        ) : (
-            <Clock size={24} className="text-blue-600" />
-        )}
+        <div className="relative w-6 h-6 border-2 border-blue-600 rounded-full flex items-center justify-center">
+            {/* Hour hand */}
+            <motion.div
+                className="absolute w-0.5 h-2 bg-blue-600 rounded-full origin-bottom"
+                style={{ bottom: '50%' }}
+                animate={hovered ? { rotate: 360 } : { rotate: 0 }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            />
+            {/* Minute hand */}
+            <motion.div
+                className="absolute w-0.5 h-2.5 bg-blue-600 rounded-full origin-bottom"
+                style={{ bottom: '50%' }}
+                animate={hovered ? { rotate: 360 } : { rotate: 0 }}
+                transition={{ duration: 0.5, repeat: Infinity, ease: "linear" }}
+            />
+            {/* Center dot */}
+            <div className="w-1 h-1 bg-blue-600 rounded-full z-10" />
+        </div>
     </div>
 );
 
-// Animated blinking eye on hover
+// Animated blinking eye via Framer Motion
 const AnimatedEye: React.FC<{ hovered: boolean }> = ({ hovered }) => (
     <div className="mb-4 bg-orange-50 w-12 h-12 rounded-xl flex items-center justify-center group-hover:bg-orange-100 transition-all duration-500">
-        <Eye size={24} className={`text-orange-600 transition-transform duration-300 ${hovered ? 'animate-eye-blink' : ''}`} />
+        <motion.div
+            animate={hovered ? { scaleY: [1, 0.1, 1] } : { scaleY: 1 }}
+            transition={{ duration: 0.4, repeat: Infinity, repeatDelay: 1 }}
+        >
+            <Eye size={24} className="text-orange-600" />
+        </motion.div>
     </div>
 );
 
@@ -114,7 +116,7 @@ export const ImpactData: React.FC = () => {
                                 <div className="bg-white p-8 rounded-3xl shadow-md border border-gray-200 hover:shadow-xl hover:shadow-purple-500/10 hover:border-purple-200 transition-all duration-500 cursor-default h-full group relative overflow-hidden"
                                     onMouseEnter={() => setHovered(0)} onMouseLeave={() => setHovered(null)}>
                                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-blue-500" aria-hidden="true" />
-                                    <AnimatedGraph hovered={hovered === 0} />
+                                    <AnimatedArrow hovered={hovered === 0} />
                                     <div className="text-5xl font-extrabold text-ink mb-3 tracking-tight group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-600 group-hover:to-blue-600 transition-all duration-500">{t('impact.stat1.value')}</div>
                                     <p className="text-sm text-gray-500 leading-relaxed font-medium group-hover:text-gray-700 transition-colors">{t('impact.stat1.desc')}</p>
                                 </div>
@@ -147,25 +149,6 @@ export const ImpactData: React.FC = () => {
                     </div>
                 </div>
             </div>
-
-            {/* Inline CSS keyframes for icon animations */}
-            <style>{`
-                @keyframes graph-draw {
-                    from { stroke-dashoffset: 60; }
-                    to { stroke-dashoffset: 0; }
-                }
-                @keyframes clock-spin {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
-                }
-                .animate-eye-blink {
-                    animation: eye-blink 0.4s ease-in-out infinite;
-                }
-                @keyframes eye-blink {
-                    0%, 100% { transform: scaleY(1); }
-                    50% { transform: scaleY(0.1); }
-                }
-            `}</style>
         </section>
     );
 };

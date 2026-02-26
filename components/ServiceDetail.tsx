@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { ServiceData } from './Features';
-import { Background } from './Background';
 
 interface ServiceDetailProps {
     service: ServiceData;
@@ -16,8 +15,6 @@ export const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack })
 
     return (
         <div className="min-h-screen relative font-sans text-ink">
-            <Background />
-
             <div className="relative z-20 container mx-auto px-6 py-20">
                 <button
                     onClick={onBack}

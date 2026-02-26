@@ -88,7 +88,7 @@ export const Process: React.FC = () => {
     };
 
     return (
-        <section className="relative z-10 px-4 py-32 border-y border-transparent overflow-visible">
+        <section className="relative z-10 py-32 border-y border-transparent overflow-visible">
             <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] -z-10" aria-hidden="true" />
 
             <div className="absolute inset-0 -z-20 opacity-30 pointer-events-none mix-blend-multiply" aria-hidden="true">
@@ -96,7 +96,7 @@ export const Process: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-tr from-blue-50/40 via-purple-50/40 to-orange-50/40 animate-pulse-slow" style={{ animationDuration: '8s' }} />
             </div>
 
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-7xl mx-auto px-4 md:px-8">
                 <div className="mb-24">
                     <Reveal width="100%">
                         <div className="flex flex-col md:flex-row items-end justify-between gap-8 border-b border-black/10 pb-8 mb-12">

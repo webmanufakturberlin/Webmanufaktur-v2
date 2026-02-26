@@ -97,13 +97,13 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
     };
 
     return (
-        <section className="relative z-10 px-4 py-32 max-w-7xl mx-auto overflow-visible">
+        <section className="relative z-10 py-32 overflow-visible">
 
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] pointer-events-none -z-10 opacity-40" aria-hidden="true">
                 <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-100 via-transparent to-orange-100 opacity-60 blur-[120px] rounded-full" />
             </div>
 
-            <div className="flex flex-col md:flex-row justify-between items-end mb-24 relative z-10">
+            <div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-col md:flex-row justify-between items-end mb-24 relative z-10">
                 <Reveal variant="left">
                     <div>
                         <h2 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 tracking-tight text-ink drop-shadow-sm">
@@ -120,7 +120,7 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
                 </Reveal>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+            <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
                 {services.map((service, idx) => (
                     <Reveal
                         key={idx}

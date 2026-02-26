@@ -54,6 +54,16 @@ const translations: Record<string, Record<Lang, string>> = {
     'hero.subtext': { en: 'Engineering high-performance digital infrastructure for the world\'s most ambitious brands.', de: 'Hochleistungs-Digitalinfrastruktur für die ambitioniertesten Marken der Welt.' },
     'hero.caseStudies': { en: 'Case Studies', de: 'Referenzen' },
 
+    // Creativity Trigger
+    'creativity.message': {
+        en: 'Hey, you seem truly creative! Feel free to share your thoughts and vision with us.',
+        de: 'Hey, du scheinst echt kreativ zu sein – teile gerne deine Gedanken oder deine Vision mit uns!'
+    },
+    'creativity.action': {
+        en: 'Share Vision',
+        de: 'Vision teilen'
+    },
+
     // Impact Data
     'impact.badge': { en: 'Market Research', de: 'Marktforschung' },
     'impact.headline1': { en: 'Design is not just art.', de: 'Design ist mehr als Ästhetik.' },
@@ -118,13 +128,6 @@ const translations: Record<string, Record<Lang, string>> = {
     'ai.errorMsg': { en: 'Our strategy nodes are currently syncing. Please try again.', de: 'Unsere Strategie-Server synchronisieren gerade. Bitte versuchen Sie es erneut.' },
     'ai.results': { en: 'Results will appear here...', de: 'Ergebnisse erscheinen hier...' },
 
-    // Proof
-    'proof.stat1.value': { en: 'Multi-Sector', de: 'Multi-Branche' },
-    'proof.stat1.label': { en: 'Diverse Industries', de: 'Vielfältige Branchen' },
-    'proof.stat2.value': { en: 'International', de: 'International' },
-    'proof.stat2.label': { en: 'Global Client Base', de: 'Globaler Kundenstamm' },
-    'proof.stat3.value': { en: 'Dedicated', de: 'Langfristig' },
-    'proof.stat3.label': { en: 'Long-term Partnerships', de: 'Langzeitpartnerschaften' },
 
     // CTA / Contact
     'cta.headline1': { en: "Let's build", de: 'Lass uns etwas' },

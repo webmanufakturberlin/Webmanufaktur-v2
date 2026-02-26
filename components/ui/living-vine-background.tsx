@@ -1,0 +1,227 @@
+import React, { useRef, useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useI18n } from "../../i18n";
+import { Sparkles, X, MessageSquare } from "lucide-react";
+
+interface LivingVineBackgroundProps {
+    children?: React.ReactNode;
+    vineColor?: string;
+    branchColor?: string;
+    maxBranchLength?: number;
+    className?: string;
+}
+
+const LivingVineBackground: React.FC<LivingVineBackgroundProps> = ({
+    children,
+    vineColor = "rgba(16, 185, 129, 0.8)",
+    branchColor = "rgba(16, 185, 129, 0.6)",
+    maxBranchLength = 50,
+    className = "",
+}) => {
+    const { t } = useI18n();
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const animationFrameIdRef = useRef<number>(0);
+    const mousePosRef = useRef({ x: typeof window !== 'undefined' ? window.innerWidth / 2 : 0, y: typeof window !== 'undefined' ? window.innerHeight / 2 : 0 });
+    const pathHistoryRef = useRef<{ x: number, y: number }[]>([]);
+    const branchesRef = useRef<any[]>([]);
+
+    // Interaction tracking
+    const [showPopup, setShowPopup] = useState(false);
+    const [hasTriggered, setHasTriggered] = useState(false);
+    const interactionTimeRef = useRef<number>(0);
+    const lastMouseMoveRef = useRef<number>(Date.now());
+    const isActiveRef = useRef<boolean>(false);
+
+    useEffect(() => {
+        let destroyed = false;
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        let width = (canvas.width = window.innerWidth);
+        let height = (canvas.height = window.innerHeight);
+
+        class Branch {
+            points: { x: number, y: number }[];
+            life: number;
+            angle: number;
+            speed: number;
+            length: number;
+
+            constructor(x: number, y: number) {
+                this.points = [{ x, y }];
+                this.life = 1;
+                this.angle = Math.random() * Math.PI * 2;
+                this.speed = Math.random() * 1.5 + 0.5;
+                this.length = 0;
+            }
+            update() {
+                if (this.length >= maxBranchLength) {
+                    this.life -= 0.02;
+                    return;
+                }
+                this.angle += (Math.random() - 0.5) * 0.2;
+                const last = this.points[this.points.length - 1];
+                const newX = last.x + Math.cos(this.angle) * this.speed;
+                const newY = last.y + Math.sin(this.angle) * this.speed;
+                this.points.push({ x: newX, y: newY });
+                this.length++;
+            }
+            draw() {
+                if (!ctx) return;
+                ctx.beginPath();
+                ctx.moveTo(this.points[0].x, this.points[0].y);
+                for (let i = 1; i < this.points.length; i++) {
+                    ctx.lineTo(this.points[i].x, this.points[i].y);
+                }
+                ctx.strokeStyle = branchColor.replace(/[\d.]+\)$/g, `${this.life * 0.4})`);
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+        }
+
+        const handleMouseMove = (e: MouseEvent) => {
+            mousePosRef.current = { x: e.clientX, y: e.clientY };
+            pathHistoryRef.current.push({ ...mousePosRef.current });
+            if (pathHistoryRef.current.length > 100) pathHistoryRef.current.shift();
+
+            // Trigger branches
+            if (Math.random() > 0.95) {
+                branchesRef.current.push(new Branch(e.clientX, e.clientY));
+            }
+
+            // Track activity for the "Creativity Trigger"
+            const now = Date.now();
+            const timeDiff = now - lastMouseMoveRef.current;
+
+            // If movement is relatively continuous and user is not scrolled down
+            if (timeDiff < 200 && window.scrollY < 300) {
+                isActiveRef.current = true;
+            } else {
+                isActiveRef.current = false;
+            }
+            lastMouseMoveRef.current = now;
+        };
+
+        const handleResize = () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        };
+
+        window.addEventListener("mousemove", handleMouseMove);
+        window.addEventListener("resize", handleResize);
+
+        // Timer for interaction accumulation
+        const timer = setInterval(() => {
+            if (isActiveRef.current && !hasTriggered) {
+                interactionTimeRef.current += 1;
+                if (interactionTimeRef.current >= 6) { // 6 seconds of active play
+                    setShowPopup(true);
+                    setHasTriggered(true);
+                    isActiveRef.current = false;
+                }
+            } else if (!hasTriggered) {
+                // Slowly decay progress if inactive
+                interactionTimeRef.current = Math.max(0, interactionTimeRef.current - 0.2);
+            }
+        }, 1000);
+
+        const animate = () => {
+            if (destroyed) return;
+            // White clearing for trailing effect
+            ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
+            ctx.fillRect(0, 0, width, height);
+
+            if (pathHistoryRef.current.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(pathHistoryRef.current[0].x, pathHistoryRef.current[0].y);
+                for (let i = 1; i < pathHistoryRef.current.length; i++) {
+                    ctx.lineTo(pathHistoryRef.current[i].x, pathHistoryRef.current[i].y);
+                }
+                ctx.strokeStyle = vineColor;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            branchesRef.current = branchesRef.current.filter((b) => b.life > 0);
+            for (const branch of branchesRef.current) {
+                branch.update();
+                branch.draw();
+            }
+
+            animationFrameIdRef.current = requestAnimationFrame(animate);
+        };
+
+        animate();
+
+        return () => {
+            destroyed = true;
+            clearInterval(timer);
+            window.removeEventListener("mousemove", handleMouseMove);
+            window.removeEventListener("resize", handleResize);
+            cancelAnimationFrame(animationFrameIdRef.current);
+        };
+    }, [vineColor, branchColor, maxBranchLength, hasTriggered]);
+
+    const scrollToContact = () => {
+        setShowPopup(false);
+        document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    return (
+        <div
+            className={`relative min-h-screen w-full overflow-hidden bg-white ${className}`}
+            style={{ backgroundColor: "#ffffff" }}
+        >
+            <canvas ref={canvasRef} className="fixed inset-0 block h-full w-full z-0 pointer-events-none" />
+
+            <AnimatePresence>
+                {showPopup && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9, y: 50, x: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 20, x: 10 }}
+                        className="fixed bottom-10 right-4 sm:right-10 z-[100] w-[90%] sm:w-auto max-w-lg"
+                    >
+                        <div className="relative group p-6 sm:p-8 rounded-[2rem] bg-white/70 backdrop-blur-2xl border border-emerald-100 shadow-[0_20px_50px_rgba(16,185,129,0.1)] overflow-hidden">
+                            {/* Decorative background glow */}
+                            <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-400/10 blur-[60px] rounded-full group-hover:bg-emerald-400/20 transition-colors duration-700" />
+
+                            <button
+                                onClick={() => setShowPopup(false)}
+                                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-ink hover:bg-gray-100 rounded-full transition-all"
+                            >
+                                <X size={18} />
+                            </button>
+
+                            <div className="flex items-start gap-4 relative z-10">
+                                <div className="p-3 rounded-2xl bg-emerald-50 text-emerald-600">
+                                    <Sparkles size={24} className="animate-pulse" />
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-lg sm:text-xl font-bold text-ink mb-2 pr-6">
+                                        {t('creativity.message')}
+                                    </h3>
+                                    <div className="flex flex-wrap items-center gap-4 mt-4">
+                                        <button
+                                            onClick={scrollToContact}
+                                            className="px-6 py-2.5 bg-ink text-white rounded-full text-sm font-bold hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+                                        >
+                                            <MessageSquare size={16} />
+                                            {t('creativity.action')}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <div className="relative z-10 w-full">{children}</div>
+        </div>
+    );
+};
+
+export default LivingVineBackground;

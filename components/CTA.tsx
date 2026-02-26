@@ -33,10 +33,10 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
     };
 
     return (
-        <footer className="relative z-10 bg-white/80 backdrop-blur-xl pt-32 pb-12 px-4 border-t border-white/20 overflow-hidden">
+        <footer className="relative z-10 bg-white/80 backdrop-blur-xl pt-32 pb-12 border-t border-white/20 overflow-hidden">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-gradient-to-b from-blue-50/50 to-transparent opacity-80 pointer-events-none" aria-hidden="true" />
 
-            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 mb-24 relative">
+            <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 mb-24 relative">
                 <div>
                     <Reveal>
                         <h2 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-8 tracking-tighter text-ink leading-[0.9]">
@@ -236,7 +236,7 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
                 </Reveal>
             </div>
 
-            <div className="max-w-7xl mx-auto pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400 relative">
+            <div className="max-w-7xl mx-auto px-4 md:px-8 pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400 relative">
                 <p>© {new Date().getFullYear()} WebManufaktur Berlin.</p>
                 <div className="flex gap-6 mt-4 md:mt-0">
                     <a href="#" onClick={(e) => { e.preventDefault(); onNavigate?.('impressum'); }} className="hover:text-ink transition-colors hover:underline decoration-blue-500 underline-offset-4 focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md px-1 cursor-pointer">{t('cta.imprint')}</a>
