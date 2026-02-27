@@ -93,7 +93,7 @@ export const ImpactData: React.FC = () => {
                 <div className="flex flex-col md:flex-row items-center justify-between gap-12">
 
                     <div className="md:w-1/3">
-                        <Reveal>
+                        <Reveal variant="left">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-widest mb-6">
                                 <TrendingUp size={12} aria-hidden="true" />
                                 {t('impact.badge')}
@@ -113,7 +113,7 @@ export const ImpactData: React.FC = () => {
 
                     {/* Cards with magnetic hover */}
                     <div className="md:w-2/3 grid grid-cols-1 sm:grid-cols-3 gap-6">
-                        <Reveal delay={0.1}>
+                        <Reveal delay={0.1} variant="parallax-up">
                             <MagnetCard>
                                 <div className="bg-white p-8 rounded-3xl shadow-md border border-gray-200 hover:shadow-xl hover:shadow-purple-500/10 hover:border-purple-200 transition-all duration-500 cursor-default h-full group relative overflow-hidden"
                                     onMouseEnter={() => setHovered(0)} onMouseLeave={() => setHovered(null)}>
@@ -125,7 +125,7 @@ export const ImpactData: React.FC = () => {
                             </MagnetCard>
                         </Reveal>
 
-                        <Reveal delay={0.2}>
+                        <Reveal delay={0.2} variant="parallax-up">
                             <MagnetCard>
                                 <div className="bg-white p-8 rounded-3xl shadow-md border border-gray-200 hover:shadow-xl hover:shadow-blue-500/10 hover:border-blue-200 transition-all duration-500 cursor-default h-full group relative overflow-hidden"
                                     onMouseEnter={() => setHovered(1)} onMouseLeave={() => setHovered(null)}>
@@ -137,7 +137,7 @@ export const ImpactData: React.FC = () => {
                             </MagnetCard>
                         </Reveal>
 
-                        <Reveal delay={0.3}>
+                        <Reveal delay={0.3} variant="parallax-up">
                             <MagnetCard>
                                 <div className="bg-white p-8 rounded-3xl shadow-md border border-gray-200 hover:shadow-xl hover:shadow-orange-500/10 hover:border-orange-200 transition-all duration-500 cursor-default h-full group relative overflow-hidden"
                                     onMouseEnter={() => setHovered(2)} onMouseLeave={() => setHovered(null)}>

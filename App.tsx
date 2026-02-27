@@ -17,20 +17,28 @@ import { motion, useInView } from 'framer-motion';
 
 const ANIMATION_VARIANTS = {
     standard: {
-        hidden: { opacity: 0, y: 40, x: 0 },
-        visible: { opacity: 1, y: 0, x: 0 }
+        hidden: { y: 40 },
+        visible: { y: 0 }
     },
     '3d-unfold': {
-        hidden: { opacity: 0, rotateX: -45, y: 100, x: 0 },
-        visible: { opacity: 1, rotateX: 0, y: 0, x: 0 }
+        hidden: { rotateX: -15, y: 60 },
+        visible: { rotateX: 0, y: 0 }
     },
     glass: {
-        hidden: { opacity: 0, backdropFilter: 'blur(30px)', scale: 0.95, x: 0 },
-        visible: { opacity: 1, backdropFilter: 'blur(0px)', scale: 1, x: 0 }
+        hidden: { filter: 'blur(8px)', scale: 0.97 },
+        visible: { filter: 'blur(0px)', scale: 1 }
     },
     'horizon-expand': {
-        hidden: { opacity: 0, scaleX: 0.8, y: 50, x: 0 },
-        visible: { opacity: 1, scaleX: 1, y: 0, x: 0 }
+        hidden: { scaleX: 0.92, y: 40 },
+        visible: { scaleX: 1, y: 0 }
+    },
+    'curtain-rise': {
+        hidden: { y: 50, scale: 0.97 },
+        visible: { y: 0, scale: 1 }
+    },
+    'spiral-in': {
+        hidden: { rotate: -4, scale: 0.95, y: 50 },
+        visible: { rotate: 0, scale: 1, y: 0 }
     }
 };
 
@@ -41,7 +49,7 @@ const SectionReveal: React.FC<{
     sectionId?: string;
 }> = ({ children, variant = 'standard', className = "", sectionId }) => {
     const ref = React.useRef(null);
-    const isInView = useInView(ref, { once: true, amount: 0.2 });
+    const isInView = useInView(ref, { once: false, amount: 0.2 });
     const selectedVariant = ANIMATION_VARIANTS[variant];
 
     return (
@@ -52,9 +60,8 @@ const SectionReveal: React.FC<{
             animate={isInView ? "visible" : "hidden"}
             variants={selectedVariant}
             transition={{
-                duration: 1.2,
-                ease: [0.16, 1, 0.3, 1],
-                opacity: { duration: 0.8 }
+                duration: 1.0,
+                ease: [0.16, 1, 0.3, 1]
             }}
             className={className}
             style={variant !== 'standard' ? { perspective: '2000px' } : {}}
@@ -139,13 +146,13 @@ const App: React.FC = () => {
 
                         <SectionDivider />
 
-                        <SectionReveal variant="glass" sectionId="features">
+                        <SectionReveal variant="curtain-rise" sectionId="features">
                             <Features onNavigate={handleServiceClick} />
                         </SectionReveal>
 
                         <SectionDivider />
 
-                        <SectionReveal variant="standard" sectionId="work">
+                        <SectionReveal variant="spiral-in" sectionId="work">
                             <Process />
                         </SectionReveal>
 

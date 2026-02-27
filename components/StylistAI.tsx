@@ -32,7 +32,7 @@ export const BusinessAI: React.FC = () => {
 
   return (
     <section className="relative z-10 px-4 py-32 max-w-6xl mx-auto">
-      <Reveal width="100%">
+      <Reveal width="100%" variant="scale">
         <div className="relative rounded-[2.5rem] p-[2px] bg-gradient-to-br from-blue-500 via-purple-500 to-orange-500 shadow-2xl">
 
           <div className="rounded-[2.4rem] bg-white p-8 md:p-16 relative overflow-hidden h-full">

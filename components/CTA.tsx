@@ -60,7 +60,7 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
                     </Reveal>
                 </div>
 
-                <Reveal delay={0.2} width="100%">
+                <Reveal delay={0.2} width="100%" variant="right">
                     <section className="bg-white rounded-[2rem] p-8 md:p-10 border border-gray-100 shadow-2xl shadow-blue-900/5 relative overflow-hidden" aria-labelledby="project-form-heading">
                         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500" aria-hidden="true" />
 

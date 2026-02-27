@@ -32,7 +32,7 @@ export const AboutUs: React.FC<AboutUsProps> = ({ onBack }) => {
                         </div>
                     </Reveal>
 
-                    <Reveal delay={0.1} variant="bottom">
+                    <Reveal delay={0.1} variant="clip-up">
                         <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] mb-8">
                             {t('about.headline1')} <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500">
@@ -85,7 +85,7 @@ export const AboutUs: React.FC<AboutUsProps> = ({ onBack }) => {
                             { icon: Award, titleKey: 'about.value2.title', descKey: 'about.value2.desc', gradient: 'from-purple-500 to-pink-500' },
                             { icon: Handshake, titleKey: 'about.value3.title', descKey: 'about.value3.desc', gradient: 'from-orange-500 to-amber-500' },
                         ].map((val, i) => (
-                            <Reveal key={i} delay={i * 0.1} variant="bottom">
+                            <Reveal key={i} delay={i * 0.1} variant="parallax-up">
                                 <div className="group text-center p-8">
                                     <div className={`w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${val.gradient} text-white flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
                                         <val.icon size={28} />

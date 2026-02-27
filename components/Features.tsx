@@ -164,7 +164,7 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
             </div>
 
             <div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-col md:flex-row justify-between items-end mb-24 relative z-10">
-                <Reveal variant="left">
+                <Reveal variant="clip-left">
                     <div>
                         <h2 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 tracking-tight text-ink drop-shadow-sm">
                             {t('features.headline1')} <br />

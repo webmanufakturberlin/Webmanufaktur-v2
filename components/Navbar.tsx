@@ -51,12 +51,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView, onHome,
                         onClick={onHome}
                         aria-label="Go to homepage"
                     >
-                        <div className="logo-mark w-10 h-10 text-white flex items-center justify-center rounded-xl shadow-lg">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M2 6 L5.5 18 L9 9 L12.5 18 L16 6" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                                <path d="M15 10 L17 18 L19 12 L21 18 L23 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.7" />
-                            </svg>
-                        </div>
+                        <img src="/assets/logo.png" alt="WebManufaktur Berlin Logo" className="h-10 w-auto object-contain" />
                         <div className="flex flex-col">
                             <span className="font-black tracking-tight text-lg text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-indigo-800 to-purple-700 group-hover:from-indigo-600 group-hover:via-purple-600 group-hover:to-pink-500 transition-all duration-500">WebManufaktur</span>
                             <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gray-400 group-hover:text-indigo-400 transition-colors duration-300">{t('nav.subtitle')}</span>

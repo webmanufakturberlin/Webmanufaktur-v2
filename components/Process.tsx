@@ -43,14 +43,14 @@ const ParallaxCard: React.FC<ParallaxCardProps> = ({ children, speed = 0, classN
     return <div ref={ref} className={`${className} will-change-transform`}>{children}</div>;
 };
 
-// Staggered word reveal
+// Staggered word reveal — bidirectional
 const WordReveal: React.FC<{ text: string; className?: string; delay?: number }> = ({ text, className = '', delay = 0 }) => {
     const ref = useRef<HTMLSpanElement>(null);
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
         const observer = new IntersectionObserver(([entry]) => {
-            if (entry.isIntersecting) setIsVisible(true);
+            setIsVisible(entry.isIntersecting);
         }, { threshold: 0.3 });
 
         const el = ref.current;
@@ -123,7 +123,7 @@ export const Process: React.FC = () => {
                     {steps.map((step, idx) => (
                         <div key={idx} className="h-full">
                             <ParallaxCard speed={idx % 2 === 0 ? 0.05 : -0.05} className="h-full">
-                                <Reveal delay={idx * 0.1} width="100%" className="h-full">
+                                <Reveal delay={idx * 0.1} width="100%" className="h-full" variant="rotate-in">
                                     <div
                                         onClick={() => handleScrollTo(step.targetId)}
                                         role="button"
