@@ -112,7 +112,7 @@ export const Hero: React.FC = () => {
                             <motion.span
                                 initial={{ x: '100%', opacity: 0 }}
                                 animate={{ x: 0, opacity: 1 }}
-                                transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
+                                transition={{ duration: 4, ease: [0.16, 1, 0.3, 1] }}
                                 className="block text-transparent bg-clip-text bg-gradient-to-b from-gray-900 to-gray-600"
                             >
                                 {t('hero.headline1')}
@@ -120,7 +120,7 @@ export const Hero: React.FC = () => {
                             <motion.span
                                 initial={{ x: '-100%', opacity: 0 }}
                                 animate={{ x: 0, opacity: 1 }}
-                                transition={{ duration: 3, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+                                transition={{ duration: 5, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
                                 className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 pb-2"
                             >
                                 {t('hero.headline2')}
@@ -176,11 +176,11 @@ export const Hero: React.FC = () => {
             <div className="absolute bottom-6 left-0 w-full z-[16] hidden md:block" aria-hidden="true">
                 <div className="flex justify-center gap-12 opacity-50 select-none grayscale hover:grayscale-0 transition-all duration-500 px-6">
                     {[
-                        { name: 'React',      color: 'hover:text-cyan-500 hover:border-cyan-200' },
-                        { name: 'Next.js',    color: 'hover:text-gray-900 hover:border-gray-300' },
+                        { name: 'React', color: 'hover:text-cyan-500 hover:border-cyan-200' },
+                        { name: 'Next.js', color: 'hover:text-gray-900 hover:border-gray-300' },
                         { name: 'TypeScript', color: 'hover:text-blue-600 hover:border-blue-200' },
-                        { name: 'Node.js',    color: 'hover:text-green-600 hover:border-green-200' },
-                        { name: 'Gemini',     color: 'hover:text-purple-600 hover:border-purple-200' },
+                        { name: 'Node.js', color: 'hover:text-green-600 hover:border-green-200' },
+                        { name: 'Gemini', color: 'hover:text-purple-600 hover:border-purple-200' },
                     ].map((tech, i) => (
                         <span
                             key={tech.name}
