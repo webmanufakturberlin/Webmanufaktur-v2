@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { ImpactData } from './components/ImpactData';
 import { Features, ServiceData } from './components/Features';
-import { Process } from './components/Process';
+import { SplineSection } from './components/SplineScene';
 import { Hero } from './components/Hero';
 import { CTA } from './components/CTA';
 import { Navbar } from './components/Navbar';
@@ -185,8 +185,8 @@ const App: React.FC = () => {
 
                         <SectionDivider />
 
-                        <SectionReveal variant="spiral-in" sectionId="work">
-                            <Process />
+                        <SectionReveal variant="standard" sectionId="work">
+                            <SplineSection />
                         </SectionReveal>
 
                         <SectionDivider />
