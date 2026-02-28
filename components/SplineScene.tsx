@@ -14,7 +14,7 @@ const LoadingFallback: React.FC = () => (
     <div className="flex items-center justify-center h-full rounded-2xl bg-gradient-to-br from-slate-50 to-indigo-50/50">
         <div className="flex flex-col items-center gap-4">
             <div className="w-12 h-12 border-2 border-gray-200 border-t-blue-500 rounded-full animate-spin" />
-            <p className="text-sm text-gray-400 font-mono tracking-wider">Loading 3D Scene...</p>
+            <p className="text-sm text-gray-500 font-mono tracking-wider">Loading 3D Scene...</p>
         </div>
     </div>
 );
@@ -32,6 +32,12 @@ export const SplineSection: React.FC = () => {
     const [shouldLoadSpline, setShouldLoadSpline] = useState(false);
     // Track if the remount is meant to auto-play (when user scrolls to it)
     const autoPlayRef = useRef(false);
+    // Hide entire section on mobile (Spline WebGL is too heavy)
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        setIsMobile(window.matchMedia('(max-width: 768px)').matches);
+    }, []);
 
     const handleLoad = useCallback((app: Application) => {
         // Transparent canvas background
@@ -97,6 +103,8 @@ export const SplineSection: React.FC = () => {
         }
     }, [isInView]);
 
+    if (isMobile) return null;
+
     return (
         <section
             ref={sectionRef}
@@ -111,7 +119,7 @@ export const SplineSection: React.FC = () => {
                             <span className="w-2 h-2 bg-blue-600 rounded-full animate-pulse" aria-hidden="true" />
                             {t('showcase.badge')}
                         </span>
-                        <span className="text-gray-400 text-sm font-mono hidden md:block">{t('process.est')}</span>
+                        <span className="text-gray-500 text-sm font-mono hidden md:block">{t('process.est')}</span>
                     </div>
                 </Reveal>
 

@@ -63,11 +63,10 @@ export const GlowCard: React.FC<GlowCardProps> = ({
       onMouseLeave={handleMouseLeave}
       role="article"
       className={`
-        relative rounded-[2rem] border border-gray-200 bg-white backdrop-blur-xl overflow-hidden 
+        relative rounded-[2rem] border border-gray-200 bg-white backdrop-blur-xl overflow-hidden
         shadow-md
         group
-        hover:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12),0_0_40px_rgba(99,102,241,0.08)]
-        border-l-[3px] border-l-transparent hover:border-l-indigo-400
+        hover:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12),0_0_40px_rgba(99,102,241,0.12)]
         ${className}
       `}
       style={{
@@ -76,12 +75,24 @@ export const GlowCard: React.FC<GlowCardProps> = ({
         willChange: 'transform',
       }}
     >
-      {/* 1. Rotating Border Beam Effect (Visible on Hover) */}
+      {/* 1. Rotating Border Beam Effect — multi-color, sharper */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-0">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-[conic-gradient(from_0deg,transparent_0_340deg,rgba(99,102,241,0.6)_360deg)] animate-spin-slow opacity-30" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-[conic-gradient(from_0deg,transparent_0_300deg,rgba(59,130,246,0.7)_320deg,rgba(139,92,246,0.9)_340deg,rgba(249,115,22,0.7)_355deg,transparent_360deg)] animate-spin-slow opacity-50" />
       </div>
 
-      {/* 2. Dynamic Gradient Border Mask */}
+      {/* 2. Animated Gradient Border — visible rotating border on hover */}
+      <div
+        className="absolute inset-0 rounded-[2rem] p-[1.5px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-[5] glow-border-rotate"
+        style={{
+          background: 'conic-gradient(from var(--border-angle, 0deg), #3b82f6, #8b5cf6, #ec4899, #f97316, #3b82f6)',
+          mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+          maskComposite: 'exclude',
+          WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+          WebkitMaskComposite: 'xor',
+        }}
+      />
+
+      {/* 3. Dynamic Gradient Border Mask (mouse-follow) */}
       <div
         ref={borderRef}
         className="absolute inset-0 rounded-[2rem] p-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10"
@@ -93,7 +104,7 @@ export const GlowCard: React.FC<GlowCardProps> = ({
         }}
       />
 
-      {/* 3. Mouse Follow Inner Glow */}
+      {/* 4. Mouse Follow Inner Glow */}
       <div
         ref={glowRef}
         className="pointer-events-none absolute -inset-px transition-opacity duration-500 z-10"

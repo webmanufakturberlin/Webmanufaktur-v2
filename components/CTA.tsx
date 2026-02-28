@@ -43,13 +43,13 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
                             {t('cta.headline1')} <br />
                             {t('cta.headline2') ? <>{t('cta.headline2')} </> : null}<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500">{t('cta.headline3')}</span>
                         </h2>
-                        <p className="text-xl text-gray-500 mb-10 max-w-md leading-relaxed">
+                        <p className="text-xl text-gray-600 mb-10 max-w-md leading-relaxed">
                             {t('cta.desc')}
                         </p>
 
                         <div className="flex flex-col gap-6">
                             <div className="p-8 bg-white/60 backdrop-blur-md rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-lg hover:border-blue-100 group">
-                                <p className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-2">
+                                <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3 flex items-center gap-2">
                                     <Mail size={14} className="text-blue-500" aria-hidden="true" /> {t('cta.directInquiries')}
                                 </p>
                                 <a href="mailto:webmanufaktur.berlin@googlemail.com" className="text-xl sm:text-2xl font-mono font-bold text-ink group-hover:text-blue-600 transition-colors break-words focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md">
@@ -73,7 +73,7 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
                             const pct = Math.round((filled / fields.length) * 100);
                             return (
                                 <div className="mb-6">
-                                    <div className="flex items-center justify-between text-xs text-gray-400 mb-1">
+                                    <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
                                         <span>{filled}/{fields.length} Felder ausgefüllt</span>
                                         <span className="font-mono">{pct}%</span>
                                     </div>
@@ -87,7 +87,7 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="relative">
-                                    <label htmlFor="cta-name" className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">{t('cta.name')}</label>
+                                    <label htmlFor="cta-name" className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">{t('cta.name')}</label>
                                     <input
                                         id="cta-name"
                                         required
@@ -100,7 +100,7 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
                                     {formData.name && <Check size={14} className="absolute right-3 top-1/2 mt-3 text-green-500" />}
                                 </div>
                                 <div className="relative">
-                                    <label htmlFor="cta-email" className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">{t('cta.email')}</label>
+                                    <label htmlFor="cta-email" className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">{t('cta.email')}</label>
                                     <input
                                         id="cta-email"
                                         required
@@ -116,7 +116,7 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label htmlFor="cta-business" className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 flex items-center gap-2">
+                                    <label htmlFor="cta-business" className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 flex items-center gap-2">
                                         <Building2 size={12} aria-hidden="true" /> {t('cta.businessName')}
                                     </label>
                                     <input
@@ -130,7 +130,7 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="cta-industry" className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 flex items-center gap-2">
+                                    <label htmlFor="cta-industry" className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 flex items-center gap-2">
                                         <Briefcase size={12} aria-hidden="true" /> {t('cta.industry')}
                                     </label>
                                     <input
@@ -146,7 +146,7 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
                             </div>
 
                             <fieldset>
-                                <legend className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">{t('cta.scope')}</legend>
+                                <legend className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">{t('cta.scope')}</legend>
                                 <div className="grid grid-cols-2 gap-4">
                                     <label className={`
                                     cursor-pointer border rounded-xl p-4 flex items-center gap-3 transition-all hover:scale-[1.02]
@@ -184,7 +184,7 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
                             </fieldset>
 
                             <div>
-                                <label htmlFor="cta-website-goal" className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">{t('cta.goal')}</label>
+                                <label htmlFor="cta-website-goal" className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">{t('cta.goal')}</label>
                                 <input
                                     id="cta-website-goal"
                                     required
@@ -197,7 +197,7 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
                             </div>
 
                             <div>
-                                <label htmlFor="cta-message" className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">{t('cta.vision')}</label>
+                                <label htmlFor="cta-message" className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">{t('cta.vision')}</label>
                                 <textarea
                                     id="cta-message"
                                     required
@@ -207,7 +207,7 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
                                     value={formData.message}
                                     onChange={e => setFormData({ ...formData, message: e.target.value })}
                                 />
-                                <div className="text-right text-xs text-gray-400 mt-1">{formData.message.length}/500</div>
+                                <div className="text-right text-xs text-gray-500 mt-1">{formData.message.length}/500</div>
                             </div>
 
                             <button
@@ -236,7 +236,7 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
                 </Reveal>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 md:px-8 pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400 relative">
+            <div className="max-w-7xl mx-auto px-4 md:px-8 pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 relative">
                 <p>© {new Date().getFullYear()} WebManufaktur Berlin.</p>
                 <div className="flex gap-6 mt-4 md:mt-0">
                     <a href="#" onClick={(e) => { e.preventDefault(); onNavigate?.('impressum'); }} className="hover:text-ink transition-colors hover:underline decoration-blue-500 underline-offset-4 focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md px-1 cursor-pointer">{t('cta.imprint')}</a>

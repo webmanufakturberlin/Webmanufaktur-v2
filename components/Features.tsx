@@ -31,9 +31,9 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
             gradient: "rgba(37, 99, 235, 0.15)",
             detailTitle: t('features.webdev.detailTitle'),
             detailContent: [
-                "We utilize a modern stack (Next.js, TypeScript, Tailwind) to ensure pixel-perfect implementation and lightning-fast load times.",
-                "Our development process includes rigorous accessibility testing (WCAG 2.1) and performance optimization (Core Web Vitals).",
-                "From complex SaaS dashboards to immersive marketing sites, we build architectures that grow with your business."
+                t('features.webdev.detail1'),
+                t('features.webdev.detail2'),
+                t('features.webdev.detail3'),
             ],
             renderIcon: (isHovered) => (
                 <motion.div
@@ -56,9 +56,9 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
             gradient: "rgba(124, 58, 237, 0.15)",
             detailTitle: t('features.content.detailTitle'),
             detailContent: [
-                "Content is the interface. We craft compelling narratives that guide users through the conversion funnel.",
-                "Our services include UX writing, SEO-driven blog strategy, and technical documentation.",
-                "We define your brand voice guidelines to ensure consistency across all touchpoints."
+                t('features.content.detail1'),
+                t('features.content.detail2'),
+                t('features.content.detail3'),
             ],
             renderIcon: (isHovered) => (
                 <motion.div
@@ -81,9 +81,9 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
             gradient: "rgba(249, 115, 22, 0.15)",
             detailTitle: t('features.ai.detailTitle'),
             detailContent: [
-                "We integrate LLMs like Gemini and GPT-4 directly into your business logic.",
-                "Custom chatbots for customer support, automated content generation, and data analysis agents.",
-                "Secure, enterprise-grade implementation with a focus on data privacy and reliability."
+                t('features.ai.detail1'),
+                t('features.ai.detail2'),
+                t('features.ai.detail3'),
             ],
             renderIcon: (isHovered) => (
                 <motion.div
@@ -105,9 +105,9 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
             gradient: "rgba(22, 163, 74, 0.15)",
             detailTitle: t('features.seo.detailTitle'),
             detailContent: [
-                "We optimize the technical foundation of your site to ensure search engines can crawl and index it efficiently.",
-                "Keyword strategy based on intent modeling and competitor gap analysis.",
-                "Continuous monitoring and optimization of Core Web Vitals to maintain top rankings."
+                t('features.seo.detail1'),
+                t('features.seo.detail2'),
+                t('features.seo.detail3'),
             ],
             renderIcon: (isHovered) => (
                 <motion.div
@@ -130,18 +130,19 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
             gradient: "rgba(219, 39, 119, 0.15)",
             detailTitle: t('features.brand.detailTitle'),
             detailContent: [
-                "We create comprehensive design systems that ensure visual consistency.",
-                "Logo design, typography selection, and color palette creation tailored to your market positioning.",
-                "Brand guidelines that empower your team to create on-brand assets independently."
+                t('features.brand.detail1'),
+                t('features.brand.detail2'),
+                t('features.brand.detail3'),
             ],
             renderIcon: (isHovered) => (
                 <motion.div
-                    initial={{ rotate: 0, scale: 1 }}
+                    initial={{ rotateY: 0, scale: 1 }}
                     animate={isHovered ? {
-                        rotate: 360,
+                        rotateY: 360,
                         scale: [1, 1.1, 1]
-                    } : { rotate: 0, scale: 1 }}
+                    } : { rotateY: 0, scale: 1 }}
                     transition={isHovered ? { duration: 2, repeat: Infinity, ease: "linear" } : { duration: 0.5, ease: "easeOut" }}
+                    style={{ perspective: 200 }}
                 >
                     <Globe className="text-pink-600" size={32} aria-hidden="true" />
                 </motion.div>
@@ -174,7 +175,7 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
                     </div>
                 </Reveal>
                 <Reveal delay={0.2} variant="blur">
-                    <p className="text-lg sm:text-xl text-gray-500 max-w-md mt-6 md:mt-0 text-right font-light leading-relaxed backdrop-blur-sm bg-white/30 p-4 rounded-xl border border-white/40">
+                    <p className="text-lg sm:text-xl text-gray-600 max-w-md mt-6 md:mt-0 text-right font-light leading-relaxed backdrop-blur-sm bg-white/30 p-4 rounded-xl border border-white/40">
                         {t('features.desc')}
                     </p>
                 </Reveal>
@@ -216,7 +217,7 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
                                         <p className="text-gray-600 leading-relaxed text-base sm:text-lg font-medium group-hover:text-gray-700 transition-colors">{service.desc}</p>
                                     </div>
                                     <div className="mt-12 pt-6 border-t border-gray-200 flex items-center justify-between">
-                                        <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-indigo-600 transition-colors duration-300">{t('features.explore')}</span>
+                                        <span className="text-xs font-bold uppercase tracking-widest text-gray-600 group-hover:text-indigo-600 transition-colors duration-300">{t('features.explore')}</span>
                                         <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 opacity-0 group-hover:opacity-100 transform translate-y-3 group-hover:translate-y-0 transition-all duration-300 shadow-md group-hover:bg-gradient-to-r group-hover:from-indigo-500 group-hover:to-purple-500 group-hover:text-white" aria-hidden="true">
                                             <span className="text-lg">→</span>
                                         </div>

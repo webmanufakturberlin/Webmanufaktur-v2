@@ -72,7 +72,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView, onHome,
                         />
                         <div className="flex flex-col">
                             <span className="font-black tracking-tight text-lg text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-indigo-800 to-purple-700 group-hover:from-indigo-600 group-hover:via-purple-600 group-hover:to-pink-500 transition-all duration-500">WebManufaktur</span>
-                            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gray-400 group-hover:text-indigo-400 transition-colors duration-300">{t('nav.subtitle')}</span>
+                            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gray-500 group-hover:text-indigo-400 transition-colors duration-300">{t('nav.subtitle')}</span>
                         </div>
                     </button>
 
@@ -237,22 +237,22 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView, onHome,
                                 <div className="flex gap-4">
                                     <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
                                         <div className="text-3xl font-bold text-blue-600 mb-1">01</div>
-                                        <div className="text-sm font-bold uppercase tracking-wider text-gray-400">{t('mega.method.discover')}</div>
+                                        <div className="text-sm font-bold uppercase tracking-wider text-gray-500">{t('mega.method.discover')}</div>
                                     </div>
                                     <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
                                         <div className="text-3xl font-bold text-purple-600 mb-1">02</div>
-                                        <div className="text-sm font-bold uppercase tracking-wider text-gray-400">{t('mega.method.design')}</div>
+                                        <div className="text-sm font-bold uppercase tracking-wider text-gray-500">{t('mega.method.design')}</div>
                                     </div>
                                     <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
                                         <div className="text-3xl font-bold text-orange-600 mb-1">03</div>
-                                        <div className="text-sm font-bold uppercase tracking-wider text-gray-400">{t('mega.method.deploy')}</div>
+                                        <div className="text-sm font-bold uppercase tracking-wider text-gray-500">{t('mega.method.deploy')}</div>
                                     </div>
                                 </div>
                             </div>
                             <div className="bg-gray-900 rounded-2xl p-8 text-white relative overflow-hidden group">
                                 <div className="relative z-10">
                                     <h4 className="font-bold text-xl mb-2">{t('mega.method.ailab.title')}</h4>
-                                    <p className="text-gray-400 text-sm mb-6">{t('mega.method.ailab.desc')}</p>
+                                    <p className="text-gray-500 text-sm mb-6">{t('mega.method.ailab.desc')}</p>
                                     <a href="#business" onClick={() => { setHoveredItem(null); onNavigate('business'); }} className="inline-block px-4 py-2 bg-white text-black text-sm font-bold rounded-lg hover:bg-blue-50 transition-colors active:scale-95 focus-visible:ring-2 focus-visible:ring-blue-500">
                                         {t('mega.method.ailab.btn')}
                                     </a>

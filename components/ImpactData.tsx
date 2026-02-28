@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useCallback } from 'react';
 import { ArrowUpRight, ExternalLink, TrendingUp, Eye } from 'lucide-react';
 import { Reveal } from './Reveal';
 import { useI18n } from '../i18n';
@@ -53,6 +53,64 @@ const cardVariants = {
     hovered: {},
 };
 
+// --- TiltCard: 3D magnetic tilt + glow on hover ---
+const TiltCard: React.FC<{
+    children: React.ReactNode;
+    className: string;
+    glowColor: string;
+}> = ({ children, className, glowColor }) => {
+    const ref = useRef<HTMLDivElement>(null);
+    const glowRef = useRef<HTMLDivElement>(null);
+
+    const handleMouseMove = useCallback((e: React.MouseEvent) => {
+        if (!ref.current) return;
+        const rect = ref.current.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+        const rotateX = (y - 0.5) * -10;
+        const rotateY = (x - 0.5) * 10;
+        ref.current.style.transform = `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px) scale(1.02)`;
+
+        if (glowRef.current) {
+            const px = e.clientX - rect.left;
+            const py = e.clientY - rect.top;
+            glowRef.current.style.background = `radial-gradient(400px circle at ${px}px ${py}px, ${glowColor}, transparent 40%)`;
+            glowRef.current.style.opacity = '1';
+        }
+    }, [glowColor]);
+
+    const handleMouseLeave = useCallback(() => {
+        if (!ref.current) return;
+        ref.current.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1)';
+        if (glowRef.current) {
+            glowRef.current.style.opacity = '0';
+        }
+    }, []);
+
+    return (
+        <div
+            ref={ref}
+            className={className}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            style={{
+                transition: 'transform 0.35s cubic-bezier(0.03, 0.98, 0.52, 0.99)',
+                transformStyle: 'preserve-3d',
+                willChange: 'transform',
+            }}
+        >
+            <div
+                ref={glowRef}
+                className="pointer-events-none absolute inset-0 rounded-3xl transition-opacity duration-500 z-0"
+                style={{ opacity: 0 }}
+            />
+            <div className="relative z-10">
+                {children}
+            </div>
+        </div>
+    );
+};
+
 export const ImpactData: React.FC = () => {
     const { t } = useI18n();
 
@@ -71,7 +129,7 @@ export const ImpactData: React.FC = () => {
                                 {t('impact.headline1')}<br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500">{t('impact.headline2')}</span>
                             </h2>
-                            <p className="text-gray-500 leading-relaxed mb-6 font-light text-lg">
+                            <p className="text-gray-600 leading-relaxed mb-6 font-light text-lg">
                                 {t('impact.desc')}
                             </p>
                             <a href="https://credibility.stanford.edu/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-ink underline decoration-gray-300 underline-offset-4 hover:decoration-blue-500 transition-all hover:text-blue-600 focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md">
@@ -84,66 +142,66 @@ export const ImpactData: React.FC = () => {
 
                         {/* Card 1 — Arrow bounce */}
                         <Reveal delay={0.1} variant="parallax-up">
-                            <motion.div
-                                variants={cardVariants}
-                                initial="idle"
-                                whileHover="hovered"
-                                className="bg-white p-8 rounded-3xl shadow-lg border-2 border-purple-200/60 hover:shadow-2xl hover:shadow-purple-500/15 hover:border-purple-400 transition-[box-shadow,border-color] duration-300 cursor-default h-full relative"
+                            <TiltCard
+                                className="bg-white p-8 rounded-3xl shadow-lg border-2 border-purple-200/60 hover:shadow-2xl hover:shadow-purple-500/15 hover:border-purple-400 transition-[box-shadow,border-color] duration-300 cursor-default h-full relative overflow-hidden"
+                                glowColor="rgba(147, 51, 234, 0.12)"
                             >
-                                                                <div className="mb-4 bg-purple-50 w-12 h-12 rounded-xl flex items-center justify-center">
-                                    <motion.div variants={arrowVariants}>
-                                        <ArrowUpRight size={24} className="text-purple-600" />
-                                    </motion.div>
-                                </div>
-                                <div className="text-5xl font-extrabold text-ink mb-3 tracking-tight">{t('impact.stat1.value')}</div>
-                                <p className="text-sm text-gray-500 leading-relaxed font-medium">{t('impact.stat1.desc')}</p>
-                            </motion.div>
+                                <motion.div variants={cardVariants} initial="idle" whileHover="hovered" className="h-full">
+                                    <div className="mb-4 bg-purple-50 w-12 h-12 rounded-xl flex items-center justify-center">
+                                        <motion.div variants={arrowVariants}>
+                                            <ArrowUpRight size={24} className="text-purple-600" />
+                                        </motion.div>
+                                    </div>
+                                    <div className="text-5xl font-extrabold text-ink mb-3 tracking-tight">{t('impact.stat1.value')}</div>
+                                    <p className="text-sm text-gray-600 leading-relaxed font-medium">{t('impact.stat1.desc')}</p>
+                                </motion.div>
+                            </TiltCard>
                         </Reveal>
 
                         {/* Card 2 — Clock speed burst */}
                         <Reveal delay={0.2} variant="parallax-up">
-                            <motion.div
-                                variants={cardVariants}
-                                initial="idle"
-                                whileHover="hovered"
-                                className="bg-white p-8 rounded-3xl shadow-lg border-2 border-blue-200/60 hover:shadow-2xl hover:shadow-blue-500/15 hover:border-blue-400 transition-[box-shadow,border-color] duration-300 cursor-default h-full relative"
+                            <TiltCard
+                                className="bg-white p-8 rounded-3xl shadow-lg border-2 border-blue-200/60 hover:shadow-2xl hover:shadow-blue-500/15 hover:border-blue-400 transition-[box-shadow,border-color] duration-300 cursor-default h-full relative overflow-hidden"
+                                glowColor="rgba(59, 130, 246, 0.12)"
                             >
-                                                                <div className="mb-4 bg-blue-50 w-12 h-12 rounded-xl flex items-center justify-center">
-                                    <div className="relative w-6 h-6 border-2 border-blue-600 rounded-full flex items-center justify-center">
-                                        <motion.div
-                                            variants={clockHourVariants}
-                                            className="absolute w-0.5 h-2 bg-blue-600 rounded-full origin-bottom"
-                                            style={{ bottom: '50%' }}
-                                        />
-                                        <motion.div
-                                            variants={clockMinuteVariants}
-                                            className="absolute w-0.5 h-2.5 bg-blue-600 rounded-full origin-bottom"
-                                            style={{ bottom: '50%' }}
-                                        />
-                                        <div className="w-1 h-1 bg-blue-600 rounded-full z-10" />
+                                <motion.div variants={cardVariants} initial="idle" whileHover="hovered" className="h-full">
+                                    <div className="mb-4 bg-blue-50 w-12 h-12 rounded-xl flex items-center justify-center">
+                                        <div className="relative w-6 h-6 border-2 border-blue-600 rounded-full flex items-center justify-center">
+                                            <motion.div
+                                                variants={clockHourVariants}
+                                                className="absolute w-0.5 h-2 bg-blue-600 rounded-full origin-bottom"
+                                                style={{ bottom: '50%' }}
+                                            />
+                                            <motion.div
+                                                variants={clockMinuteVariants}
+                                                className="absolute w-0.5 h-2.5 bg-blue-600 rounded-full origin-bottom"
+                                                style={{ bottom: '50%' }}
+                                            />
+                                            <div className="w-1 h-1 bg-blue-600 rounded-full z-10" />
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="text-5xl font-extrabold text-ink mb-3 tracking-tight">{t('impact.stat2.value')}</div>
-                                <p className="text-sm text-gray-500 leading-relaxed font-medium">{t('impact.stat2.desc')}</p>
-                            </motion.div>
+                                    <div className="text-5xl font-extrabold text-ink mb-3 tracking-tight">{t('impact.stat2.value')}</div>
+                                    <p className="text-sm text-gray-600 leading-relaxed font-medium">{t('impact.stat2.desc')}</p>
+                                </motion.div>
+                            </TiltCard>
                         </Reveal>
 
                         {/* Card 3 — Eye scan + blink */}
                         <Reveal delay={0.3} variant="parallax-up">
-                            <motion.div
-                                variants={cardVariants}
-                                initial="idle"
-                                whileHover="hovered"
-                                className="bg-white p-8 rounded-3xl shadow-lg border-2 border-orange-200/60 hover:shadow-2xl hover:shadow-orange-500/15 hover:border-orange-400 transition-[box-shadow,border-color] duration-300 cursor-default h-full relative"
+                            <TiltCard
+                                className="bg-white p-8 rounded-3xl shadow-lg border-2 border-orange-200/60 hover:shadow-2xl hover:shadow-orange-500/15 hover:border-orange-400 transition-[box-shadow,border-color] duration-300 cursor-default h-full relative overflow-hidden"
+                                glowColor="rgba(249, 115, 22, 0.12)"
                             >
-                                                                <div className="mb-4 bg-orange-50 w-12 h-12 rounded-xl flex items-center justify-center">
-                                    <motion.div variants={eyeVariants} style={{ perspective: 200 }}>
-                                        <Eye size={24} className="text-orange-600" />
-                                    </motion.div>
-                                </div>
-                                <div className="text-5xl font-extrabold text-ink mb-3 tracking-tight">{t('impact.stat3.value')}</div>
-                                <p className="text-sm text-gray-500 leading-relaxed font-medium">{t('impact.stat3.desc')}</p>
-                            </motion.div>
+                                <motion.div variants={cardVariants} initial="idle" whileHover="hovered" className="h-full">
+                                    <div className="mb-4 bg-orange-50 w-12 h-12 rounded-xl flex items-center justify-center">
+                                        <motion.div variants={eyeVariants} style={{ perspective: 200 }}>
+                                            <Eye size={24} className="text-orange-600" />
+                                        </motion.div>
+                                    </div>
+                                    <div className="text-5xl font-extrabold text-ink mb-3 tracking-tight">{t('impact.stat3.value')}</div>
+                                    <p className="text-sm text-gray-600 leading-relaxed font-medium">{t('impact.stat3.desc')}</p>
+                                </motion.div>
+                            </TiltCard>
                         </Reveal>
 
                     </div>

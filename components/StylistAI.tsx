@@ -57,7 +57,7 @@ export const BusinessAI: React.FC = () => {
                   {t('ai.desc')}
                 </p>
 
-                <div className="flex items-center gap-4 text-sm font-medium text-gray-400">
+                <div className="flex items-center gap-4 text-sm font-medium text-gray-500">
                   <div className="flex -space-x-2" aria-hidden="true">
                     <div className="w-8 h-8 rounded-full bg-blue-100 border-2 border-white"></div>
                     <div className="w-8 h-8 rounded-full bg-purple-100 border-2 border-white"></div>
@@ -100,7 +100,7 @@ export const BusinessAI: React.FC = () => {
                       </p>
                     </div>
                   ) : (
-                    <div className="h-32 flex items-center justify-center text-gray-300 text-sm italic">
+                    <div className="h-32 flex items-center justify-center text-gray-400 text-sm italic">
                       {t('ai.results')}
                     </div>
                   )}

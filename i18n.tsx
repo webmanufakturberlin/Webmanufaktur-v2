@@ -95,10 +95,25 @@ const translations: Record<string, Record<Lang, string>> = {
 
     // Features detail
     'features.webdev.detailTitle': { en: 'Engineering Scalable Systems', de: 'Skalierbare Systeme entwickeln' },
+    'features.webdev.detail1': { en: 'We utilize a modern stack (Next.js, TypeScript, Tailwind) to ensure pixel-perfect implementation and lightning-fast load times.', de: 'Wir nutzen einen modernen Stack (Next.js, TypeScript, Tailwind) für pixelgenaue Umsetzung und blitzschnelle Ladezeiten.' },
+    'features.webdev.detail2': { en: 'Our development process includes rigorous accessibility testing (WCAG 2.1) and performance optimization (Core Web Vitals).', de: 'Unser Entwicklungsprozess umfasst strenge Barrierefreiheitstests (WCAG 2.1) und Performance-Optimierung (Core Web Vitals).' },
+    'features.webdev.detail3': { en: 'From complex SaaS dashboards to immersive marketing sites, we build architectures that grow with your business.', de: 'Von komplexen SaaS-Dashboards bis hin zu immersiven Marketing-Seiten – wir bauen Architekturen, die mit Ihrem Unternehmen wachsen.' },
     'features.content.detailTitle': { en: 'Voice & Narrative Design', de: 'Stimme & Narrative gestalten' },
+    'features.content.detail1': { en: 'Content is the interface. We craft compelling narratives that guide users through the conversion funnel.', de: 'Content ist das Interface. Wir entwickeln überzeugende Narrationen, die Nutzer durch den Conversion-Funnel führen.' },
+    'features.content.detail2': { en: 'Our services include UX writing, SEO-driven blog strategy, and technical documentation.', de: 'Unsere Leistungen umfassen UX Writing, SEO-getriebene Blog-Strategie und technische Dokumentation.' },
+    'features.content.detail3': { en: 'We define your brand voice guidelines to ensure consistency across all touchpoints.', de: 'Wir definieren Ihre Brand-Voice-Guidelines für Konsistenz über alle Touchpoints hinweg.' },
     'features.ai.detailTitle': { en: 'Intelligent Automation', de: 'Intelligente Automatisierung' },
+    'features.ai.detail1': { en: 'We integrate LLMs like Gemini and GPT-4 directly into your business logic.', de: 'Wir integrieren LLMs wie Gemini und GPT-4 direkt in Ihre Geschäftslogik.' },
+    'features.ai.detail2': { en: 'Custom chatbots for customer support, automated content generation, and data analysis agents.', de: 'Maßgeschneiderte Chatbots für Kundensupport, automatisierte Content-Generierung und Datenanalyse-Agenten.' },
+    'features.ai.detail3': { en: 'Secure, enterprise-grade implementation with a focus on data privacy and reliability.', de: 'Sichere, Enterprise-Grade-Implementierung mit Fokus auf Datenschutz und Zuverlässigkeit.' },
     'features.seo.detailTitle': { en: 'Technical SEO Mastery', de: 'Technisches SEO meistern' },
+    'features.seo.detail1': { en: 'We optimize the technical foundation of your site to ensure search engines can crawl and index it efficiently.', de: 'Wir optimieren das technische Fundament Ihrer Seite, damit Suchmaschinen sie effizient crawlen und indexieren können.' },
+    'features.seo.detail2': { en: 'Keyword strategy based on intent modeling and competitor gap analysis.', de: 'Keyword-Strategie basierend auf Intent-Modellierung und Wettbewerbs-Gap-Analyse.' },
+    'features.seo.detail3': { en: 'Continuous monitoring and optimization of Core Web Vitals to maintain top rankings.', de: 'Kontinuierliches Monitoring und Optimierung der Core Web Vitals für Top-Rankings.' },
     'features.brand.detailTitle': { en: 'Visual Systems', de: 'Visuelle Systeme' },
+    'features.brand.detail1': { en: 'We create comprehensive design systems that ensure visual consistency.', de: 'Wir erstellen umfassende Design-Systeme, die visuelle Konsistenz gewährleisten.' },
+    'features.brand.detail2': { en: 'Logo design, typography selection, and color palette creation tailored to your market positioning.', de: 'Logo-Design, Typografie-Auswahl und Farbpaletten-Erstellung, zugeschnitten auf Ihre Marktpositionierung.' },
+    'features.brand.detail3': { en: 'Brand guidelines that empower your team to create on-brand assets independently.', de: 'Brand-Guidelines, die Ihr Team befähigen, eigenständig markenkonforme Assets zu erstellen.' },
 
     // Process
     'process.badge': { en: 'Our Methodology', de: 'Unsere Methodik' },

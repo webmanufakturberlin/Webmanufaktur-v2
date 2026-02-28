@@ -11,6 +11,7 @@ import { BusinessAI } from './components/StylistAI';
 import { Reveal } from './components/Reveal';
 import { ServiceDetail } from './components/ServiceDetail';
 import LivingVineBackground from './components/ui/living-vine-background';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { motion, useInView } from 'framer-motion';
 
 // --- Scroll Progress Bar ---
@@ -152,6 +153,9 @@ const App: React.FC = () => {
 
     return (
         <LivingVineBackground className="min-h-screen text-ink selection:bg-black selection:text-white font-sans">
+            <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:text-ink focus:font-bold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Zum Hauptinhalt springen
+            </a>
             <ScrollProgress />
             <Navbar onNavigate={handleNavigate} currentView={currentView} onHome={handleHome} onAbout={handleAbout} />
 
@@ -162,7 +166,7 @@ const App: React.FC = () => {
             ) : currentView === 'impressum' ? (
                 <Impressum onBack={handleHome} onNavigate={handleNavigate} />
             ) : (
-                <main className="flex flex-col">
+                <main id="main-content" className="flex flex-col">
                     <Hero />
 
                     {/* Content Container */}
@@ -186,13 +190,17 @@ const App: React.FC = () => {
                         <SectionDivider />
 
                         <SectionReveal variant="standard" sectionId="work">
-                            <SplineSection />
+                            <ErrorBoundary fallbackMessage="3D-Szene konnte nicht geladen werden.">
+                                <SplineSection />
+                            </ErrorBoundary>
                         </SectionReveal>
 
                         <SectionDivider />
 
                         <SectionReveal variant="horizon-expand" sectionId="business">
-                            <BusinessAI />
+                            <ErrorBoundary fallbackMessage="KI-Berater konnte nicht geladen werden.">
+                                <BusinessAI />
+                            </ErrorBoundary>
                         </SectionReveal>
 
                         <SectionDivider />
@@ -204,7 +212,7 @@ const App: React.FC = () => {
                         <SectionDivider />
 
                         <SectionReveal variant="standard" sectionId="impressum-footer">
-                            <footer className="py-12 px-6 flex flex-col items-center gap-4 text-gray-400">
+                            <footer className="py-12 px-6 flex flex-col items-center gap-4 text-gray-500">
                                 <p className="text-xs font-mono uppercase tracking-[0.3em]">© {new Date().getFullYear()} Webmanufaktur Berlin</p>
                             </footer>
                         </SectionReveal>

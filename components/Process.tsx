@@ -164,7 +164,7 @@ const ProcessCard: React.FC<{
                 <h3 className="text-xl font-bold mb-3 text-ink transition-all duration-300 group-hover:translate-x-1.5">
                     {t(step.titleKey)}
                 </h3>
-                <p className="text-sm text-gray-500 leading-relaxed group-hover:text-gray-800 transition-colors duration-300">
+                <p className="text-sm text-gray-600 leading-relaxed group-hover:text-gray-800 transition-colors duration-300">
                     {t(step.descKey)}
                 </p>
             </div>
@@ -240,7 +240,7 @@ export const Process: React.FC = () => {
                                 <span className="w-2 h-2 bg-blue-600 rounded-full animate-pulse" aria-hidden="true"></span>
                                 {t('process.badge')}
                             </span>
-                            <span className="text-gray-400 text-sm font-mono hidden md:block">{t('process.est')}</span>
+                            <span className="text-gray-500 text-sm font-mono hidden md:block">{t('process.est')}</span>
                         </div>
                     </Reveal>
 
