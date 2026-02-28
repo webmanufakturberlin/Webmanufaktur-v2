@@ -27,6 +27,8 @@ export const SplineSection: React.FC = () => {
     const [isPlaying, setIsPlaying] = useState(false);
     // Track if the initial load has happened (don't remount on first appear)
     const hasLoadedOnce = useRef(false);
+    // Track if we should mount the Spline component (lazy load)
+    const [shouldLoadSpline, setShouldLoadSpline] = useState(false);
 
     const handleLoad = useCallback((app: Application) => {
         // Transparent canvas background
@@ -59,7 +61,7 @@ export const SplineSection: React.FC = () => {
         setTimeout(() => setIsPlaying(false), 3000);
     }, []);
 
-    // Record when section enters viewport to track views (removed remounting for performance)
+    // Record when section enters viewport to mount WebGL and track views
     useEffect(() => {
         const section = sectionRef.current;
         if (!section) return;
@@ -70,6 +72,11 @@ export const SplineSection: React.FC = () => {
             ([entry]) => {
                 const isVisible = entry.isIntersecting;
 
+                // Load Spline as soon as we get somewhat close to the section
+                if (isVisible) {
+                    setShouldLoadSpline(true);
+                }
+
                 // Log or track view if needed, but DO NOT remount the WebGL scene
                 if (isVisible && !wasVisible && hasLoadedOnce.current) {
                     // console.log("Spline scene visible");
@@ -77,7 +84,7 @@ export const SplineSection: React.FC = () => {
 
                 wasVisible = isVisible;
             },
-            { threshold: 0.1 }
+            { threshold: 0, rootMargin: '800px' } // Start loading 800px before reaching it
         );
 
         observer.observe(section);
@@ -152,12 +159,16 @@ export const SplineSection: React.FC = () => {
                     </button>
 
                     <Suspense fallback={<LoadingFallback />}>
-                        <Spline
-                            key={sceneKey}
-                            scene={SCENE_URL}
-                            style={{ width: '100%', height: '100%' }}
-                            onLoad={handleLoad}
-                        />
+                        {shouldLoadSpline ? (
+                            <Spline
+                                key={sceneKey}
+                                scene={SCENE_URL}
+                                style={{ width: '100%', height: '100%' }}
+                                onLoad={handleLoad}
+                            />
+                        ) : (
+                            <LoadingFallback />
+                        )}
                     </Suspense>
                 </div>
             </div>
