@@ -1,6 +1,7 @@
 import React, { Suspense, lazy, useCallback, useRef, useEffect, useState } from 'react';
 import type { Application, SplineEvent } from '@splinetool/runtime';
 import { Play } from 'lucide-react';
+import { useInView } from 'framer-motion';
 import { useI18n } from '../i18n';
 import { Reveal } from './Reveal';
 
@@ -29,6 +30,8 @@ export const SplineSection: React.FC = () => {
     const hasLoadedOnce = useRef(false);
     // Track if we should mount the Spline component (lazy load)
     const [shouldLoadSpline, setShouldLoadSpline] = useState(false);
+    // Track if the remount is meant to auto-play (when user scrolls to it)
+    const autoPlayRef = useRef(false);
 
     const handleLoad = useCallback((app: Application) => {
         // Transparent canvas background
@@ -51,45 +54,48 @@ export const SplineSection: React.FC = () => {
             }
         } catch (_) { }
 
+        // Only freeze the animation if this is the initial background load
+        if (!autoPlayRef.current) {
+            app.stop();
+        }
+
         hasLoadedOnce.current = true;
     }, []);
 
-    // Replay button: remount the Spline component
+    // Replay button: restart the animation
     const handleReplay = useCallback(() => {
         setIsPlaying(true);
+        autoPlayRef.current = true;
         setSceneKey((k) => k + 1);
         setTimeout(() => setIsPlaying(false), 3000);
     }, []);
 
-    // Record when section enters viewport to mount WebGL and track views
+    // 1. Preload the WebGL assets sequentially after the Hero page finishes its entrance (e.g. 3.5 seconds)
     useEffect(() => {
-        const section = sectionRef.current;
-        if (!section) return;
-
-        let wasVisible = false;
-
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                const isVisible = entry.isIntersecting;
-
-                // Load Spline as soon as we get somewhat close to the section
-                if (isVisible) {
-                    setShouldLoadSpline(true);
-                }
-
-                // Log or track view if needed, but DO NOT remount the WebGL scene
-                if (isVisible && !wasVisible && hasLoadedOnce.current) {
-                    // console.log("Spline scene visible");
-                }
-
-                wasVisible = isVisible;
-            },
-            { threshold: 0, rootMargin: '800px' } // Start loading 800px before reaching it
-        );
-
-        observer.observe(section);
-        return () => observer.disconnect();
+        const timer = setTimeout(() => {
+            setShouldLoadSpline(true);
+        }, 3500);
+        return () => clearTimeout(timer);
     }, []);
+
+    // 2. Play the animation ONLY when the section is in the viewport
+    const isInView = useInView(sectionRef, { amount: 0.15 });
+
+    useEffect(() => {
+        if (isInView) {
+            // When scrolling INTO the section, trigger the animation replay
+            // (Only if it has already been preloaded in the background)
+            if (hasLoadedOnce.current) {
+                setIsPlaying(true);
+                autoPlayRef.current = true;
+                setSceneKey((k) => k + 1);
+                setTimeout(() => setIsPlaying(false), 3000);
+            }
+        } else {
+            // When scrolling OUT, reset to false so it can be re-triggered
+            setIsPlaying(false);
+        }
+    }, [isInView]);
 
     return (
         <section
@@ -175,3 +181,4 @@ export const SplineSection: React.FC = () => {
         </section>
     );
 };
+
