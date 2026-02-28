@@ -52,22 +52,28 @@ export function Waves({
     useEffect(() => {
         if (!containerRef.current || !svgRef.current) return
 
-        // Initialize noise generator
-        noiseRef.current = createNoise2D()
+        // Defer massive SVG calculation to let initial page components animate and render smoothly
+        const initTimer = setTimeout(() => {
+            if (!containerRef.current || !svgRef.current) return;
 
-        // Initialize size and lines
-        setSize()
-        setLines()
+            // Initialize noise generator
+            noiseRef.current = createNoise2D()
 
-        // Bind events
-        window.addEventListener('resize', onResize)
-        window.addEventListener('mousemove', onMouseMove)
-        containerRef.current.addEventListener('touchmove', onTouchMove, { passive: false })
+            // Initialize size and lines
+            setSize()
+            setLines()
 
-        // Start animation
-        rafRef.current = requestAnimationFrame(tick)
+            // Bind events
+            window.addEventListener('resize', onResize)
+            window.addEventListener('mousemove', onMouseMove)
+            containerRef.current.addEventListener('touchmove', onTouchMove, { passive: false })
+
+            // Start animation
+            rafRef.current = requestAnimationFrame(tick)
+        }, 50);
 
         return () => {
+            clearTimeout(initTimer);
             if (rafRef.current) cancelAnimationFrame(rafRef.current)
             window.removeEventListener('resize', onResize)
             window.removeEventListener('mousemove', onMouseMove)
@@ -99,9 +105,9 @@ export function Waves({
         })
         pathsRef.current = []
 
-        // Use larger spacing to drastically reduce the number of SVG DOM elements for better performance
-        const xGap = 48  // Increased horizontal spacing
-        const yGap = 48  // Increased vertical spacing
+        // Use much larger spacing to drastically reduce the number of SVG DOM elements for better performance
+        const xGap = 96  // Increased horizontal spacing
+        const yGap = 96  // Increased vertical spacing
 
         const oWidth = width + 200
         const oHeight = height + 30

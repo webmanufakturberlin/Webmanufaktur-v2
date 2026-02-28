@@ -27,8 +27,8 @@ export const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack })
                 </button>
 
                 <div className="max-w-4xl mx-auto bg-white/80 backdrop-blur-xl p-10 md:p-16 rounded-[2.5rem] border border-gray-100 shadow-2xl animate-slide-up">
-                    <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-8" aria-hidden="true">
-                        {React.cloneElement(service.icon as React.ReactElement, { size: 40 })}
+                    <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-8 [&>div>svg]:w-10 [&>div>svg]:h-10" aria-hidden="true">
+                        {service.renderIcon ? service.renderIcon(false) : null}
                     </div>
 
                     <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-6 text-ink tracking-tight">{service.title}</h1>
