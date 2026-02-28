@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ImpactData } from './components/ImpactData';
 import { Features, ServiceData } from './components/Features';
 import { Process } from './components/Process';
@@ -13,31 +13,54 @@ import { ServiceDetail } from './components/ServiceDetail';
 import LivingVineBackground from './components/ui/living-vine-background';
 import { motion, useInView } from 'framer-motion';
 
+// --- Scroll Progress Bar ---
+const ScrollProgress: React.FC = () => {
+    const [progress, setProgress] = useState(0);
+
+    useEffect(() => {
+        const onScroll = () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            setProgress(docHeight > 0 ? (scrollTop / docHeight) * 100 : 0);
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
+
+    return (
+        <div
+            className="scroll-progress"
+            style={{ width: `${progress}%` }}
+            aria-hidden="true"
+        />
+    );
+};
+
 // --- Animation Components ---
 
 const ANIMATION_VARIANTS = {
     standard: {
-        hidden: { y: 40 },
+        hidden: { y: 30 },
         visible: { y: 0 }
     },
     '3d-unfold': {
-        hidden: { rotateX: -15, y: 60 },
+        hidden: { rotateX: -12, y: 50 },
         visible: { rotateX: 0, y: 0 }
     },
     glass: {
-        hidden: { filter: 'blur(8px)', scale: 0.97 },
+        hidden: { filter: 'blur(6px)', scale: 0.97 },
         visible: { filter: 'blur(0px)', scale: 1 }
     },
     'horizon-expand': {
-        hidden: { scaleX: 0.92, y: 40 },
+        hidden: { scaleX: 0.93, y: 35 },
         visible: { scaleX: 1, y: 0 }
     },
     'curtain-rise': {
-        hidden: { y: 50, scale: 0.97 },
+        hidden: { y: 45, scale: 0.97 },
         visible: { y: 0, scale: 1 }
     },
     'spiral-in': {
-        hidden: { rotate: -4, scale: 0.95, y: 50 },
+        hidden: { rotate: -3, scale: 0.96, y: 45 },
         visible: { rotate: 0, scale: 1, y: 0 }
     }
 };
@@ -49,7 +72,15 @@ const SectionReveal: React.FC<{
     sectionId?: string;
 }> = ({ children, variant = 'standard', className = "", sectionId }) => {
     const ref = React.useRef(null);
-    const isInView = useInView(ref, { once: false, amount: 0.2 });
+    // amount: 0.12 — trigger when 12% visible
+    // margin: shrink viewport by 80px top & bottom for balanced enter/exit
+    const isInView = useInView(ref, {
+        once: false,
+        amount: 0.08,
+        // Only negative bottom: delays enter until section is 40px inside viewport.
+        // No negative top: section stays "in view" until fully scrolled past.
+        margin: '0px 0px -40px 0px',
+    });
     const selectedVariant = ANIMATION_VARIANTS[variant];
 
     return (
@@ -59,10 +90,11 @@ const SectionReveal: React.FC<{
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
             variants={selectedVariant}
-            transition={{
-                duration: 1.0,
-                ease: [0.16, 1, 0.3, 1]
-            }}
+            transition={
+                isInView
+                    ? { duration: 0.7, ease: [0.16, 1, 0.3, 1] }           // Enter: spring ease
+                    : { duration: 0.45, ease: [0.4, 0, 0.6, 1] }           // Exit: quick, no bounce
+            }
             className={className}
             style={variant !== 'standard' ? { perspective: '2000px' } : {}}
         >
@@ -120,6 +152,7 @@ const App: React.FC = () => {
 
     return (
         <LivingVineBackground className="min-h-screen text-ink selection:bg-black selection:text-white font-sans">
+            <ScrollProgress />
             <Navbar onNavigate={handleNavigate} currentView={currentView} onHome={handleHome} onAbout={handleAbout} />
 
             {currentView === 'service-detail' && selectedService ? (

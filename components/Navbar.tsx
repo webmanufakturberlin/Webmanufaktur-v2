@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Search, ChevronDown, X, ArrowRight, Layout, Zap, Code, Database, LineChart, Globe } from 'lucide-react';
 import { useI18n } from '../i18n';
 
@@ -13,6 +13,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView, onHome,
     const { lang, setLang, t } = useI18n();
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+    const [scrolled, setScrolled] = useState(false);
+    const [logoHovered, setLogoHovered] = useState(false);
+
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 12);
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
 
     const navLinks = [
         { name: t('nav.work'), id: 'work', hasDropdown: false },
@@ -39,7 +47,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView, onHome,
     return (
         <header>
             <nav
-                className="fixed top-0 left-0 right-0 z-50 h-20 transition-all duration-300 bg-white/90 backdrop-blur-md border-b border-gray-100"
+                className={`fixed top-0 left-0 right-0 z-50 h-20 transition-all duration-300 bg-white/90 backdrop-blur-md border-b border-gray-100 ${scrolled ? 'shadow-lg shadow-black/5' : ''}`}
                 onMouseLeave={() => setHoveredItem(null)}
                 aria-label="Main navigation"
             >
@@ -47,11 +55,21 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView, onHome,
 
                     {/* LOGO — WM Monogram */}
                     <button
-                        className="flex items-center gap-3 group cursor-pointer z-50 relative bg-transparent border-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-lg"
+                        className="logo-group flex items-center gap-3 group cursor-pointer z-50 relative bg-transparent border-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-lg"
                         onClick={onHome}
+                        onMouseEnter={() => setLogoHovered(true)}
+                        onMouseLeave={() => setLogoHovered(false)}
                         aria-label="Go to homepage"
                     >
-                        <img src="/assets/logo.png" alt="WebManufaktur Berlin Logo" className="h-10 w-auto object-contain" />
+                        <img
+                            src="/assets/logo.png"
+                            alt="WebManufaktur Berlin Logo"
+                            className="logo-img h-10 w-auto object-contain"
+                            style={{
+                                transform: logoHovered ? 'rotate(12deg) scale(1.08)' : 'rotate(0deg) scale(1)',
+                                transition: 'transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                            }}
+                        />
                         <div className="flex flex-col">
                             <span className="font-black tracking-tight text-lg text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-indigo-800 to-purple-700 group-hover:from-indigo-600 group-hover:via-purple-600 group-hover:to-pink-500 transition-all duration-500">WebManufaktur</span>
                             <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gray-400 group-hover:text-indigo-400 transition-colors duration-300">{t('nav.subtitle')}</span>

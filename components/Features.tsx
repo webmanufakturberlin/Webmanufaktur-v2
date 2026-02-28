@@ -181,45 +181,51 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
             </div>
 
             <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
-                {services.map((service, idx) => (
-                    <Reveal
-                        key={idx}
-                        width="100%"
-                        delay={idx * 0.15}
-                        className={service.colSpan}
-                        variant={idx % 2 === 0 ? 'bottom' : 'scale'}
-                    >
-                        <div
-                            onClick={() => onNavigate(service)}
-                            onKeyDown={(e) => handleCardKeyDown(e, service)}
-                            className="h-full"
-                            role="button"
-                            tabIndex={0}
-                            aria-label={`View details for ${service.title}`}
+                {services.map((service, idx) => {
+                    // Unified 'bottom' for all cards. Top row (0,1) stagger 0→0.12s,
+                    // bottom row (2,3,4) stagger 0.1→0.3s to avoid visual offset.
+                    const isBottomRow = idx >= 2;
+                    const delay = isBottomRow ? 0.08 + (idx - 2) * 0.04 : idx * 0.06;
+                    return (
+                        <Reveal
+                            key={idx}
+                            width="100%"
+                            delay={delay}
+                            className={service.colSpan}
+                            variant="bottom"
                         >
-                            <GlowCard
-                                className="p-10 h-full flex flex-col justify-between group cursor-pointer bg-white/40 backdrop-blur-2xl border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] hover:bg-white/60 hover:border-white/80 hover:shadow-[0_8px_32px_0_rgba(31,38,135,0.15)]"
-                                gradientColor={service.gradient}
-                                onMouseEnter={() => setHoveredIdx(idx)}
-                                onMouseLeave={() => setHoveredIdx(null)}
+                            <div
+                                onClick={() => onNavigate(service)}
+                                onKeyDown={(e) => handleCardKeyDown(e, service)}
+                                className="h-full"
+                                role="button"
+                                tabIndex={0}
+                                aria-label={`View details for ${service.title}`}
                             >
-                                <div>
-                                    <div className="w-16 h-16 bg-gradient-to-br from-white to-gray-50 rounded-2xl flex items-center justify-center mb-8 border border-white shadow-sm group-hover:shadow-lg group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-indigo-50 group-hover:to-purple-50 transition-all duration-500 overflow-visible">
-                                        {service.renderIcon(hoveredIdx === idx)}
+                                <GlowCard
+                                    className="p-10 h-full flex flex-col justify-between group cursor-pointer bg-white/90 border border-gray-200 shadow-md hover:bg-white hover:border-gray-300 hover:shadow-xl hover:shadow-indigo-500/10"
+                                    gradientColor={service.gradient}
+                                    onMouseEnter={() => setHoveredIdx(idx)}
+                                    onMouseLeave={() => setHoveredIdx(null)}
+                                >
+                                    <div>
+                                        <div className="w-16 h-16 bg-gradient-to-br from-gray-50 to-white rounded-2xl flex items-center justify-center mb-8 border border-gray-100 shadow-sm group-hover:shadow-lg group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-indigo-50 group-hover:to-purple-50 transition-all duration-500 overflow-visible">
+                                            {service.renderIcon(hoveredIdx === idx)}
+                                        </div>
+                                        <h3 className="text-2xl sm:text-3xl font-bold mb-4 text-ink group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-purple-600 transition-all duration-300 tracking-tight">{service.title}</h3>
+                                        <p className="text-gray-600 leading-relaxed text-base sm:text-lg font-medium group-hover:text-gray-700 transition-colors">{service.desc}</p>
                                     </div>
-                                    <h3 className="text-2xl sm:text-3xl font-bold mb-4 text-ink group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-purple-600 transition-all duration-300 tracking-tight">{service.title}</h3>
-                                    <p className="text-gray-600 leading-relaxed text-base sm:text-lg font-medium group-hover:text-gray-700 transition-colors">{service.desc}</p>
-                                </div>
-                                <div className="mt-12 pt-6 border-t border-gray-100/30 flex items-center justify-between">
-                                    <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-indigo-600 transition-colors duration-300">{t('features.explore')}</span>
-                                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transform translate-y-3 group-hover:translate-y-0 transition-all duration-400 shadow-md group-hover:bg-gradient-to-r group-hover:from-indigo-500 group-hover:to-purple-500" aria-hidden="true">
-                                        <span className="text-lg">→</span>
+                                    <div className="mt-12 pt-6 border-t border-gray-200 flex items-center justify-between">
+                                        <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-indigo-600 transition-colors duration-300">{t('features.explore')}</span>
+                                        <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 opacity-0 group-hover:opacity-100 transform translate-y-3 group-hover:translate-y-0 transition-all duration-300 shadow-md group-hover:bg-gradient-to-r group-hover:from-indigo-500 group-hover:to-purple-500 group-hover:text-white" aria-hidden="true">
+                                            <span className="text-lg">→</span>
+                                        </div>
                                     </div>
-                                </div>
-                            </GlowCard>
-                        </div>
-                    </Reveal>
-                ))}
+                                </GlowCard>
+                            </div>
+                        </Reveal>
+                    );
+                })}
             </div>
         </section>
     );

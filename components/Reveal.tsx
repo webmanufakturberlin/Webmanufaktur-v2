@@ -19,12 +19,18 @@ export const Reveal: React.FC<RevealProps> = ({
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    // Bidirectional: separate margins for enter vs exit.
+    // rootMargin "-8% 0px -12% 0px":
+    //   top:    -8%  → exit trigger fires when 8% remains at top (not too early)
+    //   bottom: -12% → enter trigger fires when element is 12% inside from bottom (smooth)
     const observer = new IntersectionObserver(([entry]) => {
-      // Bidirectional: true when entering, false when leaving
       setIsVisible(entry.isIntersecting);
     }, {
-      threshold: 0.15,
-      rootMargin: "0px 0px -50px 0px"
+      threshold: 0.08,
+      // Only negative bottom margin: enter trigger fires when element is 10% inside
+      // from bottom (avoids flash at page load). Top margin = 0 so exit fires only
+      // when element is fully scrolled out — content never disappears while visible.
+      rootMargin: '0px 0px -10% 0px',
     });
 
     const currentRef = ref.current;
@@ -38,16 +44,16 @@ export const Reveal: React.FC<RevealProps> = ({
   const getTransform = () => {
     if (!isVisible) {
       switch (variant) {
-        case 'bottom': return 'translateY(75px)';
-        case 'left': return 'translateX(-75px)';
-        case 'right': return 'translateX(75px)';
-        case 'scale': return 'scale(0.9)';
-        case 'blur': return 'scale(1.05)';
-        case 'clip-up': return 'translateY(40px)';
-        case 'clip-left': return 'translateX(-40px)';
-        case 'rotate-in': return 'perspective(1200px) rotateY(-25deg) translateX(-40px)';
-        case 'parallax-up': return 'translateY(120px) scale(0.95)';
-        default: return 'translateY(75px)';
+        case 'bottom':      return 'translateY(35px)';
+        case 'left':        return 'translateX(-35px)';
+        case 'right':       return 'translateX(35px)';
+        case 'scale':       return 'scale(0.95)';
+        case 'blur':        return 'scale(1.02)';
+        case 'clip-up':     return 'translateY(20px)';
+        case 'clip-left':   return 'translateX(-20px)';
+        case 'rotate-in':   return 'perspective(1200px) rotateY(-12deg) translateX(-15px)';
+        case 'parallax-up': return 'translateY(50px) scale(0.97)';
+        default:            return 'translateY(60px)';
       }
     }
     return 'translate(0) scale(1) rotateY(0deg)';
@@ -55,14 +61,14 @@ export const Reveal: React.FC<RevealProps> = ({
 
   const getFilter = () => {
     if (!isVisible && (variant === 'blur' || variant === 'scale')) {
-      return 'blur(12px)';
+      return 'blur(10px)';
     }
     return 'blur(0px)';
   };
 
   const getClipPath = () => {
     if (!isVisible) {
-      if (variant === 'clip-up') return 'inset(100% 0 0 0)';
+      if (variant === 'clip-up')   return 'inset(100% 0 0 0)';
       if (variant === 'clip-left') return 'inset(0 100% 0 0)';
     }
     return 'inset(0 0 0 0)';
@@ -78,8 +84,11 @@ export const Reveal: React.FC<RevealProps> = ({
           transform: getTransform(),
           filter: getFilter(),
           ...(isClipVariant ? { clipPath: getClipPath() } : {}),
-          transition: 'all 1200ms cubic-bezier(0.25, 1, 0.3, 1)',
-          transitionDelay: `${delay}s`,
+          // In animation: respect delay for enter
+          // Out animation: no delay — reverse fires immediately and smoothly
+          transition: isVisible
+            ? `all 700ms cubic-bezier(0.25, 1, 0.3, 1) ${delay}s`
+            : 'all 500ms cubic-bezier(0.4, 0, 0.6, 1) 0s',
           willChange: isVisible ? 'auto' : 'transform, opacity, filter',
         }}
       >

@@ -41,7 +41,7 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
                     <Reveal>
                         <h2 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-8 tracking-tighter text-ink leading-[0.9]">
                             {t('cta.headline1')} <br />
-                            {t('cta.headline2')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500">{t('cta.headline3')}</span>
+                            {t('cta.headline2') ? <>{t('cta.headline2')} </> : null}<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500">{t('cta.headline3')}</span>
                         </h2>
                         <p className="text-xl text-gray-500 mb-10 max-w-md leading-relaxed">
                             {t('cta.desc')}

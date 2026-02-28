@@ -1,4 +1,4 @@
-import { GoogleGenAI, ThinkingLevel } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 
 let aiInstance: GoogleGenAI | null = null;
 
@@ -17,23 +17,18 @@ export const getStrategyAdvice = async (userPrompt: string): Promise<string> => 
   try {
     const ai = getAI();
     const response = await ai.models.generateContent({
-      model: 'gemini-3.1-pro-preview',
+      model: 'gemini-2.0-flash',
       contents: `You are the "WebManufaktur Strategic Consultant". We are a high-end web design and content agency in Berlin (WebManufaktur Berlin).
-      
+
       User input: "${userPrompt}"
-      
+
       Your goal: The user will describe their business or a content need. You will provide a punchy, high-value strategic tip, a potential slogan, or a content hook.
       Keep the tone professional, modern, 'Berlin-cool' (minimalist and direct), and authoritative.
       Keep the response under 60 words.`,
-      config: {
-        thinkingConfig: {
-          thinkingLevel: ThinkingLevel.HIGH
-        }
-      }
     });
     return response.text || "Analyzing market data...";
   } catch (error) {
     console.error("Gemini API Error:", error);
-    return "Our strategy nodes are currently syncing. Please try again.";
+    return "Verbindung zum KI-Berater fehlgeschlagen. Bitte stelle sicher, dass ein gültiger API-Key hinterlegt ist.";
   }
 };

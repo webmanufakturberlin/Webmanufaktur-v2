@@ -131,7 +131,7 @@ const translations: Record<string, Record<Lang, string>> = {
 
     // CTA / Contact
     'cta.headline1': { en: "Let's build", de: 'Lass uns etwas' },
-    'cta.headline2': { en: 'something', de: '\u00A0' },
+    'cta.headline2': { en: 'something', de: '' },
     'cta.headline3': { en: 'iconic.', de: 'Ikonisches bauen.' },
     'cta.desc': { en: 'The future is built today. We are opening our production schedule for select partners.', de: 'Die Zukunft entsteht heute. Wir öffnen unseren Produktionsplan für ausgewählte Partner.' },
     'cta.directInquiries': { en: 'Direct Inquiries', de: 'Direkte Anfragen' },
@@ -201,7 +201,7 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const t = useCallback((key: string): string => {
         const entry = translations[key];
         if (!entry) return key;
-        return entry[lang] || entry['en'] || key;
+        return entry[lang] ?? entry['en'] ?? key;
     }, [lang]);
 
     return (
