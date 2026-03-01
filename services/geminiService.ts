@@ -7,10 +7,12 @@ const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 export const getStrategyAdvice = async (userPrompt: string): Promise<string> => {
   if (!API_KEY) {
+    console.error('API KEY IS MISSING IN import.meta.env');
     throw new Error('API key is missing.');
   }
+  console.log('API Key loaded. Length:', API_KEY.length, 'Starts with:', API_KEY.substring(0, 5));
 
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
   const payload = {
     systemInstruction: {
