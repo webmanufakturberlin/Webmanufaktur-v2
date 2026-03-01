@@ -3,7 +3,7 @@
 // Use VITE_ env var if available, otherwise fallback to the user-provided key.
 // Note: Hardcoding or exposing API keys in frontend code is typically a security risk.
 // Since this is required to run locally without a backend, we expose it here.
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyD8ahsqESiiIXH4tCcZv4LjkO28370f2hc';
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 export const getStrategyAdvice = async (userPrompt: string): Promise<string> => {
   if (!API_KEY) {
