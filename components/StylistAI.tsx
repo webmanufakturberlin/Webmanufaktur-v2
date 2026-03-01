@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { getStrategyAdvice } from '../services/geminiService';
-import { Bot, Send, Loader2, Sparkles } from 'lucide-react';
+import { Bot, Send, Loader2, Sparkles, RefreshCw, Mail } from 'lucide-react';
 import { Reveal } from './Reveal';
 import { useI18n } from '../i18n';
 
@@ -10,17 +10,20 @@ export const BusinessAI: React.FC = () => {
   const [response, setResponse] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const lastPromptRef = useRef('');
 
-  const handleAsk = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!prompt.trim()) return;
+  const handleAsk = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const currentPrompt = prompt.trim() || lastPromptRef.current;
+    if (!currentPrompt) return;
 
+    lastPromptRef.current = currentPrompt;
     setLoading(true);
     setResponse(null);
     setError(false);
 
     try {
-      const advice = await getStrategyAdvice(prompt);
+      const advice = await getStrategyAdvice(currentPrompt);
       setResponse(advice);
     } catch {
       setError(true);
@@ -28,6 +31,10 @@ export const BusinessAI: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRetry = () => {
+    handleAsk();
   };
 
   return (
@@ -67,7 +74,7 @@ export const BusinessAI: React.FC = () => {
                 </div>
               </div>
 
-              <div className="bg-gray-50 rounded-3xl p-6 border border-gray-100 shadow-inner">
+              <div className="max-w-4xl mx-auto bg-white/80 backdrop-blur-xl rounded-[2.5rem] p-8 md:p-12 border border-blue-100/50 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.1),0_0_40px_rgba(99,102,241,0.08)]">
                 <form onSubmit={handleAsk} className="relative group mb-4">
                   <label htmlFor="ai-strategy-input" className="sr-only">{t('ai.placeholder')}</label>
                   <input
@@ -98,6 +105,24 @@ export const BusinessAI: React.FC = () => {
                       <p className="text-lg text-gray-800 leading-relaxed font-medium">
                         "{response}"
                       </p>
+                      {error && (
+                        <div className="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-red-50">
+                          <button
+                            onClick={handleRetry}
+                            className="flex items-center gap-1.5 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 active:scale-95 transition-all"
+                          >
+                            <RefreshCw size={14} />
+                            Erneut versuchen
+                          </button>
+                          <a
+                            href="mailto:webmanufaktur.berlin@googlemail.com"
+                            className="flex items-center gap-1.5 px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-all"
+                          >
+                            <Mail size={14} />
+                            Direkt kontaktieren
+                          </a>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="h-32 flex items-center justify-center text-gray-400 text-sm italic">

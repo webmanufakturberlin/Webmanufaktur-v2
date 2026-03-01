@@ -6,6 +6,7 @@ interface RevealProps {
   delay?: number;
   className?: string;
   variant?: 'bottom' | 'left' | 'right' | 'scale' | 'blur' | 'clip-up' | 'clip-left' | 'rotate-in' | 'parallax-up';
+  once?: boolean;
 }
 
 export const Reveal: React.FC<RevealProps> = ({
@@ -13,23 +14,24 @@ export const Reveal: React.FC<RevealProps> = ({
   width = 'fit-content',
   delay = 0,
   className = "",
-  variant = 'bottom'
+  variant = 'bottom',
+  once = false
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    // Bidirectional: separate margins for enter vs exit.
-    // rootMargin "-8% 0px -12% 0px":
-    //   top:    -8%  → exit trigger fires when 8% remains at top (not too early)
-    //   bottom: -12% → enter trigger fires when element is 12% inside from bottom (smooth)
     const observer = new IntersectionObserver(([entry]) => {
-      setIsVisible(entry.isIntersecting);
+      if (once && hasAnimated.current) return;
+      if (entry.isIntersecting) {
+        setIsVisible(true);
+        if (once) hasAnimated.current = true;
+      } else if (!once) {
+        setIsVisible(false);
+      }
     }, {
       threshold: 0.08,
-      // Only negative bottom margin: enter trigger fires when element is 10% inside
-      // from bottom (avoids flash at page load). Top margin = 0 so exit fires only
-      // when element is fully scrolled out — content never disappears while visible.
       rootMargin: '0px 0px -10% 0px',
     });
 
@@ -39,7 +41,7 @@ export const Reveal: React.FC<RevealProps> = ({
     return () => {
       if (currentRef) observer.unobserve(currentRef);
     };
-  }, []);
+  }, [once]);
 
   const getTransform = () => {
     if (!isVisible) {

@@ -47,18 +47,18 @@ const eyeVariants = {
     },
 };
 
-// Container variant — just toggles between "idle" and "hovered"
 const cardVariants = {
     idle: {},
     hovered: {},
 };
 
-// --- TiltCard: 3D magnetic tilt + glow on hover ---
-const TiltCard: React.FC<{
+// --- MagneticTiltCard: 3D tilt + magnetic drag + glow on hover ---
+const MagneticTiltCard: React.FC<{
     children: React.ReactNode;
     className: string;
     glowColor: string;
-}> = ({ children, className, glowColor }) => {
+    borderColor: string;
+}> = ({ children, className, glowColor, borderColor }) => {
     const ref = useRef<HTMLDivElement>(null);
     const glowRef = useRef<HTMLDivElement>(null);
 
@@ -69,7 +69,10 @@ const TiltCard: React.FC<{
         const y = (e.clientY - rect.top) / rect.height;
         const rotateX = (y - 0.5) * -10;
         const rotateY = (x - 0.5) * 10;
-        ref.current.style.transform = `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px) scale(1.02)`;
+        // Magnetic drag: translate towards cursor (max ~8px)
+        const dragX = (x - 0.5) * 16;
+        const dragY = (y - 0.5) * 12;
+        ref.current.style.transform = `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translate(${dragX}px, ${dragY}px) translateY(-6px) scale(1.02)`;
 
         if (glowRef.current) {
             const px = e.clientX - rect.left;
@@ -81,7 +84,7 @@ const TiltCard: React.FC<{
 
     const handleMouseLeave = useCallback(() => {
         if (!ref.current) return;
-        ref.current.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1)';
+        ref.current.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) translate(0, 0) scale(1)';
         if (glowRef.current) {
             glowRef.current.style.opacity = '0';
         }
@@ -94,11 +97,22 @@ const TiltCard: React.FC<{
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
             style={{
-                transition: 'transform 0.35s cubic-bezier(0.03, 0.98, 0.52, 0.99)',
+                transition: 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)',
                 transformStyle: 'preserve-3d',
                 willChange: 'transform',
             }}
         >
+            {/* Animated gradient border on hover */}
+            <div
+                className="absolute inset-0 rounded-3xl p-[2px] opacity-0 hover-parent-glow transition-opacity duration-500 pointer-events-none z-0 glow-border-rotate"
+                style={{
+                    background: `conic-gradient(from var(--border-angle, 0deg), ${borderColor}, transparent 40%, ${borderColor})`,
+                    mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                    maskComposite: 'exclude',
+                    WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                    WebkitMaskComposite: 'xor',
+                }}
+            />
             <div
                 ref={glowRef}
                 className="pointer-events-none absolute inset-0 rounded-3xl transition-opacity duration-500 z-0"
@@ -142,9 +156,10 @@ export const ImpactData: React.FC = () => {
 
                         {/* Card 1 — Arrow bounce */}
                         <Reveal delay={0.1} variant="parallax-up">
-                            <TiltCard
-                                className="bg-white p-8 rounded-3xl shadow-lg border-2 border-purple-200/60 hover:shadow-2xl hover:shadow-purple-500/15 hover:border-purple-400 transition-[box-shadow,border-color] duration-300 cursor-default h-full relative overflow-hidden"
-                                glowColor="rgba(147, 51, 234, 0.12)"
+                            <MagneticTiltCard
+                                className="bg-gradient-to-br from-white to-purple-50/40 p-8 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] border-2 border-purple-300 hover:shadow-[0_8px_30px_rgba(147,51,234,0.25)] hover:border-purple-500 transition-[box-shadow,border-color] duration-300 cursor-default h-full relative overflow-hidden"
+                                glowColor="rgba(147, 51, 234, 0.15)"
+                                borderColor="#a855f7"
                             >
                                 <motion.div variants={cardVariants} initial="idle" whileHover="hovered" className="h-full">
                                     <div className="mb-4 bg-purple-50 w-12 h-12 rounded-xl flex items-center justify-center">
@@ -155,14 +170,15 @@ export const ImpactData: React.FC = () => {
                                     <div className="text-5xl font-extrabold text-ink mb-3 tracking-tight">{t('impact.stat1.value')}</div>
                                     <p className="text-sm text-gray-600 leading-relaxed font-medium">{t('impact.stat1.desc')}</p>
                                 </motion.div>
-                            </TiltCard>
+                            </MagneticTiltCard>
                         </Reveal>
 
                         {/* Card 2 — Clock speed burst */}
                         <Reveal delay={0.2} variant="parallax-up">
-                            <TiltCard
-                                className="bg-white p-8 rounded-3xl shadow-lg border-2 border-blue-200/60 hover:shadow-2xl hover:shadow-blue-500/15 hover:border-blue-400 transition-[box-shadow,border-color] duration-300 cursor-default h-full relative overflow-hidden"
-                                glowColor="rgba(59, 130, 246, 0.12)"
+                            <MagneticTiltCard
+                                className="bg-gradient-to-br from-white to-blue-50/40 p-8 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] border-2 border-blue-300 hover:shadow-[0_8px_30px_rgba(59,130,246,0.25)] hover:border-blue-500 transition-[box-shadow,border-color] duration-300 cursor-default h-full relative overflow-hidden"
+                                glowColor="rgba(59, 130, 246, 0.15)"
+                                borderColor="#3b82f6"
                             >
                                 <motion.div variants={cardVariants} initial="idle" whileHover="hovered" className="h-full">
                                     <div className="mb-4 bg-blue-50 w-12 h-12 rounded-xl flex items-center justify-center">
@@ -183,14 +199,15 @@ export const ImpactData: React.FC = () => {
                                     <div className="text-5xl font-extrabold text-ink mb-3 tracking-tight">{t('impact.stat2.value')}</div>
                                     <p className="text-sm text-gray-600 leading-relaxed font-medium">{t('impact.stat2.desc')}</p>
                                 </motion.div>
-                            </TiltCard>
+                            </MagneticTiltCard>
                         </Reveal>
 
                         {/* Card 3 — Eye scan + blink */}
                         <Reveal delay={0.3} variant="parallax-up">
-                            <TiltCard
-                                className="bg-white p-8 rounded-3xl shadow-lg border-2 border-orange-200/60 hover:shadow-2xl hover:shadow-orange-500/15 hover:border-orange-400 transition-[box-shadow,border-color] duration-300 cursor-default h-full relative overflow-hidden"
-                                glowColor="rgba(249, 115, 22, 0.12)"
+                            <MagneticTiltCard
+                                className="bg-gradient-to-br from-white to-orange-50/40 p-8 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] border-2 border-orange-300 hover:shadow-[0_8px_30px_rgba(249,115,22,0.25)] hover:border-orange-500 transition-[box-shadow,border-color] duration-300 cursor-default h-full relative overflow-hidden"
+                                glowColor="rgba(249, 115, 22, 0.15)"
+                                borderColor="#f97316"
                             >
                                 <motion.div variants={cardVariants} initial="idle" whileHover="hovered" className="h-full">
                                     <div className="mb-4 bg-orange-50 w-12 h-12 rounded-xl flex items-center justify-center">
@@ -201,7 +218,7 @@ export const ImpactData: React.FC = () => {
                                     <div className="text-5xl font-extrabold text-ink mb-3 tracking-tight">{t('impact.stat3.value')}</div>
                                     <p className="text-sm text-gray-600 leading-relaxed font-medium">{t('impact.stat3.desc')}</p>
                                 </motion.div>
-                            </TiltCard>
+                            </MagneticTiltCard>
                         </Reveal>
 
                     </div>

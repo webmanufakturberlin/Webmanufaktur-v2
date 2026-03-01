@@ -183,17 +183,18 @@ export const Features: React.FC<FeaturesProps> = ({ onNavigate }) => {
 
             <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
                 {services.map((service, idx) => {
-                    // Unified 'bottom' for all cards. Top row (0,1) stagger 0→0.12s,
-                    // bottom row (2,3,4) stagger 0.1→0.3s to avoid visual offset.
+                    // Top row (0,1): staggered bottom animation
+                    // Bottom row (2,3,4): identical delay, scale variant, once only
                     const isBottomRow = idx >= 2;
-                    const delay = isBottomRow ? 0.08 + (idx - 2) * 0.04 : idx * 0.06;
+                    const delay = isBottomRow ? 0.12 : idx * 0.06;
                     return (
                         <Reveal
                             key={idx}
                             width="100%"
                             delay={delay}
                             className={service.colSpan}
-                            variant="bottom"
+                            variant={isBottomRow ? "scale" : "bottom"}
+                            once={isBottomRow}
                         >
                             <div
                                 onClick={() => onNavigate(service)}

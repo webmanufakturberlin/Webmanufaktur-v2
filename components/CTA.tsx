@@ -19,6 +19,13 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
         message: ''
     });
     const [loading, setLoading] = useState(false);
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText('webmanufaktur.berlin@googlemail.com');
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -47,14 +54,30 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
                             {t('cta.desc')}
                         </p>
 
-                        <div className="flex flex-col gap-6">
-                            <div className="p-8 bg-white/60 backdrop-blur-md rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-lg hover:border-blue-100 group">
-                                <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3 flex items-center gap-2">
-                                    <Mail size={14} className="text-blue-500" aria-hidden="true" /> {t('cta.directInquiries')}
+                        <div className="flex flex-col gap-6 relative group/email cursor-pointer" onClick={handleCopy}>
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500 rounded-2xl opacity-0 group-hover/email:opacity-20 transition-opacity duration-500 blur-xl"></div>
+                            <div className="p-8 bg-white/70 backdrop-blur-xl rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-300 hover:shadow-2xl hover:border-blue-200 relative overflow-hidden group-hover/email:-translate-y-1">
+                                <div className="absolute top-0 right-0 p-4">
+                                    <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                                        <span className="relative flex h-2 w-2">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                        </span>
+                                        Available
+                                    </span>
+                                </div>
+                                <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-4 flex items-center gap-2">
+                                    <Mail size={16} className="text-blue-500" aria-hidden="true" /> {t('cta.directInquiries')}
                                 </p>
-                                <a href="mailto:webmanufaktur.berlin@googlemail.com" className="text-xl sm:text-2xl font-mono font-bold text-ink group-hover:text-blue-600 transition-colors break-words focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md">
-                                    webmanufaktur.berlin@googlemail.com
-                                </a>
+                                <div className="text-xl sm:text-2xl font-mono font-bold text-ink transition-colors break-words flex flex-col gap-2">
+                                    <span className="group-hover/email:text-transparent group-hover/email:bg-clip-text group-hover/email:bg-gradient-to-r group-hover/email:from-blue-600 group-hover/email:to-purple-600 transition-all duration-300">
+                                        webmanufaktur.berlin
+                                    </span>
+                                    <span className="text-sm text-gray-400 group-hover/email:text-gray-600 transition-colors">@googlemail.com</span>
+                                </div>
+                                <div className={`absolute bottom-0 right-0 p-4 text-sm font-bold transition-all duration-300 ${copied ? 'text-green-600 opacity-100 translate-y-0' : 'text-blue-600 opacity-0 translate-y-4 group-hover/email:opacity-100 group-hover/email:translate-y-0'}`}>
+                                    {copied ? 'Copied ✓' : 'Click to copy ->'}
+                                </div>
                             </div>
                         </div>
                     </Reveal>

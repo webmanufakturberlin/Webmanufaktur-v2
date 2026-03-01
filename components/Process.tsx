@@ -89,9 +89,15 @@ const ProcessCard: React.FC<{
     const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
         if (!cardRef.current) return;
         const rect = cardRef.current.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        cardRef.current.style.transform = `perspective(900px) rotateX(${-y * 8}deg) rotateY(${x * 8}deg) translateY(-10px) scale(1.03)`;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // 2D Magnetic logic (Replaces 3D tilt)
+        const magneticX = ((x - centerX) / centerX) * 8;
+        const magneticY = ((y - centerY) / centerY) * 12;
+        cardRef.current.style.transform = `translate(${magneticX}px, ${magneticY}px) scale(1.02)`;
     }, []);
 
     const handleMouseEnter = useCallback(() => {
@@ -101,7 +107,7 @@ const ProcessCard: React.FC<{
     const handleMouseLeave = useCallback(() => {
         setHovered(false);
         if (cardRef.current) {
-            cardRef.current.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1)';
+            cardRef.current.style.transform = 'translate(0px, 0px) scale(1)';
         }
     }, []);
 
@@ -120,31 +126,14 @@ const ProcessCard: React.FC<{
                 group relative p-8 min-h-[380px] rounded-3xl border border-gray-100 bg-white/90
                 cursor-pointer flex flex-col justify-between overflow-hidden
                 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2
-                active:scale-[0.98] shadow-md hover:shadow-2xl
+                active:scale-[0.98] shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:shadow-2xl
             `}
             style={{
                 transition: 'transform 0.35s cubic-bezier(0.03, 0.98, 0.52, 0.99), box-shadow 0.35s ease',
-                transformStyle: 'preserve-3d',
             }}
         >
             {/* Colored background flood */}
             <div className={`absolute inset-0 opacity-0 group-hover:opacity-[0.07] transition-opacity duration-600 ${step.bgColor} pointer-events-none rounded-3xl`} />
-
-            {/* Border beam sweep — conic gradient in the card's accent color */}
-            <div
-                className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{
-                    background: `conic-gradient(from 0deg at 50% 50%, transparent 0deg, ${step.beamColor} 60deg, transparent 120deg)`,
-                    animation: hovered ? 'spin-slow 2.5s linear infinite' : 'none',
-                    mixBlendMode: 'multiply',
-                    mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                    maskComposite: 'exclude',
-                    WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                    WebkitMaskComposite: 'xor',
-                    padding: '1px',
-                }}
-                aria-hidden="true"
-            />
 
             <div>
                 {/* Colored bar — spring width expand */}

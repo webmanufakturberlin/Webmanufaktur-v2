@@ -7,11 +7,13 @@ import { CTA } from './components/CTA';
 import { Navbar } from './components/Navbar';
 import { AboutUs } from './components/AboutUs';
 import { Impressum } from './components/Impressum';
+import { References } from './components/References';
 import { BusinessAI } from './components/StylistAI';
 import { Reveal } from './components/Reveal';
 import { ServiceDetail } from './components/ServiceDetail';
 import LivingVineBackground from './components/ui/living-vine-background';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { KILabor } from './components/KILabor';
 import { motion, useInView } from 'framer-motion';
 
 // --- Scroll Progress Bar ---
@@ -111,14 +113,22 @@ const SectionDivider: React.FC = () => (
 // --- Main App Component ---
 
 const App: React.FC = () => {
-    const [currentView, setCurrentView] = useState<'home' | 'service-detail' | 'about' | 'impressum'>('home');
+    const [currentView, setCurrentView] = useState<'home' | 'service-detail' | 'about' | 'impressum' | 'ki-labor' | 'references'>('home');
     const [selectedService, setSelectedService] = useState<ServiceData | null>(null);
 
     const handleNavigate = useCallback((id: string) => {
         if (id === 'about') {
             setCurrentView('about');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         } else if (id === 'impressum') {
             setCurrentView('impressum');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (id === 'ai-lab' || id === 'ki-labor') {
+            setCurrentView('ki-labor');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (id === 'references') {
+            setCurrentView('references');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
             setCurrentView('home');
             setTimeout(() => {
@@ -140,6 +150,11 @@ const App: React.FC = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
+    const handleReferences = useCallback(() => {
+        setCurrentView('references');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
+
     const handleServiceClick = useCallback((service: ServiceData) => {
         setSelectedService(service);
         setCurrentView('service-detail');
@@ -148,16 +163,21 @@ const App: React.FC = () => {
 
     const handleBack = useCallback(() => {
         setCurrentView('home');
-        window.scrollTo(0, 0);
+        setTimeout(() => {
+            const element = document.getElementById('features');
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
     }, []);
 
     return (
-        <LivingVineBackground className="min-h-screen text-ink selection:bg-black selection:text-white font-sans">
+        <LivingVineBackground isHomeView={currentView === 'home'} className="min-h-screen text-ink selection:bg-black selection:text-white font-sans">
             <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:text-ink focus:font-bold focus:outline-none focus:ring-2 focus:ring-blue-500">
                 Zum Hauptinhalt springen
             </a>
             <ScrollProgress />
-            <Navbar onNavigate={handleNavigate} currentView={currentView} onHome={handleHome} onAbout={handleAbout} />
+            <Navbar onNavigate={handleNavigate} currentView={currentView} onHome={handleHome} onAbout={handleAbout} onReferences={handleReferences} />
 
             {currentView === 'service-detail' && selectedService ? (
                 <ServiceDetail service={selectedService} onBack={handleBack} />
@@ -165,9 +185,13 @@ const App: React.FC = () => {
                 <AboutUs onBack={handleHome} />
             ) : currentView === 'impressum' ? (
                 <Impressum onBack={handleHome} onNavigate={handleNavigate} />
+            ) : currentView === 'ki-labor' ? (
+                <KILabor onBack={handleHome} onNavigate={handleNavigate} />
+            ) : currentView === 'references' ? (
+                <References onBack={handleHome} />
             ) : (
                 <main id="main-content" className="flex flex-col">
-                    <Hero />
+                    <Hero onReferences={handleReferences} />
 
                     {/* Content Container */}
                     <div className="relative z-20 -mt-6 rounded-t-[2.5rem] shadow-[0_-20px_60px_rgba(0,0,0,0.06)] overflow-hidden"
@@ -205,15 +229,33 @@ const App: React.FC = () => {
 
                         <SectionDivider />
 
-                        <SectionReveal variant="standard" sectionId="contact">
+                        <SectionReveal variant="curtain-rise" sectionId="contact">
                             <CTA onNavigate={handleNavigate} />
                         </SectionReveal>
 
                         <SectionDivider />
 
                         <SectionReveal variant="standard" sectionId="impressum-footer">
-                            <footer className="py-12 px-6 flex flex-col items-center gap-4 text-gray-500">
-                                <p className="text-xs font-mono uppercase tracking-[0.3em]">© {new Date().getFullYear()} Webmanufaktur Berlin</p>
+                            <footer className="py-16 px-6 border-t border-gray-200">
+                                <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+                                    <p className="text-xs font-mono uppercase tracking-[0.3em] text-gray-500">© {new Date().getFullYear()} Webmanufaktur Berlin</p>
+                                    <div className="flex items-center gap-6 text-sm">
+                                        <a
+                                            href="#impressum"
+                                            onClick={(e) => { e.preventDefault(); handleNavigate('impressum'); }}
+                                            className="text-gray-500 hover:text-gray-900 transition-colors font-medium"
+                                        >
+                                            Impressum
+                                        </a>
+                                        <span className="text-gray-300">|</span>
+                                        <a
+                                            href="mailto:webmanufaktur.berlin@googlemail.com"
+                                            className="text-gray-500 hover:text-blue-600 transition-colors font-medium"
+                                        >
+                                            webmanufaktur.berlin@googlemail.com
+                                        </a>
+                                    </div>
+                                </div>
                             </footer>
                         </SectionReveal>
                     </div>

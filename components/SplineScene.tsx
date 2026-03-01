@@ -23,10 +23,11 @@ const LoadingFallback: React.FC = () => (
 export const SplineSection: React.FC = () => {
     const { t } = useI18n();
     const sectionRef = useRef<HTMLDivElement>(null);
-    // Changing this key remounts the Spline component, replaying all load animations
-    const [sceneKey, setSceneKey] = useState(0);
+    // Reference to the actual 3D engine instance to trigger replays without reloading
+    const splineApp = useRef<Application | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
-    // Track if the initial load has happened (don't remount on first appear)
+    // Track if the initial load has happened via state to trigger reactivity for autoplay
+    const [isSplineLoaded, setIsSplineLoaded] = useState(false);
     const hasLoadedOnce = useRef(false);
     // Track if we should mount the Spline component (lazy load)
     const [shouldLoadSpline, setShouldLoadSpline] = useState(false);
@@ -60,48 +61,84 @@ export const SplineSection: React.FC = () => {
             }
         } catch (_) { }
 
+        // Save the app instance for programmatic playback later
+        splineApp.current = app;
+
         // Only freeze the animation if this is the initial background load
         if (!autoPlayRef.current) {
             app.stop();
         }
 
         hasLoadedOnce.current = true;
+        setIsSplineLoaded(true);
     }, []);
 
-    // Replay button: restart the animation
+    // Replay button: restart the animation instantly via API
     const handleReplay = useCallback(() => {
         setIsPlaying(true);
         autoPlayRef.current = true;
-        setSceneKey((k) => k + 1);
+
+        if (splineApp.current) {
+            // Stop, reset to start, and play again natively
+            splineApp.current.stop();
+            splineApp.current.play();
+        }
+
         setTimeout(() => setIsPlaying(false), 3000);
     }, []);
 
-    // 1. Preload the WebGL assets sequentially after the Hero page finishes its entrance (e.g. 3.5 seconds)
+    // 1. "Slow and steady" background preload when user starts scrolling down
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setShouldLoadSpline(true);
-        }, 3500);
-        return () => clearTimeout(timer);
-    }, []);
+        const handleScroll = () => {
+            if (window.scrollY > 100 && !shouldLoadSpline) {
+                // Use requestIdleCallback to defer the heavy WebGL initialization
+                // until the browser is truly idle, preventing scroll stutter
+                if ('requestIdleCallback' in window) {
+                    (window as any).requestIdleCallback(() => setShouldLoadSpline(true), { timeout: 2000 });
+                } else {
+                    setTimeout(() => setShouldLoadSpline(true), 200);
+                }
+                window.removeEventListener('scroll', handleScroll);
+            }
+        };
 
-    // 2. Play the animation ONLY when the section is in the viewport
+        handleScroll(); // Check immediately on mount
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [shouldLoadSpline]);
+
+    // 2. Play the animation when the section enters viewport (bidirectional)
     const isInView = useInView(sectionRef, { amount: 0.15 });
+    const hasPlayedOnce = useRef(false);
 
     useEffect(() => {
         if (isInView) {
-            // When scrolling INTO the section, trigger the animation replay
-            // (Only if it has already been preloaded in the background)
-            if (hasLoadedOnce.current) {
-                setIsPlaying(true);
-                autoPlayRef.current = true;
-                setSceneKey((k) => k + 1);
-                setTimeout(() => setIsPlaying(false), 3000);
+            // Only trigger if we haven't played since entering this time
+            if (!hasPlayedOnce.current) {
+                // Fallback: trigger load if they jumped here without scrolling
+                if (!shouldLoadSpline) {
+                    setShouldLoadSpline(true);
+                }
+
+                // Only auto-play once the internal Spline onLoad has fired successfully
+                if (isSplineLoaded) {
+                    hasPlayedOnce.current = true;
+                    setIsPlaying(true);
+                    autoPlayRef.current = true;
+
+                    if (splineApp.current) {
+                        splineApp.current.stop();
+                        splineApp.current.play();
+                    }
+
+                    setTimeout(() => setIsPlaying(false), 3000);
+                }
             }
         } else {
-            // When scrolling OUT, reset to false so it can be re-triggered
-            setIsPlaying(false);
+            // Reset the lock when completely out of view so it plays again when re-entering
+            hasPlayedOnce.current = false;
         }
-    }, [isInView]);
+    }, [isInView, shouldLoadSpline, isSplineLoaded]);
 
     if (isMobile) return null;
 
@@ -113,7 +150,7 @@ export const SplineSection: React.FC = () => {
         >
             {/* Section header */}
             <div className="max-w-7xl mx-auto px-4 md:px-8 mb-12 relative z-10">
-                <Reveal width="100%">
+                <Reveal width="100%" once>
                     <div className="flex flex-col md:flex-row items-end justify-between gap-8 border-b border-black/10 pb-8 mb-8">
                         <span className="text-blue-600 font-mono text-sm uppercase tracking-widest flex items-center gap-2">
                             <span className="w-2 h-2 bg-blue-600 rounded-full animate-pulse" aria-hidden="true" />
@@ -123,7 +160,7 @@ export const SplineSection: React.FC = () => {
                     </div>
                 </Reveal>
 
-                <Reveal variant="left">
+                <Reveal variant="left" once>
                     <h2 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight text-ink mb-6">
                         {t('showcase.headline1')}{' '}
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500">
@@ -132,7 +169,7 @@ export const SplineSection: React.FC = () => {
                     </h2>
                 </Reveal>
 
-                <Reveal delay={0.1} variant="blur">
+                <Reveal delay={0.1} variant="blur" once>
                     <p className="text-lg text-gray-500 max-w-lg font-light leading-relaxed">
                         {t('showcase.desc')}
                     </p>
@@ -142,7 +179,7 @@ export const SplineSection: React.FC = () => {
             {/* 3D Spline Viewer with subtle background */}
             <div className="w-full h-[500px] md:h-[700px] lg:h-[800px] relative mx-auto max-w-7xl px-4 md:px-8">
                 <div
-                    className="w-full h-full rounded-3xl overflow-hidden border border-gray-200/60 shadow-xl relative"
+                    className="w-full h-full rounded-[2rem] overflow-hidden bg-white/50 border border-gray-200 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.15),0_0_40px_rgba(99,102,241,0.12)] relative z-10"
                     style={{
                         background: 'linear-gradient(135deg, rgba(239,246,255,0.7) 0%, rgba(238,232,255,0.5) 40%, rgba(255,237,225,0.4) 100%)',
                     }}
@@ -175,7 +212,6 @@ export const SplineSection: React.FC = () => {
                     <Suspense fallback={<LoadingFallback />}>
                         {shouldLoadSpline ? (
                             <Spline
-                                key={sceneKey}
                                 scene={SCENE_URL}
                                 style={{ width: '100%', height: '100%' }}
                                 onLoad={handleLoad}

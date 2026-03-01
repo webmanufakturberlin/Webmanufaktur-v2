@@ -18,6 +18,7 @@ const translations: Record<string, Record<Lang, string>> = {
     'nav.login': { en: 'Login', de: 'Anmelden' },
     'nav.startProject': { en: 'Start Project', de: 'Projekt starten' },
     'nav.search': { en: 'Search...', de: 'Suchen...' },
+    'nav.references': { en: 'References', de: 'Referenzen' },
     'nav.subtitle': { en: 'Berlin Studio', de: 'Berlin Studio' },
 
     // Navbar mega menu - Solutions
@@ -51,7 +52,7 @@ const translations: Record<string, Record<Lang, string>> = {
     'hero.badge': { en: 'Made in Berlin', de: 'Made in Berlin' },
     'hero.headline1': { en: 'WE CODE', de: 'WIR GESTALTEN' },
     'hero.headline2': { en: 'VISION.', de: 'VISION.' },
-    'hero.subtext': { en: 'Engineering high-performance digital infrastructure for the world\'s most ambitious brands.', de: 'Hochleistungs-Digitalinfrastruktur für die ambitioniertesten Marken der Welt.' },
+    'hero.subtext': { en: 'All that’s missing is yours.', de: 'Alles, was uns dazu noch fehlt, ist deine.' },
     'hero.caseStudies': { en: 'Case Studies', de: 'Referenzen' },
 
     // Creativity Trigger

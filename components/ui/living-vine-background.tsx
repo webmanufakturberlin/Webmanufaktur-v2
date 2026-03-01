@@ -9,6 +9,7 @@ interface LivingVineBackgroundProps {
     branchColor?: string;
     maxBranchLength?: number;
     className?: string;
+    isHomeView?: boolean;
 }
 
 const LivingVineBackground: React.FC<LivingVineBackgroundProps> = ({
@@ -17,6 +18,7 @@ const LivingVineBackground: React.FC<LivingVineBackgroundProps> = ({
     branchColor = "rgba(16, 185, 129, 0.6)",
     maxBranchLength = 50,
     className = "",
+    isHomeView = true,
 }) => {
     const { t } = useI18n();
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -32,7 +34,16 @@ const LivingVineBackground: React.FC<LivingVineBackgroundProps> = ({
     const lastMouseMoveRef = useRef<number>(Date.now());
     const isActiveRef = useRef<boolean>(false);
 
+    // Detect mobile — skip canvas on small screens for performance
+    const [isMobile, setIsMobile] = useState(false);
     useEffect(() => {
+        setIsMobile(window.matchMedia('(max-width: 768px)').matches);
+    }, []);
+
+    useEffect(() => {
+        // Skip canvas animation entirely on mobile
+        if (isMobile) return;
+
         let destroyed = false;
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -86,16 +97,13 @@ const LivingVineBackground: React.FC<LivingVineBackgroundProps> = ({
             pathHistoryRef.current.push({ ...mousePosRef.current });
             if (pathHistoryRef.current.length > 100) pathHistoryRef.current.shift();
 
-            // Trigger branches
             if (Math.random() > 0.95) {
                 branchesRef.current.push(new Branch(e.clientX, e.clientY));
             }
 
-            // Track activity for the "Creativity Trigger"
             const now = Date.now();
             const timeDiff = now - lastMouseMoveRef.current;
 
-            // If movement is relatively continuous and user is not scrolled down
             if (timeDiff < 200 && window.scrollY < 300) {
                 isActiveRef.current = true;
             } else {
@@ -112,24 +120,22 @@ const LivingVineBackground: React.FC<LivingVineBackgroundProps> = ({
         window.addEventListener("mousemove", handleMouseMove);
         window.addEventListener("resize", handleResize);
 
-        // Timer for interaction accumulation
+        // Creativity popup timer — 20s of active interaction required
         const timer = setInterval(() => {
-            if (isActiveRef.current && !hasTriggered) {
+            if (isActiveRef.current && isHomeView && !hasTriggered) {
                 interactionTimeRef.current += 1;
-                if (interactionTimeRef.current >= 6) { // 6 seconds of active play
+                if (interactionTimeRef.current >= 20) {
                     setShowPopup(true);
                     setHasTriggered(true);
                     isActiveRef.current = false;
                 }
             } else if (!hasTriggered) {
-                // Slowly decay progress if inactive
                 interactionTimeRef.current = Math.max(0, interactionTimeRef.current - 0.2);
             }
         }, 1000);
 
         const animate = () => {
             if (destroyed) return;
-            // White clearing for trailing effect
             ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
             ctx.fillRect(0, 0, width, height);
 
@@ -162,7 +168,7 @@ const LivingVineBackground: React.FC<LivingVineBackgroundProps> = ({
             window.removeEventListener("resize", handleResize);
             cancelAnimationFrame(animationFrameIdRef.current);
         };
-    }, [vineColor, branchColor, maxBranchLength, hasTriggered]);
+    }, [vineColor, branchColor, maxBranchLength, hasTriggered, isMobile]);
 
     const scrollToContact = () => {
         setShowPopup(false);
@@ -174,7 +180,10 @@ const LivingVineBackground: React.FC<LivingVineBackgroundProps> = ({
             className={`relative min-h-screen w-full overflow-hidden bg-white ${className}`}
             style={{ backgroundColor: "#ffffff" }}
         >
-            <canvas ref={canvasRef} className="fixed inset-0 block h-full w-full z-0 pointer-events-none" />
+            {/* Only render canvas on desktop */}
+            {!isMobile && (
+                <canvas ref={canvasRef} className="fixed inset-0 block h-full w-full z-0 pointer-events-none" />
+            )}
 
             <AnimatePresence>
                 {showPopup && (
@@ -182,36 +191,32 @@ const LivingVineBackground: React.FC<LivingVineBackgroundProps> = ({
                         initial={{ opacity: 0, scale: 0.9, y: 50, x: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: 20, x: 10 }}
-                        className="fixed bottom-10 right-4 sm:right-10 z-[100] w-[90%] sm:w-auto max-w-lg"
+                        className="fixed bottom-10 right-4 sm:right-10 z-[100] w-[90%] sm:w-auto max-w-sm"
                     >
-                        <div className="relative group p-6 sm:p-8 rounded-[2rem] bg-white/70 backdrop-blur-2xl border border-emerald-100 shadow-[0_20px_50px_rgba(16,185,129,0.1)] overflow-hidden">
-                            {/* Decorative background glow */}
-                            <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-400/10 blur-[60px] rounded-full group-hover:bg-emerald-400/20 transition-colors duration-700" />
-
+                        <div className="relative group p-5 sm:p-6 rounded-2xl bg-white/80 backdrop-blur-2xl border border-emerald-100 shadow-lg overflow-hidden">
                             <button
                                 onClick={() => setShowPopup(false)}
-                                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-ink hover:bg-gray-100 rounded-full transition-all"
+                                className="absolute top-3 right-3 p-1.5 text-gray-400 hover:text-ink hover:bg-gray-100 rounded-full transition-all"
+                                aria-label="Close"
                             >
-                                <X size={18} />
+                                <X size={16} />
                             </button>
 
-                            <div className="flex items-start gap-4 relative z-10">
-                                <div className="p-3 rounded-2xl bg-emerald-50 text-emerald-600">
-                                    <Sparkles size={24} className="animate-pulse" />
+                            <div className="flex items-start gap-3 relative z-10">
+                                <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600 flex-shrink-0">
+                                    <Sparkles size={20} />
                                 </div>
-                                <div className="flex-1">
-                                    <h3 className="text-lg sm:text-xl font-bold text-ink mb-2 pr-6">
+                                <div className="flex-1 pr-4">
+                                    <p className="text-sm font-medium text-gray-700 mb-3">
                                         {t('creativity.message')}
-                                    </h3>
-                                    <div className="flex flex-wrap items-center gap-4 mt-4">
-                                        <button
-                                            onClick={scrollToContact}
-                                            className="px-6 py-2.5 bg-ink text-white rounded-full text-sm font-bold hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
-                                        >
-                                            <MessageSquare size={16} />
-                                            {t('creativity.action')}
-                                        </button>
-                                    </div>
+                                    </p>
+                                    <button
+                                        onClick={scrollToContact}
+                                        className="px-4 py-2 bg-ink text-white rounded-full text-xs font-bold hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5"
+                                    >
+                                        <MessageSquare size={14} />
+                                        {t('creativity.action')}
+                                    </button>
                                 </div>
                             </div>
                         </div>

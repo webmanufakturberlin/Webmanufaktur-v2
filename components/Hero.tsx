@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { ArrowRight, Terminal, ChevronDown } from 'lucide-react';
 import { useI18n } from '../i18n';
 import { Waves } from './ui/wave-background';
@@ -40,33 +40,72 @@ const MagneticBtn: React.FC<{
     );
 };
 
-// Shimmer text — each word shimmers on hover with stagger
-const ShimmerText: React.FC<{ text: string; className?: string }> = ({ text, className = '' }) => {
-    const [active, setActive] = useState(false);
-    const words = text.split(' ');
+// Attached SVG - Scaled TV Tower on the left
+const BerlinTVTower: React.FC = () => {
+    const [scrollY, setScrollY] = useState(0);
+
+    useEffect(() => {
+        const onScroll = () => setScrollY(window.scrollY);
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
+
+    const parallaxY = scrollY * 0.08;
 
     return (
-        <p
-            className={className}
-            onMouseEnter={() => setActive(true)}
-            onMouseLeave={() => setActive(false)}
+        <div
+            className="hidden sm:block absolute left-[-2rem] md:left-4 lg:left-8 bottom-10 md:bottom-20 z-[5] pointer-events-none select-none opacity-40 scale-[1.5] origin-bottom-left"
+            style={{ transform: `translateY(${parallaxY}px)` }}
         >
-            {words.map((word, i) => (
-                <React.Fragment key={i}>
-                    <span
-                        className={`shimmer-word${active ? ' active' : ''}`}
-                        style={{ animationDelay: active ? `${i * 40}ms` : '0ms' }}
-                    >
-                        {word}
-                    </span>
-                    {i < words.length - 1 ? ' ' : ''}
-                </React.Fragment>
-            ))}
-        </p>
+            <svg
+                width="48"
+                height="260"
+                viewBox="0 0 48 260"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-12 h-64"
+            >
+                {/* Antenna tip with glow */}
+                <circle cx="24" cy="6" r="3" className="tv-tower-glow" fill="none" stroke="#6366f1" strokeWidth="1.5" />
+                <circle cx="24" cy="6" r="1.5" fill="#6366f1" className="tv-tower-glow" />
+
+                {/* Antenna mast */}
+                <line x1="24" y1="8" x2="24" y2="70" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" />
+
+                {/* Sphere (observation deck) */}
+                <ellipse cx="24" cy="85" rx="18" ry="22" stroke="#94a3b8" strokeWidth="1.5" fill="none" />
+                <ellipse cx="24" cy="82" rx="14" ry="8" stroke="#94a3b8" strokeWidth="1" fill="none" opacity="0.5" />
+                <ellipse cx="24" cy="90" rx="16" ry="6" stroke="#94a3b8" strokeWidth="1" fill="none" opacity="0.4" />
+
+                {/* Restaurant ring */}
+                <ellipse cx="24" cy="100" rx="12" ry="4" stroke="#94a3b8" strokeWidth="1.2" fill="none" />
+
+                {/* Lower shaft */}
+                <line x1="20" y1="107" x2="18" y2="200" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" />
+                <line x1="28" y1="107" x2="30" y2="200" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" />
+
+                {/* Cross supports */}
+                <line x1="19" y1="130" x2="29" y2="140" stroke="#94a3b8" strokeWidth="0.8" opacity="0.5" />
+                <line x1="29" y1="130" x2="19" y2="140" stroke="#94a3b8" strokeWidth="0.8" opacity="0.5" />
+                <line x1="18.5" y1="160" x2="29.5" y2="170" stroke="#94a3b8" strokeWidth="0.8" opacity="0.5" />
+                <line x1="29.5" y1="160" x2="18.5" y2="170" stroke="#94a3b8" strokeWidth="0.8" opacity="0.5" />
+
+                {/* Base widening */}
+                <line x1="18" y1="200" x2="12" y2="250" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" />
+                <line x1="30" y1="200" x2="36" y2="250" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" />
+
+                {/* Ground line */}
+                <line x1="8" y1="250" x2="40" y2="250" stroke="#94a3b8" strokeWidth="1" opacity="0.4" />
+            </svg>
+        </div>
     );
 };
 
-export const Hero: React.FC = () => {
+interface HeroProps {
+    onReferences?: () => void;
+}
+
+export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
     const { t } = useI18n();
 
     const scrollToContact = () => {
@@ -74,11 +113,15 @@ export const Hero: React.FC = () => {
     };
 
     return (
-        <section className="relative min-h-[90vh] flex flex-col items-center justify-center pt-32 pb-4 overflow-hidden">
+        <section className="relative min-h-screen flex flex-col items-center justify-center pt-24 md:pt-32 pb-4 overflow-hidden">
             {/* WAVES BACKGROUND */}
-            <div className="absolute inset-0 z-[1] opacity-20 pointer-events-none select-none">
+            {/* Removed pointer-events-none so it's instantly interactive on load */}
+            <div className="absolute inset-0 z-[1] opacity-25 select-none">
                 <Waves strokeColor="#334155" backgroundColor="transparent" />
             </div>
+
+            {/* Scaled Left SVG Graphic */}
+            <BerlinTVTower />
 
             <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 text-center">
                 <div className="flex flex-col items-center">
@@ -106,9 +149,16 @@ export const Hero: React.FC = () => {
                         />
                     </div>
 
-                    {/* Headline */}
-                    <div className="relative mb-8">
-                        <h1 className="text-4xl sm:text-6xl md:text-9xl font-black tracking-tighter leading-[0.9] select-none">
+                    {/* Headline - Now with mouse tracking shimmer */}
+                    <div
+                        className="relative mb-10 group/headline inline-block mx-auto cursor-default"
+                        onMouseMove={(e) => {
+                            const rect = e.currentTarget.getBoundingClientRect();
+                            e.currentTarget.style.setProperty('--mouseX', `${e.clientX - rect.left}px`);
+                            e.currentTarget.style.setProperty('--mouseY', `${e.clientY - rect.top}px`);
+                        }}
+                    >
+                        <h1 className="text-4xl sm:text-6xl md:text-9xl font-black tracking-tighter leading-[0.9] select-none transition-opacity duration-300 group-hover/headline:opacity-80">
                             <motion.span
                                 initial={{ x: '100%', opacity: 0 }}
                                 animate={{ x: 0, opacity: 1 }}
@@ -126,14 +176,28 @@ export const Hero: React.FC = () => {
                                 {t('hero.headline2')}
                             </motion.span>
                         </h1>
+
+                        {/* Mouse Tracking Shimmer Overlay */}
+                        <h1
+                            className="absolute inset-0 text-4xl sm:text-6xl md:text-9xl font-black tracking-tighter leading-[0.9] select-none opacity-0 group-hover/headline:opacity-100 transition-opacity duration-300 pointer-events-none"
+                            style={{
+                                backgroundImage: 'radial-gradient(250px circle at var(--mouseX, 50%) var(--mouseY, 50%), #ffffff, transparent 80%)',
+                                WebkitBackgroundClip: 'text',
+                                backgroundClip: 'text',
+                                color: 'transparent',
+                            }}
+                            aria-hidden="true"
+                        >
+                            <span className="block">{t('hero.headline1')}</span>
+                            <span className="inline-block pb-2">{t('hero.headline2')}</span>
+                        </h1>
                     </div>
 
-                    {/* Subtext — word-by-word shimmer on hover */}
+                    {/* Subtext — plain text, increased size */}
                     <div>
-                        <ShimmerText
-                            text={t('hero.subtext')}
-                            className="max-w-2xl text-lg sm:text-xl md:text-2xl text-gray-500 leading-relaxed mb-10 mx-auto font-light cursor-default"
-                        />
+                        <p className="max-w-2xl text-lg sm:text-xl md:text-3xl text-gray-500 leading-relaxed mb-10 mx-auto font-light cursor-default">
+                            {t('hero.subtext')}
+                        </p>
                     </div>
 
                     {/* Buttons */}
@@ -150,9 +214,15 @@ export const Hero: React.FC = () => {
                             </div>
                         </MagneticBtn>
 
-                        {/* Secondary — sliding gradient underline */}
+                        {/* Secondary — links to References */}
                         <a
-                            href="#work"
+                            href="#references"
+                            onClick={(e) => {
+                                if (onReferences) {
+                                    e.preventDefault();
+                                    onReferences();
+                                }
+                            }}
                             className="relative group min-w-[180px] text-sm font-bold uppercase tracking-widest text-gray-500 hover:text-gray-900 transition-all px-6 py-4 hover:bg-white hover:shadow-lg rounded-full border border-transparent hover:border-gray-100 flex items-center justify-center gap-2 active:scale-95 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 hover:-translate-y-0.5 duration-300 overflow-hidden"
                         >
                             <span

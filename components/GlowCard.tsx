@@ -27,10 +27,10 @@ export const GlowCard: React.FC<GlowCardProps> = ({
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
 
-    // 3D tilt calculation
-    const tiltX = ((y - centerY) / centerY) * -8;
-    const tiltY = ((x - centerX) / centerX) * 8;
-    divRef.current.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.03)`;
+    // 2D Magnetic logic
+    const magneticX = ((x - centerX) / centerX) * 8;
+    const magneticY = ((y - centerY) / centerY) * 12;
+    divRef.current.style.transform = `translate(${magneticX}px, ${magneticY}px) scale(1.02)`;
 
     // Dynamic border glow
     if (borderRef.current) {
@@ -50,7 +50,7 @@ export const GlowCard: React.FC<GlowCardProps> = ({
   const handleMouseLeave = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (glowRef.current) glowRef.current.style.opacity = '0';
     if (divRef.current) {
-      divRef.current.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+      divRef.current.style.transform = 'translate(0px, 0px) scale(1)';
     }
     if (onMouseLeave) onMouseLeave();
   }, [onMouseLeave]);
@@ -63,26 +63,32 @@ export const GlowCard: React.FC<GlowCardProps> = ({
       onMouseLeave={handleMouseLeave}
       role="article"
       className={`
-        relative rounded-[2rem] border border-gray-200 bg-white backdrop-blur-xl overflow-hidden
-        shadow-md
+        relative rounded-[2rem] border border-gray-300 bg-white backdrop-blur-xl overflow-hidden
+        shadow-[0_4px_24px_rgba(0,0,0,0.1)]
         group
-        hover:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12),0_0_40px_rgba(99,102,241,0.12)]
+        hover:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.15),0_0_40px_rgba(99,102,241,0.12)]
         ${className}
       `}
       style={{
         transition: 'transform 0.4s cubic-bezier(0.03, 0.98, 0.52, 0.99), box-shadow 0.5s ease, border-color 0.5s ease',
-        transformStyle: 'preserve-3d',
         willChange: 'transform',
       }}
     >
-      {/* 1. Rotating Border Beam Effect — multi-color, sharper */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-0">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-[conic-gradient(from_0deg,transparent_0_300deg,rgba(59,130,246,0.7)_320deg,rgba(139,92,246,0.9)_340deg,rgba(249,115,22,0.7)_355deg,transparent_360deg)] animate-spin-slow opacity-50" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-[conic-gradient(from_0deg,transparent_0_300deg,rgba(59,130,246,0.9)_320deg,rgba(139,92,246,1)_340deg,rgba(249,115,22,0.9)_355deg,transparent_360deg)] animate-spin-slow opacity-80" />
       </div>
 
-      {/* 2. Animated Gradient Border — visible rotating border on hover */}
+      {/* Outer blurred intense aura */}
       <div
-        className="absolute inset-0 rounded-[2rem] p-[1.5px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-[5] glow-border-rotate"
+        className="absolute -inset-2 rounded-[2.5rem] p-[4px] opacity-0 group-hover:opacity-40 transition-opacity duration-500 pointer-events-none z-[1] blur-xl glow-border-rotate"
+        style={{
+          background: 'conic-gradient(from var(--border-angle, 0deg), #3b82f6, #8b5cf6, #ec4899, #f97316, #3b82f6)'
+        }}
+      />
+
+      {/* Main thicker vibrant border layer */}
+      <div
+        className="absolute inset-0 rounded-[2rem] p-[3px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-[5] glow-border-rotate"
         style={{
           background: 'conic-gradient(from var(--border-angle, 0deg), #3b82f6, #8b5cf6, #ec4899, #f97316, #3b82f6)',
           mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
