@@ -30,18 +30,21 @@ export function Waves({
 }: WavesProps) {
     const containerRef = useRef<HTMLDivElement>(null)
     const svgRef = useRef<SVGSVGElement>(null)
+    const centerX = typeof window !== 'undefined' ? window.innerWidth / 2 : 0
+    const centerY = typeof window !== 'undefined' ? window.innerHeight / 2 : 0
     const mouseRef = useRef({
-        x: -10,
-        y: 0,
-        lx: 0,
-        ly: 0,
-        sx: 0,
-        sy: 0,
+        x: centerX,
+        y: centerY,
+        lx: centerX,
+        ly: centerY,
+        sx: centerX,
+        sy: centerY,
         v: 0,
-        vs: 0,
+        vs: 12,
         a: 0,
-        set: false,
+        set: true,
     })
+    const hasRealMouseInput = useRef(false)
     const pathsRef = useRef<SVGPathElement[]>([])
     const linesRef = useRef<Point[][]>([])
     const noiseRef = useRef<((x: number, y: number) => number) | null>(null)
@@ -156,19 +159,12 @@ export function Waves({
     const updateMousePosition = (x: number, y: number) => {
         if (!boundingRef.current) return
 
+        hasRealMouseInput.current = true
+
         // Global mouse position relative to the document
         const mouse = mouseRef.current
         mouse.x = x - boundingRef.current.left
         mouse.y = y - boundingRef.current.top
-
-        if (!mouse.set) {
-            mouse.sx = mouse.x
-            mouse.sy = mouse.y
-            mouse.lx = mouse.x
-            mouse.ly = mouse.y
-
-            mouse.set = true
-        }
 
         if (containerRef.current) {
             containerRef.current.style.setProperty('--x', `${mouse.sx}px`)
@@ -252,6 +248,16 @@ export function Waves({
     const tick = (time: number) => {
         const { current: mouse } = mouseRef
 
+        // Auto-ripple: gentle oscillation before real mouse input
+        if (!hasRealMouseInput.current && boundingRef.current) {
+            const cx = boundingRef.current.width / 2
+            const cy = boundingRef.current.height / 2
+            mouse.x = cx + Math.sin(time * 0.001) * 60
+            mouse.y = cy + Math.cos(time * 0.0008) * 40
+            mouse.vs = 8 + Math.sin(time * 0.002) * 4
+            mouse.a = time * 0.001
+        }
+
         mouse.sx += (mouse.x - mouse.sx) * 1;
         mouse.sy += (mouse.y - mouse.sy) * 1;
 
@@ -293,7 +299,7 @@ export function Waves({
                 width: '100%',
                 height: '100%',
                 overflow: 'hidden',
-                '--x': '-0.5rem',
+                '--x': '50%',
                 '--y': '50%',
             } as React.CSSProperties}
         >

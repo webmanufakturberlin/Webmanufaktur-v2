@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { ArrowRight, Terminal, ChevronDown } from 'lucide-react';
 import { useI18n } from '../i18n';
-import { Waves } from './ui/wave-background';
+import VoxelBerlinBackground from './ui/VoxelBerlinBackground';
 import { motion } from 'framer-motion';
 
 // Magnetic CTA button — follows cursor slightly with spring return
@@ -40,67 +40,6 @@ const MagneticBtn: React.FC<{
     );
 };
 
-// Attached SVG - Scaled TV Tower on the left
-const BerlinTVTower: React.FC = () => {
-    const [scrollY, setScrollY] = useState(0);
-
-    useEffect(() => {
-        const onScroll = () => setScrollY(window.scrollY);
-        window.addEventListener('scroll', onScroll, { passive: true });
-        return () => window.removeEventListener('scroll', onScroll);
-    }, []);
-
-    const parallaxY = scrollY * 0.08;
-
-    return (
-        <div
-            className="hidden sm:block absolute left-[-2rem] md:left-4 lg:left-8 bottom-10 md:bottom-20 z-[5] pointer-events-none select-none opacity-40 scale-[1.5] origin-bottom-left"
-            style={{ transform: `translateY(${parallaxY}px)` }}
-        >
-            <svg
-                width="48"
-                height="260"
-                viewBox="0 0 48 260"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-12 h-64"
-            >
-                {/* Antenna tip with glow */}
-                <circle cx="24" cy="6" r="3" className="tv-tower-glow" fill="none" stroke="#6366f1" strokeWidth="1.5" />
-                <circle cx="24" cy="6" r="1.5" fill="#6366f1" className="tv-tower-glow" />
-
-                {/* Antenna mast */}
-                <line x1="24" y1="8" x2="24" y2="70" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" />
-
-                {/* Sphere (observation deck) */}
-                <ellipse cx="24" cy="85" rx="18" ry="22" stroke="#94a3b8" strokeWidth="1.5" fill="none" />
-                <ellipse cx="24" cy="82" rx="14" ry="8" stroke="#94a3b8" strokeWidth="1" fill="none" opacity="0.5" />
-                <ellipse cx="24" cy="90" rx="16" ry="6" stroke="#94a3b8" strokeWidth="1" fill="none" opacity="0.4" />
-
-                {/* Restaurant ring */}
-                <ellipse cx="24" cy="100" rx="12" ry="4" stroke="#94a3b8" strokeWidth="1.2" fill="none" />
-
-                {/* Lower shaft */}
-                <line x1="20" y1="107" x2="18" y2="200" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" />
-                <line x1="28" y1="107" x2="30" y2="200" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" />
-
-                {/* Cross supports */}
-                <line x1="19" y1="130" x2="29" y2="140" stroke="#94a3b8" strokeWidth="0.8" opacity="0.5" />
-                <line x1="29" y1="130" x2="19" y2="140" stroke="#94a3b8" strokeWidth="0.8" opacity="0.5" />
-                <line x1="18.5" y1="160" x2="29.5" y2="170" stroke="#94a3b8" strokeWidth="0.8" opacity="0.5" />
-                <line x1="29.5" y1="160" x2="18.5" y2="170" stroke="#94a3b8" strokeWidth="0.8" opacity="0.5" />
-
-                {/* Base widening */}
-                <line x1="18" y1="200" x2="12" y2="250" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" />
-                <line x1="30" y1="200" x2="36" y2="250" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" />
-
-                {/* Ground line */}
-                <line x1="8" y1="250" x2="40" y2="250" stroke="#94a3b8" strokeWidth="1" opacity="0.4" />
-            </svg>
-        </div>
-    );
-};
-
 interface HeroProps {
     onReferences?: () => void;
 }
@@ -113,15 +52,8 @@ export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
     };
 
     return (
-        <section className="relative min-h-screen flex flex-col items-center justify-center pt-24 md:pt-32 pb-4 overflow-hidden">
-            {/* WAVES BACKGROUND */}
-            {/* Removed pointer-events-none so it's instantly interactive on load */}
-            <div className="absolute inset-0 z-[1] opacity-25 select-none">
-                <Waves strokeColor="#334155" backgroundColor="transparent" />
-            </div>
-
-            {/* Scaled Left SVG Graphic */}
-            <BerlinTVTower />
+        <section id="hero-section" className="relative min-h-screen flex flex-col items-center justify-center pt-24 md:pt-32 pb-4 overflow-hidden">
+            <VoxelBerlinBackground />
 
             <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 text-center">
                 <div className="flex flex-col items-center">

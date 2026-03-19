@@ -40,6 +40,14 @@ const LivingVineBackground: React.FC<LivingVineBackgroundProps> = ({
         setIsMobile(window.matchMedia('(max-width: 768px)').matches);
     }, []);
 
+    // Reset interaction timer when leaving home view
+    useEffect(() => {
+        if (!isHomeView) {
+            interactionTimeRef.current = 0;
+            isActiveRef.current = false;
+        }
+    }, [isHomeView]);
+
     useEffect(() => {
         // Skip canvas animation entirely on mobile
         if (isMobile) return;
@@ -104,8 +112,22 @@ const LivingVineBackground: React.FC<LivingVineBackgroundProps> = ({
             const now = Date.now();
             const timeDiff = now - lastMouseMoveRef.current;
 
-            if (timeDiff < 200 && window.scrollY < 300) {
-                isActiveRef.current = true;
+            // Check if mouse is within the actual hero section bounds
+            const heroSection = document.getElementById('hero-section');
+            if (heroSection) {
+                const heroRect = heroSection.getBoundingClientRect();
+                const inHero = (
+                    e.clientY >= heroRect.top &&
+                    e.clientY <= heroRect.bottom &&
+                    e.clientX >= heroRect.left &&
+                    e.clientX <= heroRect.right
+                );
+
+                if (timeDiff < 200 && inHero) {
+                    isActiveRef.current = true;
+                } else {
+                    isActiveRef.current = false;
+                }
             } else {
                 isActiveRef.current = false;
             }
@@ -130,12 +152,17 @@ const LivingVineBackground: React.FC<LivingVineBackgroundProps> = ({
                     isActiveRef.current = false;
                 }
             } else if (!hasTriggered) {
-                interactionTimeRef.current = Math.max(0, interactionTimeRef.current - 0.2);
+                interactionTimeRef.current = Math.max(0, interactionTimeRef.current - 1);
             }
         }, 1000);
 
         const animate = () => {
             if (destroyed) return;
+            // Skip expensive drawing when hero is fully covered by content
+            if (window.scrollY > window.innerHeight * 1.5) {
+                animationFrameIdRef.current = requestAnimationFrame(animate);
+                return;
+            }
             ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
             ctx.fillRect(0, 0, width, height);
 

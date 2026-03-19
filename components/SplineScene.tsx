@@ -87,24 +87,20 @@ export const SplineSection: React.FC = () => {
         setTimeout(() => setIsPlaying(false), 3000);
     }, []);
 
-    // 1. "Slow and steady" background preload when user starts scrolling down
+    // 1. "Slow and steady" — preload Spline at idle priority immediately on mount
+    //    so it's fully ready before the user scrolls to this section
     useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 100 && !shouldLoadSpline) {
-                // Use requestIdleCallback to defer the heavy WebGL initialization
-                // until the browser is truly idle, preventing scroll stutter
-                if ('requestIdleCallback' in window) {
-                    (window as any).requestIdleCallback(() => setShouldLoadSpline(true), { timeout: 2000 });
-                } else {
-                    setTimeout(() => setShouldLoadSpline(true), 200);
-                }
-                window.removeEventListener('scroll', handleScroll);
-            }
-        };
-
-        handleScroll(); // Check immediately on mount
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => window.removeEventListener('scroll', handleScroll);
+        if (shouldLoadSpline) return;
+        if ('requestIdleCallback' in window) {
+            const id = (window as any).requestIdleCallback(
+                () => setShouldLoadSpline(true),
+                { timeout: 3000 }
+            );
+            return () => (window as any).cancelIdleCallback(id);
+        } else {
+            const timer = setTimeout(() => setShouldLoadSpline(true), 500);
+            return () => clearTimeout(timer);
+        }
     }, [shouldLoadSpline]);
 
     // 2. Play the animation when the section enters viewport (bidirectional)

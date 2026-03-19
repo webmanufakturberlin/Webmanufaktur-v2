@@ -1,0 +1,23 @@
+.design-liquid-glass {
+  --color-gallery: #FFFFFF;
+  --color-alabaster: #FAFAFA;
+  --color-silk: #F3F4F6;
+  --color-ink: #09090B;
+  --font-serif: "Cinzel", serif;
+  --font-mono: "IBM Plex Mono", monospace;
+
+  cursor: none;
+  background-color: var(--color-gallery);
+  color: var(--color-ink);
+  overflow-x: hidden;
+}
+
+/* Hide scrollbar for cleaner look */
+.design-liquid-glass ::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+.design-liquid-glass a, .design-liquid-glass button {
+  cursor: none;
+}

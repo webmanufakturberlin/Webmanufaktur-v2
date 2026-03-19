@@ -2,27 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* === Animated Border Angle (for GlowCard rotating gradient border) === */
-@property --border-angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
-}
-
-@keyframes border-rotate {
-  from {
-    --border-angle: 0deg;
-  }
-
-  to {
-    --border-angle: 360deg;
-  }
-}
-
-.glow-border-rotate {
-  animation: border-rotate 3s linear infinite;
-}
-
 /* === Base Reset & Globals === */
 *,
 *::before,
@@ -201,17 +180,6 @@ body {
 
   100% {
     box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
-  }
-}
-
-/* Badge holographic shimmer border */
-@keyframes badge-border-spin {
-  from {
-    --border-angle: 0deg;
-  }
-
-  to {
-    --border-angle: 360deg;
   }
 }
 

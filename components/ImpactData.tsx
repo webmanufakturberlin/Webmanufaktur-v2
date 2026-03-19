@@ -1,8 +1,8 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useState } from 'react';
 import { ArrowUpRight, ExternalLink, TrendingUp, Eye } from 'lucide-react';
 import { Reveal } from './Reveal';
 import { useI18n } from '../i18n';
-import { motion } from 'framer-motion';
+import { motion, useAnimationFrame } from 'framer-motion';
 
 // --- Icon animations use Framer Motion variants propagated from parent ---
 
@@ -61,6 +61,15 @@ const MagneticTiltCard: React.FC<{
 }> = ({ children, className, glowColor, borderColor }) => {
     const ref = useRef<HTMLDivElement>(null);
     const glowRef = useRef<HTMLDivElement>(null);
+    const borderRotateRef = useRef<HTMLDivElement>(null);
+    const [isTiltHovered, setIsTiltHovered] = useState(false);
+
+    // JS-driven border rotation — works in all browsers
+    useAnimationFrame((time) => {
+        if (!isTiltHovered || !borderRotateRef.current) return;
+        const angle = (time / 1000 * 120) % 360;
+        borderRotateRef.current.style.background = `conic-gradient(from ${angle}deg, ${borderColor}, transparent 40%, ${borderColor})`;
+    });
 
     const handleMouseMove = useCallback((e: React.MouseEvent) => {
         if (!ref.current) return;
@@ -82,7 +91,12 @@ const MagneticTiltCard: React.FC<{
         }
     }, [glowColor]);
 
+    const handleMouseEnter = useCallback(() => {
+        setIsTiltHovered(true);
+    }, []);
+
     const handleMouseLeave = useCallback(() => {
+        setIsTiltHovered(false);
         if (!ref.current) return;
         ref.current.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) translate(0, 0) scale(1)';
         if (glowRef.current) {
@@ -95,6 +109,7 @@ const MagneticTiltCard: React.FC<{
             ref={ref}
             className={className}
             onMouseMove={handleMouseMove}
+            onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             style={{
                 transition: 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)',
@@ -102,11 +117,12 @@ const MagneticTiltCard: React.FC<{
                 willChange: 'transform',
             }}
         >
-            {/* Animated gradient border on hover */}
+            {/* Animated gradient border on hover — JS-driven rotation */}
             <div
-                className="absolute inset-0 rounded-3xl p-[2px] opacity-0 hover-parent-glow transition-opacity duration-500 pointer-events-none z-0 glow-border-rotate"
+                ref={borderRotateRef}
+                className="absolute inset-0 rounded-3xl p-[2px] opacity-0 hover-parent-glow transition-opacity duration-500 pointer-events-none z-0"
                 style={{
-                    background: `conic-gradient(from var(--border-angle, 0deg), ${borderColor}, transparent 40%, ${borderColor})`,
+                    background: `conic-gradient(from 0deg, ${borderColor}, transparent 40%, ${borderColor})`,
                     mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
                     maskComposite: 'exclude',
                     WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',

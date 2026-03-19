@@ -11,7 +11,6 @@ import { References } from './components/References';
 import { BusinessAI } from './components/StylistAI';
 import { Reveal } from './components/Reveal';
 import { ServiceDetail } from './components/ServiceDetail';
-import LivingVineBackground from './components/ui/living-vine-background';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { KILabor } from './components/KILabor';
 import { motion, useInView } from 'framer-motion';
@@ -99,7 +98,11 @@ const SectionReveal: React.FC<{
                     : { duration: 0.45, ease: [0.4, 0, 0.6, 1] }           // Exit: quick, no bounce
             }
             className={className}
-            style={variant !== 'standard' ? { perspective: '2000px' } : {}}
+            style={{
+                ...(variant !== 'standard' ? { perspective: '2000px' } : {}),
+                contentVisibility: 'auto',
+                containIntrinsicSize: 'auto 600px',
+            } as React.CSSProperties}
         >
             {children}
         </motion.div>
@@ -172,7 +175,7 @@ const App: React.FC = () => {
     }, []);
 
     return (
-        <LivingVineBackground isHomeView={currentView === 'home'} className="min-h-screen text-ink selection:bg-black selection:text-white font-sans">
+        <div className="min-h-screen text-ink selection:bg-black selection:text-white font-sans">
             <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:text-ink focus:font-bold focus:outline-none focus:ring-2 focus:ring-blue-500">
                 Zum Hauptinhalt springen
             </a>
@@ -261,7 +264,7 @@ const App: React.FC = () => {
                     </div>
                 </main>
             )}
-        </LivingVineBackground>
+        </div>
     );
 };
 

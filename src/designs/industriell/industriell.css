@@ -1,0 +1,85 @@
+.design-industriell {
+  --color-matte-black: #121212;
+  --color-copper: #B87333;
+  --color-hivis-yellow: #EAB308;
+  --color-ash: #D1D5DB;
+  
+  --font-heading: "Teko", sans-serif;
+  --font-drama: "Exo 2", sans-serif;
+  --font-data: "Fira Code", monospace;
+
+  background-color: var(--color-matte-black);
+  color: var(--color-ash);
+  font-family: var(--font-drama);
+  /* Subtle grid background for the "drafting board / metal plate" feel */
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Mechanical Button Active State */
+.design-industriell .btn-mechanical {
+  transition: all 0.1s ease;
+  border-bottom-width: 4px;
+}
+.design-industriell .btn-mechanical:active {
+  transform: translateY(4px);
+  border-bottom-width: 0px;
+  margin-bottom: 4px;
+}
+
+/* Warning Stripe Pattern */
+.design-industriell .bg-warning-stripe {
+  background: repeating-linear-gradient(
+    45deg,
+    #121212,
+    #121212 20px,
+    #1a1a1a 20px,
+    #1a1a1a 40px
+  );
+}
+
+/* Inspection Light Card */
+.design-industriell .inspection-card {
+  position: relative;
+  overflow: hidden;
+}
+.design-industriell .inspection-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(184, 115, 51, 0.15),
+    transparent 40%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Blueprint Reveal */
+.design-industriell .blueprint-reveal {
+  position: relative;
+  overflow: hidden;
+}
+.design-industriell .blueprint-reveal img {
+  transition: all 0.4s ease;
+}
+.design-industriell .blueprint-reveal:hover img {
+  filter: grayscale(100%) invert(100%) contrast(150%);
+  mix-blend-mode: screen;
+}
+.design-industriell .blueprint-reveal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(18,18,18,0.2), rgba(18,18,18,0.8));
+  pointer-events: none;
+}
+.design-industriell .blueprint-reveal:hover::after {
+  background: rgba(18, 18, 18, 0.9);
+}

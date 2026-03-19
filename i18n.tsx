@@ -52,7 +52,8 @@ const translations: Record<string, Record<Lang, string>> = {
     'hero.badge': { en: 'Made in Berlin', de: 'Made in Berlin' },
     'hero.headline1': { en: 'WE CODE', de: 'WIR GESTALTEN' },
     'hero.headline2': { en: 'VISION.', de: 'VISION.' },
-    'hero.subtext': { en: 'All that’s missing is yours.', de: 'Alles, was uns dazu noch fehlt, ist deine.' },
+    'hero.subtitle': { en: 'Your Webmanufaktur for digital excellence', de: 'Ihre Webmanufaktur für digitale Exzellenz' },
+    'hero.subtext': { en: "All that's missing is yours.", de: 'Alles, was uns dazu noch fehlt, ist deine.' },
     'hero.caseStudies': { en: 'Case Studies', de: 'Referenzen' },
 
     // Creativity Trigger
@@ -176,7 +177,7 @@ const translations: Record<string, Record<Lang, string>> = {
     'about.badge': { en: 'Our Story', de: 'Unsere Geschichte' },
     'about.headline1': { en: 'We are', de: 'Wir sind' },
     'about.headline2': { en: 'WebManufaktur.', de: 'WebManufaktur.' },
-    'about.intro': { en: 'A Berlin-based digital studio crafting high-performance web experiences for ambitious brands worldwide.', de: 'Ein Berliner Digital-Studio, das hochperformante Web-Erlebnisse für ambitionierte Marken weltweit gestaltet.' },
+    'about.intro': { en: 'WebManufaktur — a Berlin-based digital studio crafting high-performance web experiences for ambitious brands worldwide.', de: 'WebManufaktur — ein Berliner Digital-Studio, das hochperformante Web-Erlebnisse für ambitionierte Marken weltweit gestaltet.' },
     'about.mission.title': { en: 'Our Mission', de: 'Unsere Mission' },
     'about.mission.desc': { en: 'We bridge the gap between design vision and technical execution. Every project is a chance to push boundaries.', de: 'Wir schließen die Lücke zwischen Design-Vision und technischer Umsetzung. Jedes Projekt ist eine Chance, Grenzen zu verschieben.' },
     'about.craft.title': { en: 'Code as Craft', de: 'Code als Handwerk' },
