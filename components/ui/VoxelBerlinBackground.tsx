@@ -181,14 +181,9 @@ const VoxelCity = () => {
         return group;
     }, []);
 
-    // Cinematic drone shot: slow lateral pan while looking at a target
-    // The target is shifted directly to the TV Tower (-5, 45, -50) to keep it perfectly centered.
-    useFrame(({ clock, camera }) => {
-        const elapsedTime = clock.getElapsedTime();
-        camera.position.x = 10 + Math.sin(elapsedTime * 0.1) * 15;
-        camera.lookAt(-5, 45, -50);
-    });
-
+    // We let OrbitControls handle the cinematic 360 rotation around the TV Tower
+    // No manual useFrame camera panning is needed here.
+    
     return <primitive object={cityGroup} />;
 };
 
@@ -197,7 +192,7 @@ export default function VoxelBerlinBackground() {
         <div className="absolute inset-0 z-[1] bg-[#a3dcfc] overflow-hidden pointer-events-none">
             <Canvas 
                 shadows 
-                camera={{ position: [10, 50, 10], fov: 50 }}
+                camera={{ position: [10, 52, 10], fov: 50 }}
                 gl={{ antialias: true, powerPreference: "high-performance" }}
                 className="w-full h-full"
             >
@@ -216,8 +211,7 @@ export default function VoxelBerlinBackground() {
 
                 <VoxelCity />
                 
-                {/* We removed autoRotate and instead use useFrame above for a highly curated cinematic pan 
-                    that keeps the TV tower perfectly framed in the center! */}
+                {/* 360 Rotation perfectly anchored to the TV Tower sphere */}
                 <OrbitControls 
                     target={[-5, 45, -50]}
                     enableDamping
@@ -226,6 +220,8 @@ export default function VoxelBerlinBackground() {
                     enableZoom={false}
                     enablePan={false}
                     enableRotate={false}
+                    autoRotate={true}
+                    autoRotateSpeed={0.5}
                 />
             </Canvas>
             
