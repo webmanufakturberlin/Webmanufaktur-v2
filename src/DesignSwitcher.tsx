@@ -86,14 +86,14 @@ const DesignSwitcher: React.FC = () => {
         {!isOpen && (
           <div className="group flex flex-col items-end gap-2 relative">
             {/* Attention-grabbing Arrow Indicator */}
-            <div className="absolute bottom-[110%] mb-4 left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce pointer-events-none">
+            <div className="absolute bottom-[110%] mb-4 right-0 flex flex-col items-end animate-bounce pointer-events-none">
               <div className="bg-blue-600 text-white text-[10px] font-bold uppercase tracking-widest font-mono py-1 px-3 rounded-md shadow-[0_0_15px_rgba(37,99,235,0.7)] mb-1 whitespace-nowrap">
                 Design Switcher
               </div>
               <svg 
                 width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
                 strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" 
-                className="text-blue-500 drop-shadow-[0_0_8px_rgba(37,99,235,0.8)]"
+                className="text-blue-500 drop-shadow-[0_0_8px_rgba(37,99,235,0.8)] mr-3 md:mr-4"
               >
                 <path d="M12 5v14M19 12l-7 7-7-7"/>
               </svg>
