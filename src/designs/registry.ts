@@ -25,5 +25,13 @@ export const DESIGN_VARIANTS: DesignVariant[] = [
     component: React.lazy(() => import('./liquid-glass/LiquidGlassApp')),
     cssClass: 'design-liquid-glass',
     fonts: ['https://fonts.googleapis.com/css2?family=Cinzel:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@300;400&display=swap']
+  },
+  {
+    id: 'schlicht-spielerisch',
+    name: 'Schlicht & Spielerisch',
+    description: 'Brutalistisches Voxel-Grid mit Domino-Effekten',
+    component: React.lazy(() => import('./schlicht-spielerisch/SchlichtApp')),
+    cssClass: 'design-schlicht',
+    fonts: ['https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&family=Outfit:wght@400;700;900&display=swap']
   }
 ];

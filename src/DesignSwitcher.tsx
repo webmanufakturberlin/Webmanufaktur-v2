@@ -9,9 +9,9 @@ const DesignSwitcher: React.FC = () => {
   const [isInitializing, setIsInitializing] = useState(true);
   const activeDesign = DESIGN_VARIANTS.find(d => d.id === activeDesignId);
 
-  // Load from local storage on mount
+  // Load from session storage on mount
   useEffect(() => {
-    const savedDesign = localStorage.getItem('wmb-design');
+    const savedDesign = sessionStorage.getItem('wmb-design');
     if (savedDesign && DESIGN_VARIANTS.some(d => d.id === savedDesign)) {
       setActiveDesignId(savedDesign);
     }
@@ -56,11 +56,11 @@ const DesignSwitcher: React.FC = () => {
   }, [activeDesignId, activeDesign]);
 
   const handleSelectDesign = (id: string | null) => {
-    // Save choice to localStorage FIRST
+    // Save choice to sessionStorage FIRST
     if (id) {
-      localStorage.setItem('wmb-design', id);
+      sessionStorage.setItem('wmb-design', id);
     } else {
-      localStorage.removeItem('wmb-design');
+      sessionStorage.removeItem('wmb-design');
     }
     
     // Hard reload to fully clear WebGL contexts from previous design.
