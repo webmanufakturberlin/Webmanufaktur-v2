@@ -40,13 +40,8 @@ export const getStrategyAdvice = async (userPrompt: string): Promise<string> => 
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      const msg = (errorData.error && errorData.error.message) || '';
-      if (response.status === 400) throw new Error(`[400 Bad Request] ${msg}`);
-      if (response.status === 401) throw new Error(`[401 Unauthorized] API-Key ungültig oder nicht gesetzt. ${msg}`);
-      if (response.status === 403) throw new Error(`[403 Forbidden] API-Key hat keine Berechtigung. ${msg}`);
-      if (response.status === 429) throw new Error(`[429 Rate Limit] Zu viele Anfragen. ${msg}`);
-      if (response.status === 500) throw new Error(`[500 Server Error] Google-Server-Fehler. ${msg}`);
-      throw new Error(`[HTTP ${response.status}] ${msg}`);
+      const msg = (errorData.error && errorData.error.message) || 'API request failed';
+      throw new Error(msg);
     }
 
     const data = await response.json();
