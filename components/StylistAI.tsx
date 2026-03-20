@@ -10,6 +10,7 @@ export const BusinessAI: React.FC = () => {
   const [response, setResponse] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
   const lastPromptRef = useRef('');
 
   const handleAsk = async (e?: React.FormEvent) => {
@@ -21,13 +22,16 @@ export const BusinessAI: React.FC = () => {
     setLoading(true);
     setResponse(null);
     setError(false);
+    setErrorDetail(null);
 
     try {
       const advice = await getStrategyAdvice(currentPrompt);
       setResponse(advice);
-    } catch {
+    } catch (err) {
       setError(true);
-      setResponse(t('ai.errorMsg'));
+      const msg = err instanceof Error ? err.message : String(err);
+      setErrorDetail(msg);
+      setResponse(msg);
     } finally {
       setLoading(false);
     }

@@ -40,16 +40,21 @@ export const getStrategyAdvice = async (userPrompt: string): Promise<string> => 
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error((errorData.error && errorData.error.message) || 'API request failed');
+      const msg = (errorData.error && errorData.error.message) || '';
+      if (response.status === 400) throw new Error(`[400 Bad Request] ${msg}`);
+      if (response.status === 401) throw new Error(`[401 Unauthorized] API-Key ungültig oder nicht gesetzt. ${msg}`);
+      if (response.status === 403) throw new Error(`[403 Forbidden] API-Key hat keine Berechtigung. ${msg}`);
+      if (response.status === 429) throw new Error(`[429 Rate Limit] Zu viele Anfragen. ${msg}`);
+      if (response.status === 500) throw new Error(`[500 Server Error] Google-Server-Fehler. ${msg}`);
+      throw new Error(`[HTTP ${response.status}] ${msg}`);
     }
 
     const data = await response.json();
 
-    // Extract the text from the response
     if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
       return data.candidates[0].content.parts[0].text || 'Analyzing market data...';
     } else {
-      throw new Error('Unexpected response format from AI.');
+      throw new Error(`[Unexpected Response] ${JSON.stringify(data).substring(0, 200)}`);
     }
   } catch (error) {
     console.error('Gemini API Error:', error);
