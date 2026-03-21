@@ -33,5 +33,13 @@ export const DESIGN_VARIANTS: DesignVariant[] = [
     component: React.lazy(() => import('./schlicht-spielerisch/SchlichtApp')),
     cssClass: 'design-schlicht',
     fonts: ['https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&family=Outfit:wght@400;700;900&display=swap']
+  },
+  {
+    id: 'brutalist-glass',
+    name: 'Brutalist Glass',
+    description: 'Brutalistischer Beton trifft auf Neon-Acid und Glas-Monolithen',
+    component: React.lazy(() => import('./brutalist-glass/BrutalistGlassApp')),
+    cssClass: 'design-brutalist-glass',
+    fonts: ['https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&family=Oswald:wght@700&display=swap']
   }
 ];
