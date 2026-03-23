@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // REQUIRED: Set GEMINI_API_KEY as a Vercel Environment Variable
-// In Vercel Dashboard: Settings → Environment Variables → Add "GEMINI_API_KEY"
+// In Vercel Dashboard: Settings > Environment Variables > Add "GEMINI_API_KEY"
 
 // Simple in-memory rate limiter (per-IP, resets on cold start)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -32,23 +32,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method not allowed', code: 'METHOD_NOT_ALLOWED' });
   }
 
   // Rate limiting
   const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || 'unknown';
   if (isRateLimited(ip)) {
-    return res.status(429).json({ error: 'Too many requests. Please try again later.' });
+    return res.status(429).json({
+      error: 'Zu viele Anfragen. Bitte warte einen Moment.',
+      code: 'RATE_LIMITED',
+    });
   }
 
   // Input validation
   const { prompt } = req.body || {};
-  if (!prompt || typeof prompt !== 'string') {
-    return res.status(400).json({ error: 'Invalid prompt' });
+  if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
+    return res.status(400).json({
+      error: 'Bitte gib eine Frage ein.',
+      code: 'INVALID_PROMPT',
+    });
   }
 
   if (prompt.length > 500) {
-    return res.status(400).json({ error: 'Prompt too long (max 500 characters)' });
+    return res.status(400).json({
+      error: 'Deine Nachricht ist zu lang (max. 500 Zeichen).',
+      code: 'PROMPT_TOO_LONG',
+    });
   }
 
   // Sanitize input
@@ -56,7 +65,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: 'API key not configured' });
+    console.error('GEMINI_API_KEY is not set in environment variables');
+    return res.status(500).json({
+      error: 'Der KI-Service ist nicht konfiguriert.',
+      code: 'API_KEY_MISSING',
+    });
   }
 
   try {
@@ -75,10 +88,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     return res.status(200).json({ text: response.text || 'Analyzing market data...' });
-  } catch (error) {
-    console.error('Gemini API Error:', error);
+  } catch (error: any) {
+    console.error('Gemini API Error:', error?.message || error);
+
+    // Distinguish between connectivity and API errors
+    if (error?.message?.includes('fetch') || error?.message?.includes('ECONNREFUSED') || error?.message?.includes('network')) {
+      return res.status(503).json({
+        error: 'Der KI-Service ist momentan nicht erreichbar.',
+        code: 'AI_UNAVAILABLE',
+      });
+    }
+
     return res.status(500).json({
-      error: 'Verbindung zum KI-Berater fehlgeschlagen. Bitte versuche es später erneut.',
+      error: 'Bei der Verarbeitung ist ein Fehler aufgetreten.',
+      code: 'AI_ERROR',
     });
   }
 }

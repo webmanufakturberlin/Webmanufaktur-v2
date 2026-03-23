@@ -1,12 +1,18 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAppStore } from '../store';
 import gsap from 'gsap';
 
 export const CustomCursor = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
   const { isHoveringInteractive } = useAppStore();
+  const [isTouch, setIsTouch] = useState(false);
 
   useEffect(() => {
+    setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  }, []);
+
+  useEffect(() => {
+    if (isTouch) return;
     const cursor = cursorRef.current;
     if (!cursor) return;
 
@@ -21,7 +27,9 @@ export const CustomCursor = () => {
 
     window.addEventListener('mousemove', onMouseMove);
     return () => window.removeEventListener('mousemove', onMouseMove);
-  }, []);
+  }, [isTouch]);
+
+  if (isTouch) return null;
 
   return (
     <div

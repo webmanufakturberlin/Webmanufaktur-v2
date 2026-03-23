@@ -18,16 +18,18 @@ export function ZoomParallax({ images }: ZoomParallaxProps) {
 		offset: ['start start', 'end end'],
 	});
 
-	const scale4 = useTransform(scrollYProgress, [0, 1], [1, 4]);
-	const scale5 = useTransform(scrollYProgress, [0, 1], [1, 5]);
-	const scale6 = useTransform(scrollYProgress, [0, 1], [1, 6]);
-	const scale8 = useTransform(scrollYProgress, [0, 1], [1, 8]);
-	const scale9 = useTransform(scrollYProgress, [0, 1], [1, 9]);
+	// Reduced zoom on mobile for better performance
+	const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+	const scale4 = useTransform(scrollYProgress, [0, 1], [1, isMobile ? 2 : 4]);
+	const scale5 = useTransform(scrollYProgress, [0, 1], [1, isMobile ? 2.5 : 5]);
+	const scale6 = useTransform(scrollYProgress, [0, 1], [1, isMobile ? 3 : 6]);
+	const scale8 = useTransform(scrollYProgress, [0, 1], [1, isMobile ? 3.5 : 8]);
+	const scale9 = useTransform(scrollYProgress, [0, 1], [1, isMobile ? 4 : 9]);
 
 	const scales = [scale4, scale5, scale6, scale5, scale6, scale8, scale9];
 
 	return (
-		<div ref={container} className="relative h-[300vh]">
+		<div ref={container} className="relative h-[200vh] md:h-[300vh]">
 			<div className="sticky top-0 h-screen overflow-hidden">
 				{images.map(({ src, alt }, index) => {
 					const scale = scales[index % scales.length];

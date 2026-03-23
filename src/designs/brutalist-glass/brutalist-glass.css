@@ -18,6 +18,17 @@
   overflow-x: hidden;
 }
 
+/* Restore normal cursor on touch devices */
+@media (pointer: coarse) {
+  .design-brutalist-glass {
+    cursor: auto;
+  }
+  .design-brutalist-glass a,
+  .design-brutalist-glass button {
+    cursor: auto;
+  }
+}
+
 /* Global Noise Overlay */
 .design-brutalist-glass::before {
   content: "";

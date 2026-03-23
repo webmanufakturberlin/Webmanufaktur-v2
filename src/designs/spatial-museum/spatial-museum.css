@@ -12,6 +12,17 @@
   scroll-behavior: smooth;
 }
 
+/* Restore normal cursor on touch devices */
+@media (pointer: coarse) {
+  .design-spatial-museum {
+    cursor: auto;
+  }
+  .design-spatial-museum a,
+  .design-spatial-museum button {
+    cursor: auto;
+  }
+}
+
 /* Custom scrollbar */
 .design-spatial-museum ::-webkit-scrollbar {
   width: 8px;

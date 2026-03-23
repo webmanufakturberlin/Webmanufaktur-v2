@@ -1,12 +1,18 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useStore } from '../store';
 
 export const LiquidCursor = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
   const { cursorState } = useStore();
+  const [isTouch, setIsTouch] = useState(false);
 
   useEffect(() => {
+    setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  }, []);
+
+  useEffect(() => {
+    if (isTouch) return;
     const cursor = cursorRef.current;
     if (!cursor) return;
 
@@ -24,9 +30,10 @@ export const LiquidCursor = () => {
     return () => {
       window.removeEventListener('mousemove', moveCursor);
     };
-  }, []);
+  }, [isTouch]);
 
   useEffect(() => {
+    if (isTouch) return;
     const cursor = cursorRef.current;
     if (!cursor) return;
 
@@ -56,7 +63,10 @@ export const LiquidCursor = () => {
         ease: 'power2.out',
       });
     }
-  }, [cursorState]);
+  }, [cursorState, isTouch]);
+
+  // Don't render on touch devices
+  if (isTouch) return null;
 
   return (
     <div

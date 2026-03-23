@@ -22,14 +22,15 @@ export default function BrutalistGlassApp() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: isTouch ? 1.0 : 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 1,
-      touchMultiplier: 2,
+      touchMultiplier: isTouch ? 1.5 : 2,
     });
 
     lenis.on('scroll', (e: any) => {
@@ -124,10 +125,10 @@ export default function BrutalistGlassApp() {
       {/* FLOOR 1: THE HOOK (Zoom Parallax) */}
       <section className="relative w-full">
         <div className="sticky top-0 h-screen w-full z-10 flex flex-col items-center justify-center pointer-events-none mix-blend-difference">
-          <h1 className="font-display text-7xl md:text-[12vw] leading-[0.8] tracking-tighter text-white uppercase text-center brutal-text-reveal">
+          <h1 className="font-display text-5xl sm:text-7xl md:text-[12vw] leading-[0.8] tracking-tighter text-white uppercase text-center brutal-text-reveal">
             Digital<br />Concrete
           </h1>
-          <p className="mt-8 font-mono text-[#CCFF00] text-sm md:text-base tracking-widest uppercase brutal-text-reveal">
+          <p className="mt-6 md:mt-8 font-mono text-[#CCFF00] text-xs sm:text-sm md:text-base tracking-widest uppercase brutal-text-reveal px-4">
             We build impossible web experiences.
           </p>
         </div>
@@ -206,10 +207,10 @@ export default function BrutalistGlassApp() {
           <div className="absolute inset-0 bg-[#CCFF00] transform scale-y-0 origin-bottom transition-transform duration-700 ease-[cubic-bezier(0.87,0,0.13,1)] group-hover:scale-y-100 z-0"></div>
 
           <div className="relative z-10 flex flex-col items-start gap-8 mix-blend-difference text-white">
-            <h2 className="font-display text-6xl md:text-[8vw] uppercase tracking-tighter leading-none">
+            <h2 className="font-display text-4xl sm:text-6xl md:text-[8vw] uppercase tracking-tighter leading-none">
               Initiate<br/>Protocol
             </h2>
-            <p className="font-mono text-lg max-w-md">
+            <p className="font-mono text-base md:text-lg max-w-md">
               Ready to cast your vision in digital concrete? We are accepting new clients for Q3.
             </p>
 

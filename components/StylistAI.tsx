@@ -4,12 +4,34 @@ import { Bot, Send, Loader2, Sparkles, RefreshCw, Mail } from 'lucide-react';
 import { Reveal } from './Reveal';
 import { useI18n } from '../i18n';
 
+function getErrorMessage(code: string, t: (key: string) => string): string {
+  switch (code) {
+    case 'RATE_LIMITED':
+      return t('ai.error.rateLimited');
+    case 'PROMPT_TOO_LONG':
+      return t('ai.error.promptTooLong');
+    case 'AI_UNAVAILABLE':
+      return t('ai.error.aiUnavailable');
+    case 'AI_ERROR':
+      return t('ai.error.aiError');
+    case 'TIMEOUT':
+      return t('ai.error.timeout');
+    case 'NETWORK_ERROR':
+      return t('ai.error.networkError');
+    case 'API_KEY_MISSING':
+      return t('ai.error.aiUnavailable');
+    default:
+      return t('ai.error.unknown');
+  }
+}
+
 export const BusinessAI: React.FC = () => {
   const { t } = useI18n();
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [errorCode, setErrorCode] = useState('');
   const lastPromptRef = useRef('');
 
   const handleAsk = async (e?: React.FormEvent) => {
@@ -21,13 +43,16 @@ export const BusinessAI: React.FC = () => {
     setLoading(true);
     setResponse(null);
     setError(false);
+    setErrorCode('');
 
     try {
       const advice = await getStrategyAdvice(currentPrompt);
       setResponse(advice);
-    } catch {
+    } catch (err: any) {
+      const code = err?.code || 'UNKNOWN';
       setError(true);
-      setResponse(t('ai.errorMsg'));
+      setErrorCode(code);
+      setResponse(getErrorMessage(code, t));
     } finally {
       setLoading(false);
     }
@@ -83,6 +108,7 @@ export const BusinessAI: React.FC = () => {
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     placeholder={t('ai.placeholder')}
+                    maxLength={500}
                     className="w-full bg-white border border-gray-200 rounded-xl px-6 py-5 pr-14 text-lg text-ink placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus-visible:ring-2 focus-visible:ring-blue-500 transition-all shadow-sm"
                   />
                   <button
@@ -107,19 +133,21 @@ export const BusinessAI: React.FC = () => {
                       </p>
                       {error && (
                         <div className="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-red-50">
-                          <button
-                            onClick={handleRetry}
-                            className="flex items-center gap-1.5 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 active:scale-95 transition-all"
-                          >
-                            <RefreshCw size={14} />
-                            Erneut versuchen
-                          </button>
+                          {errorCode !== 'PROMPT_TOO_LONG' && (
+                            <button
+                              onClick={handleRetry}
+                              className="flex items-center gap-1.5 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 active:scale-95 transition-all"
+                            >
+                              <RefreshCw size={14} />
+                              {t('ai.retry')}
+                            </button>
+                          )}
                           <a
                             href="mailto:webmanufaktur.berlin@googlemail.com"
                             className="flex items-center gap-1.5 px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-all"
                           >
                             <Mail size={14} />
-                            Direkt kontaktieren
+                            {t('ai.contactDirect')}
                           </a>
                         </div>
                       )}

@@ -1,19 +1,21 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { ImpactData } from './components/ImpactData';
-import { Features, ServiceData } from './components/Features';
-import { SplineSection } from './components/SplineScene';
+import React, { useState, useCallback, useEffect, Suspense } from 'react';
 import { Hero } from './components/Hero';
-import { CTA } from './components/CTA';
 import { Navbar } from './components/Navbar';
-import { AboutUs } from './components/AboutUs';
-import { Impressum } from './components/Impressum';
-import { References } from './components/References';
-import { BusinessAI } from './components/StylistAI';
-import { Reveal } from './components/Reveal';
-import { ServiceDetail } from './components/ServiceDetail';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { KILabor } from './components/KILabor';
 import { motion, useInView } from 'framer-motion';
+
+// Lazy-load below-the-fold sections for faster initial paint
+const ImpactData = React.lazy(() => import('./components/ImpactData').then(m => ({ default: m.ImpactData })));
+const Features = React.lazy(() => import('./components/Features').then(m => ({ default: m.Features })));
+type ServiceData = import('./components/Features').ServiceData;
+const ProcessSection = React.lazy(() => import('./components/ProcessSection').then(m => ({ default: m.ProcessSection })));
+const CTA = React.lazy(() => import('./components/CTA').then(m => ({ default: m.CTA })));
+const BusinessAI = React.lazy(() => import('./components/StylistAI').then(m => ({ default: m.BusinessAI })));
+const AboutUs = React.lazy(() => import('./components/AboutUs').then(m => ({ default: m.AboutUs })));
+const Impressum = React.lazy(() => import('./components/Impressum').then(m => ({ default: m.Impressum })));
+const References = React.lazy(() => import('./components/References').then(m => ({ default: m.References })));
+const ServiceDetail = React.lazy(() => import('./components/ServiceDetail').then(m => ({ default: m.ServiceDetail })));
+const KILabor = React.lazy(() => import('./components/KILabor').then(m => ({ default: m.KILabor })));
 
 // --- Scroll Progress Bar ---
 const ScrollProgress: React.FC = () => {
@@ -182,6 +184,7 @@ const App: React.FC = () => {
             <ScrollProgress />
             <Navbar onNavigate={handleNavigate} currentView={currentView} onHome={handleHome} onAbout={handleAbout} onReferences={handleReferences} />
 
+            <Suspense fallback={null}>
             {currentView === 'service-detail' && selectedService ? (
                 <ServiceDetail service={selectedService} onBack={handleBack} />
             ) : currentView === 'about' ? (
@@ -217,9 +220,7 @@ const App: React.FC = () => {
                         <SectionDivider />
 
                         <SectionReveal variant="standard" sectionId="work">
-                            <ErrorBoundary fallbackMessage="3D-Szene konnte nicht geladen werden.">
-                                <SplineSection />
-                            </ErrorBoundary>
+                            <ProcessSection />
                         </SectionReveal>
 
                         <SectionDivider />
@@ -264,6 +265,7 @@ const App: React.FC = () => {
                     </div>
                 </main>
             )}
+            </Suspense>
         </div>
     );
 };

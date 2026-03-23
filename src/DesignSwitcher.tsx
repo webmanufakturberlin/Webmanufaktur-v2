@@ -9,8 +9,14 @@ const DesignSwitcher: React.FC = () => {
   const [isInitializing, setIsInitializing] = useState(true);
   const activeDesign = DESIGN_VARIANTS.find(d => d.id === activeDesignId);
 
-  // Load from session storage on mount
+  // Load from session storage on mount & prevent scroll restoration
   useEffect(() => {
+    // Prevent browser from restoring scroll position after reload
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
     const savedDesign = sessionStorage.getItem('wmb-design');
     if (savedDesign && DESIGN_VARIANTS.some(d => d.id === savedDesign)) {
       setActiveDesignId(savedDesign);
@@ -63,9 +69,9 @@ const DesignSwitcher: React.FC = () => {
       sessionStorage.removeItem('wmb-design');
     }
     
+    // Scroll to top before reload so browser doesn't restore mid-page position
+    window.scrollTo(0, 0);
     // Hard reload to fully clear WebGL contexts from previous design.
-    // Soft-swapping causes WebGL context conflicts between designs
-    // (e.g. SplineSection in Original vs Three.js Canvas in Liquid Glass).
     window.location.reload();
   };
 
