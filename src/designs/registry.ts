@@ -19,12 +19,12 @@ export const DESIGN_VARIANTS: DesignVariant[] = [
     fonts: ['https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Fira+Code:wght@300..700&family=Teko:wght@300..700&display=swap']
   },
   {
-    id: 'liquid-glass',
-    name: 'Liquid Glass',
-    description: 'Immersives 3D-Museum mit Glaskörpern',
-    component: React.lazy(() => import('./liquid-glass/LiquidGlassApp')),
-    cssClass: 'design-liquid-glass',
-    fonts: ['https://fonts.googleapis.com/css2?family=Cinzel:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@300;400&display=swap']
+    id: 'spatial-museum',
+    name: 'Spatial Museum',
+    description: 'Minimalistisches 3D-Museum mit räumlicher U-Shape Navigation',
+    component: React.lazy(() => import('./spatial-museum/SpatialMuseumApp')),
+    cssClass: 'design-spatial-museum',
+    fonts: ['https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400&family=Inter:wght@300;400;500&display=swap']
   },
   {
     id: 'schlicht-spielerisch',

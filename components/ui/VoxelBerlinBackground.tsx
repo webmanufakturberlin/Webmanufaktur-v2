@@ -29,6 +29,21 @@ const PALETTE = {
     treeTrunk: 0x3d2b1f,
     water: 0x3a7ab5,
     pathGravel: 0x8a8070,
+    // Streets & roofs
+    road: 0x3a3a3a,
+    sidewalk: 0x908880,
+    roofTile: 0x8b4513,
+    roofSlate: 0x505560,
+    canal: 0x2a6090,
+    // Additional landmarks
+    frankfurterSand: 0xc8b89c,
+    frankfurterCopper: 0x5a8a6a,
+    oberbaumRed: 0x8b3a3a,
+    bridgeStone: 0x6a5a4a,
+    modernGlass: 0x6a8090,
+    modernSteel: 0x505860,
+    gedaechtnisStone: 0x6a6058,
+    gedaechtnisBlue: 0x3a5a8a,
 };
 
 const VOXEL_GAP = 0.92;
@@ -216,6 +231,98 @@ const VoxelCity = () => {
             addVoxel(sx, 40, sz, PALETTE.siegessauleGold);
         }
 
+        // --- Frankfurter Tor (twin towers on Karl-Marx-Allee) ---
+        function buildFrankfurterTor(fx: number, fz: number) {
+            const towerOffset = 6;
+            for (const side of [-1, 1]) {
+                const tx = fx + side * towerOffset;
+                buildBlock(tx - 2, 0, fz - 2, 5, 4, 5, PALETTE.frankfurterSand);
+                buildBlock(tx - 1, 4, fz - 1, 3, 14, 3, PALETTE.frankfurterSand);
+                for (let y = 5; y < 17; y += 2) {
+                    addVoxel(tx - 1, y, fz + 2, PALETTE.windowDark);
+                    addVoxel(tx + 1, y, fz + 2, PALETTE.windowDark);
+                }
+                const domeY = 18;
+                for (let x = -3; x <= 3; x++) {
+                    for (let y = 0; y <= 3; y++) {
+                        for (let z = -3; z <= 3; z++) {
+                            if (x * x + y * y + z * z <= 9 && y >= 0) {
+                                addVoxel(tx + x, domeY + y, fz + z, PALETTE.frankfurterCopper);
+                            }
+                        }
+                    }
+                }
+                addVoxel(tx, domeY + 4, fz, PALETTE.frankfurterCopper);
+            }
+            buildBlock(fx - towerOffset + 3, 0, fz - 1, towerOffset * 2 - 5, 4, 3, PALETTE.frankfurterSand);
+        }
+
+        // --- Oberbaumbrücke (double-deck bridge with neo-gothic towers) ---
+        function buildOberbaumBridge(ox: number, oz: number) {
+            const halfLen = 9;
+            buildBlock(ox - halfLen, 2, oz - 2, halfLen * 2, 2, 4, PALETTE.bridgeStone);
+            for (let x = -halfLen + 2; x < halfLen - 2; x += 4) {
+                buildBlock(ox + x, 0, oz - 1, 2, 2, 2, PALETTE.bridgeStone);
+            }
+            for (const side of [-1, 1]) {
+                const tx = ox + side * 5;
+                buildBlock(tx - 1, 4, oz - 2, 3, 10, 4, PALETTE.oberbaumRed);
+                buildBlock(tx, 14, oz - 1, 1, 3, 2, PALETTE.oberbaumRed);
+                addVoxel(tx, 17, oz, PALETTE.oberbaumRed);
+                for (let y = 6; y < 13; y += 2) {
+                    addVoxel(tx, y, oz + 2, PALETTE.windowDark);
+                }
+            }
+            for (let x = -halfLen; x <= halfLen; x += 2) {
+                addVoxel(ox + x, 4, oz - 2, PALETTE.oberbaumRed);
+                addVoxel(ox + x, 4, oz + 1, PALETTE.oberbaumRed);
+            }
+        }
+
+        // --- Potsdamer Platz (modern glass skyscrapers) ---
+        function buildPotsdamerPlatz(px: number, pz: number) {
+            buildCylinder(px, 0, pz, 3, 32, PALETTE.modernSteel);
+            for (let y = 4; y < 30; y += 4) {
+                for (let a = 0; a < 8; a++) {
+                    const ax = Math.round(Math.cos(a * Math.PI / 4) * 3.5);
+                    const az = Math.round(Math.sin(a * Math.PI / 4) * 3.5);
+                    addVoxel(px + ax, y, pz + az, PALETTE.modernGlass);
+                }
+            }
+            buildBlock(px + 7, 0, pz - 2, 5, 28, 5, PALETTE.modernGlass);
+            for (let y = 2; y < 27; y += 2) {
+                for (let x = 1; x < 4; x += 2) {
+                    addVoxel(px + 7 + x, y, pz + 3, PALETTE.windowDark);
+                }
+            }
+            buildBlock(px - 7, 0, pz - 1, 4, 22, 4, PALETTE.modernGlass);
+        }
+
+        // --- Gedächtniskirche (ruined tower + modern blue church) ---
+        function buildGedaechtniskirche(gx: number, gz: number) {
+            buildBlock(gx - 2, 0, gz - 2, 5, 11, 5, PALETTE.gedaechtnisStone);
+            for (let x = -2; x <= 2; x++) {
+                for (let z = -2; z <= 2; z++) {
+                    const h = 11 + Math.floor(Math.abs(x * 7 + z * 13) % 4);
+                    if (h > 11 && (Math.abs(x) + Math.abs(z)) < 4) {
+                        for (let y = 11; y < h; y++) {
+                            addVoxel(gx + x, y, gz + z, PALETTE.gedaechtnisStone);
+                        }
+                    }
+                }
+            }
+            const mx = gx + 7;
+            buildCylinder(mx, 0, gz, 4, 10, PALETTE.gedaechtnisBlue);
+            buildCylinder(mx, 10, gz, 4, 1, PALETTE.modernSteel);
+            for (let y = 1; y < 9; y += 2) {
+                for (let a = 0; a < 8; a++) {
+                    const ax = Math.round(Math.cos(a * Math.PI / 4) * 4.5);
+                    const az = Math.round(Math.sin(a * Math.PI / 4) * 4.5);
+                    addVoxel(mx + ax, y, gz + az, 0x2a4a7a);
+                }
+            }
+        }
+
         // --- Residential blocks (Altbau / Plattenbau style) ---
         function buildResidentialBlock(rx: number, rz: number, w: number, d: number, h: number, warm: boolean) {
             const palette = warm ? PALETTE.residentialWarm : PALETTE.residentialCool;
@@ -286,13 +393,90 @@ const VoxelCity = () => {
             }
         }
 
-        // --- Tree-lined street ---
-        function buildTreeStreet(sx: number, sz: number, length: number, horizontal: boolean) {
-            for (let i = 0; i < length; i += 6) {
-                const tx = horizontal ? sx + i : sx;
-                const tz = horizontal ? sz : sz + i;
-                buildTree(tx, tz, true);
+        // --- Boulevard with visible road surface + trees ---
+        function buildBoulevard(x1: number, z1: number, x2: number, z2: number, width: number, streetSet: Set<string>) {
+            const dx = x2 - x1;
+            const dz = z2 - z1;
+            const len = Math.sqrt(dx * dx + dz * dz);
+            if (len === 0) return;
+            const steps = Math.ceil(len);
+            const halfW = Math.floor(width / 2);
+
+            for (let i = 0; i <= steps; i++) {
+                const t = i / steps;
+                const cx = Math.round(x1 + dx * t);
+                const cz = Math.round(z1 + dz * t);
+                const nx = -dz / len;
+                const nz = dx / len;
+
+                for (let w = -halfW; w <= halfW; w++) {
+                    const rx = Math.round(cx + nx * w);
+                    const rz = Math.round(cz + nz * w);
+                    const key = `${rx},${rz}`;
+                    if (!streetSet.has(key)) {
+                        streetSet.add(key);
+                        const isEdge = Math.abs(w) === halfW;
+                        addVoxel(rx, 0, rz, isEdge ? PALETTE.sidewalk : PALETTE.road);
+                    }
+                }
+
+                // Trees every 8 units on sidewalk edges
+                if (i % 8 === 0) {
+                    for (const side of [-1, 1]) {
+                        const tw = side * (halfW + 1);
+                        const tx = Math.round(cx + nx * tw);
+                        const tz = Math.round(cz + nz * tw);
+                        buildTree(tx, tz, true);
+                    }
+                }
             }
+        }
+
+        // --- Landwehr Canal ---
+        function buildLandwehrCanal(waterBuffer: Set<string>): Set<string> {
+            const points = [
+                new THREE.Vector2(-95, 14),
+                new THREE.Vector2(-70, 18),
+                new THREE.Vector2(-50, 20),
+                new THREE.Vector2(-35, 18),
+                new THREE.Vector2(-15, 22),
+                new THREE.Vector2(10, 20),
+                new THREE.Vector2(30, 16),
+                new THREE.Vector2(50, 14),
+                new THREE.Vector2(68, 18),     // meets Spree near Oberbaumbrücke
+            ];
+            const curve = new THREE.SplineCurve(points);
+            const samples = curve.getPoints(300);
+            const canalSet = new Set<string>();
+            const canalWidth = 2;
+
+            for (let i = 0; i < samples.length; i++) {
+                const pt = samples[i];
+                const next = samples[Math.min(i + 1, samples.length - 1)];
+                const prev = samples[Math.max(i - 1, 0)];
+                const tx = next.x - prev.x;
+                const ty = next.y - prev.y;
+                const len = Math.sqrt(tx * tx + ty * ty) || 1;
+                const nx = -ty / len;
+                const ny = tx / len;
+
+                for (let w = -canalWidth; w <= canalWidth; w++) {
+                    const rx = Math.round(pt.x + nx * w);
+                    const rz = Math.round(pt.y + ny * w);
+                    const key = `${rx},${rz}`;
+                    if (!canalSet.has(key)) {
+                        canalSet.add(key);
+                        addVoxel(rx, 0, rz, PALETTE.canal);
+                        // Add to waterBuffer for exclusion
+                        for (let ddx = -2; ddx <= 2; ddx++) {
+                            for (let ddz = -2; ddz <= 2; ddz++) {
+                                waterBuffer.add(`${rx + ddx},${rz + ddz}`);
+                            }
+                        }
+                    }
+                }
+            }
+            return canalSet;
         }
 
         // --- Spree River ---
@@ -305,14 +489,16 @@ const VoxelCity = () => {
                 new THREE.Vector2(-70, -10),    // approaching Reichstag from west
                 new THREE.Vector2(-55, -8),     // south of Reichstag, near Gate
                 new THREE.Vector2(-30, -2),     // curving south after Gate
-                new THREE.Vector2(-10, 6),      // heading toward Museum Island
-                new THREE.Vector2(0, 16),       // Museum Island (south of Dom at -5,12)
-                new THREE.Vector2(15, 8),       // between Dom and TV Tower
-                new THREE.Vector2(28, 4),       // past Alexanderplatz area
-                new THREE.Vector2(40, -2),      // heading east
-                new THREE.Vector2(70, -5),      // east Berlin
-                new THREE.Vector2(100, -6),     // continuing east
-                new THREE.Vector2(160, -8),     // far east exit
+                new THREE.Vector2(-10, 8),      // heading toward Museum Island
+                new THREE.Vector2(-2, 12),      // Museum Island (SOUTH of Dom at -12,-4)
+                new THREE.Vector2(12, 10),      // south of TV Tower area
+                new THREE.Vector2(28, 8),       // past Alexanderplatz area
+                new THREE.Vector2(42, 7),       // heading east
+                new THREE.Vector2(56, 8),       // curving toward Oberbaumbrücke
+                new THREE.Vector2(72, 15),      // through Oberbaumbrücke
+                new THREE.Vector2(90, 10),      // continuing east
+                new THREE.Vector2(120, 5),      // far east
+                new THREE.Vector2(160, 2),      // east exit
             ];
             const curve = new THREE.SplineCurve(points);
             const samples = curve.getPoints(500);
@@ -361,16 +547,18 @@ const VoxelCity = () => {
                 }
             });
 
+            // Landwehr Canal (south of Spree)
+            buildLandwehrCanal(riverBuffer);
+
             // Parks — Tiergarten is the huge park between Gate and Siegessäule
             const parkZones = [
-                { x: -105, z: -14, w: 28, d: 22 },  // Tiergarten West (around Siegessäule)
-                { x: -78, z: -12, w: 20, d: 18 },   // Tiergarten Central
-                { x: -58, z: -12, w: 18, d: 16 },   // Tiergarten East (near Gate)
-                { x: 45, z: -20, w: 16, d: 14 },    // Volkspark Friedrichshain (NE)
-                { x: 50, z: 30, w: 14, d: 12 },     // Treptower Park (SE)
-                { x: -120, z: 20, w: 14, d: 12 },   // Schlosspark Charlottenburg (far W)
-                { x: 80, z: -10, w: 12, d: 10 },    // Park Lichtenberg (E)
-                { x: -10, z: 35, w: 16, d: 14 },    // Görlitzer Park / Kreuzberg (S)
+                { x: -108, z: -16, w: 55, d: 26 },  // Großer Tiergarten (one big zone)
+                { x: 42, z: -24, w: 22, d: 20 },    // Volkspark Friedrichshain (NE)
+                { x: 48, z: 28, w: 18, d: 16 },     // Treptower Park (SE)
+                { x: -125, z: 18, w: 16, d: 14 },   // Schlosspark Charlottenburg (far W)
+                { x: 85, z: -12, w: 14, d: 12 },    // Park Lichtenberg (E)
+                { x: -12, z: 33, w: 20, d: 18 },    // Görlitzer Park / Kreuzberg (S)
+                { x: -28, z: -35, w: 16, d: 14 },   // Invalidenpark (N of Spree)
             ];
 
             // Landmarks — geographically spread like real Berlin
@@ -378,30 +566,38 @@ const VoxelCity = () => {
             // TV Tower at Alexanderplatz is the reference point
             // Large exclusion radii so the Alex area isn't crammed
             const landmarks = [
-                { x: 15, z: -5, r: 28 },      // TV Tower (Alexanderplatz) — big open plaza
-                { x: -5, z: 12, r: 20 },      // Berliner Dom (Museum Island, further SW)
-                { x: 25, z: 15, r: 16 },      // Hotel Park Inn (SE of TV Tower)
-                { x: -55, z: -5, r: 20 },     // Brandenburg Gate (~2.5km W)
-                { x: -58, z: -22, r: 22 },    // Reichstag (N of Gate, more space)
-                { x: -95, z: -5, r: 16 },     // Siegessäule (~4km W, Tiergarten)
+                { x: 15, z: -5, r: 30 },      // TV Tower (Alexanderplatz) — big open plaza
+                { x: -12, z: -4, r: 22 },     // Berliner Dom (Museum Island, NORTH of Spree)
+                { x: 38, z: -14, r: 16 },     // Hotel Park Inn (east of Alex, well away from Tower)
+                { x: -55, z: -5, r: 22 },     // Brandenburg Gate (~2.5km W)
+                { x: -58, z: -14, r: 20 },    // Reichstag (N of Gate)
+                { x: -95, z: -5, r: 18 },     // Siegessäule (~4km W, Tiergarten)
+                { x: 68, z: -3, r: 16 },      // Frankfurter Tor (Karl-Marx-Allee, E)
+                { x: 72, z: 15, r: 16 },      // Oberbaumbrücke (on Spree, E)
+                { x: -38, z: 8, r: 18 },      // Potsdamer Platz (between Gate and center)
+                { x: -118, z: 24, r: 16 },    // Gedächtniskirche (Kurfürstendamm, far W)
             ];
+
+            // Berlin boulevards with visible road surface + trees
+            const streetCells = new Set<string>();
+            buildBoulevard(-95, -5, -55, -5, 4, streetCells);   // Straße des 17. Juni
+            buildBoulevard(-55, -3, 12, -3, 4, streetCells);     // Unter den Linden (Gate → Alex area)
+            buildBoulevard(15, -5, 68, -3, 4, streetCells);     // Karl-Marx-Allee (Alex → Frankfurter Tor)
+            buildBoulevard(-118, 22, -75, 16, 3, streetCells);  // Kurfürstendamm
+            buildBoulevard(-38, 8, 10, 5, 3, streetCells);      // Leipziger Straße
+            buildBoulevard(-30, -40, -30, 30, 3, streetCells);  // Friedrichstraße (N-S)
+            buildBoulevard(15, -35, 15, 20, 3, streetCells);    // Alexanderstraße (N-S)
 
             function isExcluded(bx: number, bz: number) {
                 if (landmarks.some(l => Math.abs(bx - l.x) < l.r && Math.abs(bz - l.z) < l.r)) return true;
                 if (parkZones.some(p => bx >= p.x - 2 && bx <= p.x + p.w + 2 && bz >= p.z - 2 && bz <= p.z + p.d + 2)) return true;
                 if (riverBuffer.has(`${Math.round(bx)},${Math.round(bz)}`)) return true;
+                if (streetCells.has(`${Math.round(bx)},${Math.round(bz)}`)) return true;
                 return false;
             }
 
             // Build parks
             parkZones.forEach(p => buildPark(p.x, p.z, p.w, p.d));
-
-            // Tree-lined streets — Berlin boulevards
-            buildTreeStreet(-95, -5, 40, true);   // Straße des 17. Juni (Siegessäule → Gate)
-            buildTreeStreet(-55, -3, 65, true);   // Unter den Linden (Gate → Museum Island)
-            buildTreeStreet(15, -30, 40, false);  // Karl-Marx-Allee (N-S near TV Tower)
-            buildTreeStreet(40, -15, 50, true);   // Frankfurter Allee (east)
-            buildTreeStreet(-30, 20, 40, true);   // Kurfürstendamm area
 
             // --- Inner city buildings (grid-based, -150 to 150) ---
             const gridSize = 6;
@@ -429,15 +625,37 @@ const VoxelCity = () => {
                             height = Math.min(height, 12);
                         }
 
-                        const color = PALETTE.cityColors[Math.floor(Math.random() * PALETTE.cityColors.length)];
+                        // Near Potsdamer Platz: modern glass buildings
+                        const distPP = Math.sqrt((x + 35) ** 2 + (z - 5) ** 2);
+                        const isModern = distPP < 20;
+
+                        const color = isModern
+                            ? (Math.random() > 0.5 ? PALETTE.modernGlass : PALETTE.modernSteel)
+                            : PALETTE.cityColors[Math.floor(Math.random() * PALETTE.cityColors.length)];
+
                         buildBlock(x, 0, z, width, height, depth, color);
+
+                        // Windows on facade
                         if (height > 6 && Math.random() > 0.35) {
                             for (let wy = 2; wy < height - 1; wy += 2) {
                                 for (let wx = 1; wx < width - 1; wx += 2) {
                                     if (Math.random() > 0.3) {
                                         const winColor = Math.random() > 0.85 ? PALETTE.windowLit : PALETTE.windowDark;
                                         addVoxel(x + wx, wy, z + depth, winColor);
+                                        addVoxel(x + wx, wy, z - 1, winColor);
                                     }
+                                }
+                            }
+                        }
+
+                        // Pitched roof on ~40% of lower buildings (Berlin Altbau look)
+                        if (!isModern && height < 10 && height > 4 && Math.random() > 0.6) {
+                            const roofColor = Math.random() > 0.5 ? PALETTE.roofTile : PALETTE.roofSlate;
+                            const peakH = Math.min(Math.floor(depth / 2), 3);
+                            for (let ry = 0; ry < peakH; ry++) {
+                                for (let rx = 0; rx < width; rx++) {
+                                    addVoxel(x + rx, height + ry, z + ry, roofColor);
+                                    addVoxel(x + rx, height + ry, z + depth - 1 - ry, roofColor);
                                 }
                             }
                         }
@@ -502,12 +720,16 @@ const VoxelCity = () => {
 
         // Build scene — geographically correct, spread like real Berlin
         buildFullCity();
-        buildHotelParkInn(25, 15);         // SE of TV Tower, breathing room
-        buildCathedral(-5, 12);            // Museum Island, well SW of TV Tower
-        buildBrandenburgGate(-55, -5);     // ~2.5km W of TV Tower
-        buildReichstag(-58, -22);          // well N of Brandenburg Gate
-        buildSiegessaule(-95, -5);         // ~4km W, in Tiergarten
         buildTVTower(15, -5);              // Alexanderplatz — reference point, open plaza
+        buildHotelParkInn(38, -14);        // East of Alex, well separated from TV Tower
+        buildCathedral(-12, -4);           // Museum Island, NORTH of Spree
+        buildBrandenburgGate(-55, -5);     // ~2.5km W of TV Tower
+        buildReichstag(-58, -14);          // just N of Brandenburg Gate
+        buildSiegessaule(-95, -5);         // ~4km W, in Tiergarten
+        buildFrankfurterTor(68, -3);       // Karl-Marx-Allee, far east
+        buildOberbaumBridge(72, 15);       // On the Spree, crossing the river
+        buildPotsdamerPlatz(-38, 8);       // Between Gate and center
+        buildGedaechtniskirche(-118, 24);  // Kurfürstendamm, far west
 
         // Create single InstancedMesh with per-instance colors
         const geo = new THREE.BoxGeometry(VOXEL_GAP, VOXEL_GAP, VOXEL_GAP);
@@ -576,9 +798,9 @@ const CinematicCamera = () => {
         const radiusAmplitude = 48;
         const radius = radiusBase + Math.sin(t * 0.25) * radiusAmplitude;
 
-        // Height: 28 (above capped buildings at 14) → 80 (panoramic)
+        // Height: 35 (safely above Dom dome at ~29) → 80 (panoramic)
         const radiusNorm = (radius - (radiusBase - radiusAmplitude)) / (radiusAmplitude * 2);
-        const heightLow = 28;
+        const heightLow = 35;
         const heightHigh = 80;
         const height = heightLow + radiusNorm * (heightHigh - heightLow);
 
@@ -586,7 +808,7 @@ const CinematicCamera = () => {
         cam.position.z = TV_TOWER.z + Math.cos(angle) * radius;
         cam.position.y = height;
 
-        const lookY = 25 + radiusNorm * 15;
+        const lookY = 28 + radiusNorm * 10;
         cam.lookAt(TV_TOWER.x, lookY, TV_TOWER.z);
     });
 

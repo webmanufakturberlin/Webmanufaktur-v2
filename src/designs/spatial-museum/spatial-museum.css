@@ -1,0 +1,39 @@
+/* Spatial Museum — Scoped Design Styles */
+
+.design-spatial-museum {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cinzel", ui-serif, Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+
+  background-color: #FAFAFA;
+  color: #09090B;
+  overflow-x: hidden;
+  cursor: none;
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+.design-spatial-museum ::-webkit-scrollbar {
+  width: 8px;
+}
+.design-spatial-museum ::-webkit-scrollbar-track {
+  background: #FAFAFA;
+}
+.design-spatial-museum ::-webkit-scrollbar-thumb {
+  background: #E5E7EB;
+  border-radius: 4px;
+}
+.design-spatial-museum ::-webkit-scrollbar-thumb:hover {
+  background: #D1D5DB;
+}
+
+/* Typography utilities */
+.design-spatial-museum .text-drama {
+  font-family: "Cinzel", serif;
+  font-style: italic;
+}
+
+.design-spatial-museum a,
+.design-spatial-museum button {
+  cursor: none;
+}

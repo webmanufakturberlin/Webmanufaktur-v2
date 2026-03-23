@@ -11,6 +11,7 @@ export default {
                 sans: ['Inter', 'sans-serif'],
                 mono: ['JetBrains Mono', 'monospace'],
                 display: ['Oswald', 'sans-serif'],
+                serif: ['Cinzel', 'serif'],
             },
             colors: {
                 canvas: '#ffffff',
