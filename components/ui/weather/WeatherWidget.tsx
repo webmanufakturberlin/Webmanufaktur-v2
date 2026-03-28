@@ -81,6 +81,12 @@ export default function WeatherWidget() {
   const isLoading = useWeatherStore(s => s.isLoading);
   const error = useWeatherStore(s => s.error);
 
+  React.useEffect(() => {
+    const startPolling = useWeatherStore.getState().startPolling;
+    const cleanup = startPolling();
+    return cleanup;
+  }, []);
+
   // Always show widget — use fallback when no API data
   const temp = raw ? `${raw.temp}°C` : isLoading ? '...' : 'Berlin';
 
@@ -90,7 +96,7 @@ export default function WeatherWidget() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       className={`
-        absolute top-4 right-4 z-20
+        absolute top-28 md:top-36 right-4 md:right-8 z-30
         flex items-center gap-2 px-3 py-1.5 rounded-full
         backdrop-blur-md border
         ${isNight

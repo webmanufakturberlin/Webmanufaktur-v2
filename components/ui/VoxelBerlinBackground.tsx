@@ -821,14 +821,7 @@ const CinematicCamera = () => {
 
 export default function VoxelBerlinBackground({ onLoad }: { onLoad?: () => void }) {
     const isNight = useWeatherStore(s => s.isNight);
-    const startPolling = useWeatherStore(s => s.startPolling);
     const [contextLost, setContextLost] = React.useState(false);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => {
-        const cleanup = startPolling();
-        return cleanup;
-    }, []);
 
     // Handle WebGL context loss (iPad / memory constrained devices)
     const handleCreated = React.useCallback(({ gl }: { gl: THREE.WebGLRenderer }) => {
