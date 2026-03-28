@@ -20,6 +20,16 @@ function getErrorMessage(code: string, t: (key: string) => string): string {
       return t('ai.error.networkError');
     case 'API_KEY_MISSING':
       return t('ai.error.aiUnavailable');
+    case 'QUOTA_EXCEEDED':
+      return t('ai.error.quotaExceeded');
+    case 'FORBIDDEN':
+      return t('ai.error.forbidden');
+    case 'MODEL_NOT_FOUND':
+      return t('ai.error.modelNotFound');
+    case 'BAD_REQUEST':
+      return t('ai.error.badRequest');
+    case 'AI_SERVER_ERROR':
+      return t('ai.error.serverError');
     default:
       return t('ai.error.unknown');
   }
@@ -126,7 +136,9 @@ export const BusinessAI: React.FC = () => {
                     <div className={`p-6 rounded-2xl bg-white border shadow-sm animate-slide-up ${error ? 'border-red-100' : 'border-blue-100'}`}>
                       <div className={`flex items-center gap-2 mb-3 font-bold text-xs uppercase tracking-wider ${error ? 'text-red-500' : 'text-blue-600'}`}>
                         <Sparkles size={14} aria-hidden="true" />
-                        {error ? t('ai.error') : t('ai.insight')}
+                        {error ? (
+                          <span>{t('ai.error')} <span className="ml-1 px-2 py-0.5 rounded bg-red-50 text-red-400 font-mono text-[10px] tracking-normal normal-case">[ERR-{errorCode}]</span></span>
+                        ) : t('ai.insight')}
                       </div>
                       <p className="text-lg text-gray-800 leading-relaxed font-medium">
                         "{response}"

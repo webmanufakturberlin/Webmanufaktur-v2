@@ -5,11 +5,33 @@
 const DEV_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const IS_DEV = import.meta.env.DEV;
 
+// ── Client-side rate limiting ────────────────────────────────────────
+let lastRequestTime = 0;
+const MIN_REQUEST_INTERVAL = 5000; // 5 seconds between requests
+
+// ── Error code mapping from HTTP status ──────────────────────────────
+function mapHttpStatusToCode(status: number): string {
+  switch (status) {
+    case 400: return 'BAD_REQUEST';
+    case 403: return 'FORBIDDEN';
+    case 404: return 'MODEL_NOT_FOUND';
+    case 429: return 'QUOTA_EXCEEDED';
+    default:
+      if (status >= 500) return 'AI_SERVER_ERROR';
+      return 'AI_ERROR';
+  }
+}
+
+function createCodedError(message: string, code: string): Error & { code: string } {
+  const err = new Error(message) as Error & { code: string };
+  err.code = code;
+  return err;
+}
+
 async function callGeminiDirect(userPrompt: string): Promise<string> {
   if (!DEV_API_KEY) {
-    const err = new Error('API key not configured for dev mode') as Error & { code: string };
-    err.code = 'API_KEY_MISSING';
-    throw err;
+    console.error('[CHATBOT ERR] API_KEY_MISSING — VITE_GEMINI_API_KEY is not set in .env');
+    throw createCodedError('API key not configured for dev mode', 'API_KEY_MISSING');
   }
 
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${DEV_API_KEY}`;
@@ -22,6 +44,8 @@ async function callGeminiDirect(userPrompt: string): Promise<string> {
     contents: [{ parts: [{ text: userPrompt }] }],
   };
 
+  console.log('[CHATBOT] Sending request to Gemini API (dev mode)...');
+
   const response = await fetch(endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -31,21 +55,25 @@ async function callGeminiDirect(userPrompt: string): Promise<string> {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    const err = new Error(errorData?.error?.message || 'API request failed') as Error & { code: string };
-    err.code = 'AI_ERROR';
-    throw err;
+    const code = mapHttpStatusToCode(response.status);
+    const geminiMsg = errorData?.error?.message || `HTTP ${response.status}`;
+    console.error(`[CHATBOT ERR] ${code} (HTTP ${response.status}) — ${geminiMsg}`);
+    throw createCodedError(geminiMsg, code);
   }
 
   const data = await response.json();
   if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+    console.log('[CHATBOT] ✓ Response received successfully');
     return data.candidates[0].content.parts[0].text;
   }
-  const err = new Error('Unexpected API response') as Error & { code: string };
-  err.code = 'AI_ERROR';
-  throw err;
+
+  console.error('[CHATBOT ERR] AI_ERROR — Unexpected API response structure', data);
+  throw createCodedError('Unexpected API response', 'AI_ERROR');
 }
 
 async function callBackendAPI(userPrompt: string): Promise<string> {
+  console.log('[CHATBOT] Sending request to /api/chat (prod mode)...');
+
   const response = await fetch('/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -55,17 +83,29 @@ async function callBackendAPI(userPrompt: string): Promise<string> {
 
   if (!response.ok) {
     const data = await response.json().catch(() => ({}));
-    const code = data.code || `HTTP_${response.status}`;
-    const error = new Error(data.error || 'Request failed') as Error & { code: string };
-    error.code = code;
-    throw error;
+    // Backend already sends a code — use it, or derive from HTTP status
+    const code = data.code || mapHttpStatusToCode(response.status);
+    const message = data.error || `Request failed (HTTP ${response.status})`;
+    console.error(`[CHATBOT ERR] ${code} (HTTP ${response.status}) — ${message}`);
+    throw createCodedError(message, code);
   }
 
   const data = await response.json();
+  console.log('[CHATBOT] ✓ Response received successfully');
   return data.text || 'Analyzing market data...';
 }
 
 export const getStrategyAdvice = async (userPrompt: string): Promise<string> => {
+  // ── Client-side rate limiting ────────────────────────────────────
+  const now = Date.now();
+  const elapsed = now - lastRequestTime;
+  if (lastRequestTime > 0 && elapsed < MIN_REQUEST_INTERVAL) {
+    const waitSec = Math.ceil((MIN_REQUEST_INTERVAL - elapsed) / 1000);
+    console.warn(`[CHATBOT ERR] CLIENT_RATE_LIMITED — Wait ${waitSec}s before next request`);
+    throw createCodedError(`Bitte warte ${waitSec} Sekunde(n)`, 'RATE_LIMITED');
+  }
+  lastRequestTime = now;
+
   try {
     // Dev: call Gemini directly (no serverless runtime)
     // Prod: call /api/chat (Vercel serverless, hides API key)
@@ -76,21 +116,18 @@ export const getStrategyAdvice = async (userPrompt: string): Promise<string> => 
   } catch (error: any) {
     // Timeout
     if (error.name === 'TimeoutError' || error.name === 'AbortError') {
-      const timeoutErr = new Error('Request timed out') as Error & { code: string };
-      timeoutErr.code = 'TIMEOUT';
-      throw timeoutErr;
+      console.error('[CHATBOT ERR] TIMEOUT — Request exceeded 15s');
+      throw createCodedError('Request timed out', 'TIMEOUT');
     }
     // Network error (offline, DNS failure, etc.)
     if (error instanceof TypeError && error.message.includes('fetch')) {
-      const netErr = new Error('Network error') as Error & { code: string };
-      netErr.code = 'NETWORK_ERROR';
-      throw netErr;
+      console.error('[CHATBOT ERR] NETWORK_ERROR —', error.message);
+      throw createCodedError('Network error', 'NETWORK_ERROR');
     }
-    // Re-throw if it already has a code
+    // Re-throw if it already has a code (from our handlers above)
     if (error.code) throw error;
     // Unknown
-    const unknownErr = new Error(error.message || 'Unknown error') as Error & { code: string };
-    unknownErr.code = 'UNKNOWN';
-    throw unknownErr;
+    console.error('[CHATBOT ERR] UNKNOWN —', error.message || error);
+    throw createCodedError(error.message || 'Unknown error', 'UNKNOWN');
   }
 };

@@ -89,19 +89,51 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     return res.status(200).json({ text: response.text || 'Analyzing market data...' });
   } catch (error: any) {
-    console.error('Gemini API Error:', error?.message || error);
+    const status = error?.status || error?.httpStatusCode || error?.code;
+    const message = error?.message || 'Unknown error';
+    console.error(`[CHATBOT API ERR] status=${status} message=${message}`);
 
-    // Distinguish between connectivity and API errors
-    if (error?.message?.includes('fetch') || error?.message?.includes('ECONNREFUSED') || error?.message?.includes('network')) {
+    // ── Differentiated Gemini API errors ──────────────────────────
+    if (status === 429 || message.includes('429') || message.toLowerCase().includes('quota') || message.toLowerCase().includes('rate')) {
+      return res.status(429).json({
+        error: 'API-Kontingent erschöpft. Bitte warte einen Moment.',
+        code: 'QUOTA_EXCEEDED',
+      });
+    }
+
+    if (status === 403 || message.includes('403') || message.toLowerCase().includes('forbidden') || message.toLowerCase().includes('permission')) {
+      return res.status(403).json({
+        error: 'API-Zugriff verweigert. API-Key prüfen.',
+        code: 'FORBIDDEN',
+      });
+    }
+
+    if (status === 404 || message.includes('404') || message.toLowerCase().includes('not found')) {
+      return res.status(404).json({
+        error: 'KI-Modell nicht gefunden.',
+        code: 'MODEL_NOT_FOUND',
+      });
+    }
+
+    if (status === 400 || message.includes('400') || message.toLowerCase().includes('invalid')) {
+      return res.status(400).json({
+        error: 'Ungültige Anfrage an die KI.',
+        code: 'BAD_REQUEST',
+      });
+    }
+
+    // Connectivity errors
+    if (message.includes('fetch') || message.includes('ECONNREFUSED') || message.includes('network')) {
       return res.status(503).json({
         error: 'Der KI-Service ist momentan nicht erreichbar.',
         code: 'AI_UNAVAILABLE',
       });
     }
 
+    // Fallback
     return res.status(500).json({
       error: 'Bei der Verarbeitung ist ein Fehler aufgetreten.',
-      code: 'AI_ERROR',
+      code: 'AI_SERVER_ERROR',
     });
   }
 }

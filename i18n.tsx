@@ -174,6 +174,11 @@ const translations: Record<string, Record<Lang, string>> = {
     'ai.error.timeout': { en: 'The request took too long. Please try again.', de: 'Die Anfrage hat zu lange gedauert. Bitte versuche es erneut.' },
     'ai.error.networkError': { en: 'No internet connection. Please check your connection.', de: 'Keine Internetverbindung. Bitte prüfe deine Verbindung.' },
     'ai.error.unknown': { en: 'An unknown error occurred. Please contact us directly.', de: 'Ein unbekannter Fehler ist aufgetreten. Bitte kontaktiere uns direkt.' },
+    'ai.error.quotaExceeded': { en: 'Daily quota exceeded. Please try again later.', de: 'Tages-Kontingent erschöpft. Bitte später erneut versuchen.' },
+    'ai.error.forbidden': { en: 'API access denied. Please check the API key.', de: 'API-Zugriff verweigert. Bitte API-Key prüfen.' },
+    'ai.error.modelNotFound': { en: 'AI model not found. Please check configuration.', de: 'KI-Modell nicht gefunden. Bitte Konfiguration prüfen.' },
+    'ai.error.badRequest': { en: 'Invalid request. Please try a different question.', de: 'Ungültige Anfrage. Bitte versuche es mit einer anderen Frage.' },
+    'ai.error.serverError': { en: 'AI server reported an error. Please try again later.', de: 'KI-Server hat einen Fehler gemeldet. Bitte später erneut versuchen.' },
 
 
     // CTA / Contact

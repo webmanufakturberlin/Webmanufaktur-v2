@@ -2,6 +2,8 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { ArrowRight, Terminal, ChevronDown } from 'lucide-react';
 import { useI18n } from '../i18n';
 import VoxelBerlinBackground from './ui/VoxelBerlinBackground';
+import WeatherWidget from './ui/weather/WeatherWidget';
+import { useWeatherStore } from '../stores/weatherStore';
 import { motion } from 'framer-motion';
 
 // Magnetic CTA button — follows cursor slightly with spring return
@@ -46,6 +48,7 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
     const { t } = useI18n();
+    const isNight = useWeatherStore(s => s.isNight);
 
     const scrollToContact = () => {
         document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
@@ -54,20 +57,25 @@ export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
     return (
         <section id="hero-section" className="relative min-h-screen flex flex-col items-center justify-center pt-24 md:pt-32 pb-4 overflow-hidden">
             <VoxelBerlinBackground />
+            <WeatherWidget />
 
             <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 text-center">
                 <div className="flex flex-col items-center">
 
                     {/* Made in Berlin Badge — holographic shimmer + Berlin red dot */}
                     <div
-                        className="badge-holo inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-white/95 backdrop-blur-md border border-indigo-100/80 mb-10 shadow-lg shadow-indigo-900/5 cursor-default transition-all duration-300 hover:shadow-xl hover:shadow-indigo-200/30 hover:border-indigo-200 hover:scale-105"
+                        className={`badge-holo inline-flex items-center gap-3 px-6 py-2.5 rounded-full backdrop-blur-md border mb-10 shadow-lg cursor-default transition-all duration-300 hover:shadow-xl hover:scale-105 ${
+                            isNight
+                                ? 'bg-white/10 border-white/20 shadow-black/10 hover:shadow-white/10 hover:border-white/30'
+                                : 'bg-white/95 border-indigo-100/80 shadow-indigo-900/5 hover:shadow-indigo-200/30 hover:border-indigo-200'
+                        }`}
                     >
                         {/* Berlin red pulsing dot */}
                         <span className="relative flex h-2 w-2" aria-hidden="true">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
                         </span>
-                        <span className="text-xs font-mono font-bold uppercase tracking-[0.22em] text-gray-700 select-none">
+                        <span className={`text-xs font-mono font-bold uppercase tracking-[0.22em] select-none ${isNight ? 'text-gray-200' : 'text-gray-700'}`}>
                             Made in Berlin
                         </span>
                         {/* CRT scanline overlay */}
@@ -95,7 +103,7 @@ export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
                                 initial={{ x: '100%', opacity: 0 }}
                                 animate={{ x: 0, opacity: 1 }}
                                 transition={{ duration: 4, ease: [0.16, 1, 0.3, 1] }}
-                                className="block text-transparent bg-clip-text bg-gradient-to-b from-gray-900 to-gray-600"
+                                className={`block text-transparent bg-clip-text ${isNight ? 'bg-gradient-to-b from-white to-gray-300' : 'bg-gradient-to-b from-gray-900 to-gray-600'}`}
                             >
                                 {t('hero.headline1')}
                             </motion.span>
@@ -127,7 +135,7 @@ export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
 
                     {/* Subtext — plain text, increased size */}
                     <div>
-                        <p className="max-w-2xl text-lg sm:text-xl md:text-3xl text-gray-500 leading-relaxed mb-10 mx-auto font-light cursor-default">
+                        <p className={`max-w-2xl text-lg sm:text-xl md:text-3xl leading-relaxed mb-10 mx-auto font-light cursor-default ${isNight ? 'text-gray-300' : 'text-gray-500'}`}>
                             {t('hero.subtext')}
                         </p>
                     </div>
@@ -155,7 +163,11 @@ export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
                                     onReferences();
                                 }
                             }}
-                            className="relative group min-w-[180px] text-sm font-bold uppercase tracking-widest text-gray-500 hover:text-gray-900 transition-all px-6 py-4 hover:bg-white hover:shadow-lg rounded-full border border-transparent hover:border-gray-100 flex items-center justify-center gap-2 active:scale-95 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 hover:-translate-y-0.5 duration-300 overflow-hidden"
+                            className={`relative group min-w-[180px] text-sm font-bold uppercase tracking-widest transition-all px-6 py-4 rounded-full border border-transparent flex items-center justify-center gap-2 active:scale-95 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 hover:-translate-y-0.5 duration-300 overflow-hidden ${
+                                isNight
+                                    ? 'text-gray-300 hover:text-white hover:bg-white/10 hover:shadow-lg hover:border-white/20'
+                                    : 'text-gray-500 hover:text-gray-900 hover:bg-white hover:shadow-lg hover:border-gray-100'
+                            }`}
                         >
                             <span
                                 className="absolute bottom-3 left-1/2 -translate-x-1/2 h-[2px] w-0 group-hover:w-2/3 bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500 rounded-full transition-all duration-500 ease-out"
@@ -170,8 +182,8 @@ export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
 
             {/* Scroll indicator */}
             <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[16] flex flex-col items-center gap-2 animate-bounce pointer-events-none" style={{ animationDuration: '2s' }}>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{t('hero.scroll')}</span>
-                <ChevronDown size={20} className="text-gray-400" />
+                <span className={`text-[10px] font-bold uppercase tracking-widest ${isNight ? 'text-gray-500' : 'text-gray-400'}`}>{t('hero.scroll')}</span>
+                <ChevronDown size={20} className={isNight ? 'text-gray-500' : 'text-gray-400'} />
             </div>
 
             {/* Footer Tech Stack — individual hover colors */}
@@ -186,7 +198,11 @@ export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
                     ].map((tech, i) => (
                         <span
                             key={tech.name}
-                            className={`text-xs font-bold font-mono tracking-widest text-gray-400 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-md shadow-sm border border-gray-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:opacity-100 ${tech.color}`}
+                            className={`text-xs font-bold font-mono tracking-widest backdrop-blur-sm px-3 py-1 rounded-md shadow-sm border transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:opacity-100 ${
+                                isNight
+                                    ? 'text-gray-400 bg-white/10 border-white/10'
+                                    : `text-gray-400 bg-white/80 border-gray-100 ${tech.color}`
+                            }`}
                             style={{ transitionDelay: `${i * 40}ms` }}
                         >
                             {tech.name}

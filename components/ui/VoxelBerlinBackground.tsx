@@ -1,6 +1,10 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import WeatherSky from './weather/WeatherSky';
+import WeatherLighting from './weather/WeatherLighting';
+import WeatherParticles from './weather/WeatherParticles';
+import { useWeatherStore } from '../../stores/weatherStore';
 
 // Palette from Voxel-Berlin3
 const PALETTE = {
@@ -816,38 +820,44 @@ const CinematicCamera = () => {
 };
 
 export default function VoxelBerlinBackground() {
+    const isNight = useWeatherStore(s => s.isNight);
+    const startPolling = useWeatherStore(s => s.startPolling);
+
+    useEffect(() => {
+        const cleanup = startPolling();
+        return cleanup;
+    }, [startPolling]);
+
     return (
-        <div className="absolute inset-0 z-[1] bg-[#a3dcfc] overflow-hidden pointer-events-none">
+        <div className={`absolute inset-0 z-[1] overflow-hidden pointer-events-none ${isNight ? 'bg-[#050510]' : 'bg-[#a3dcfc]'}`}>
             <Canvas
                 shadows
                 camera={{ position: [0, 70, 150], fov: 60 }}
                 gl={{ antialias: true, powerPreference: 'high-performance' }}
                 className="w-full h-full"
             >
-                <color attach="background" args={['#a3dcfc']} />
+                <WeatherSky />
                 <fogExp2 attach="fog" args={['#a3dcfc', 0.004]} />
-
-                <ambientLight intensity={1.5} color="#504040" />
-                <directionalLight
-                    position={[-100, 60, 50]}
-                    intensity={2.5}
-                    color="#ffd0a0"
-                    castShadow
-                    shadow-mapSize={[2048, 2048]}
-                >
-                    <orthographicCamera attach="shadow-camera" args={[-120, 120, 120, -120, 0.5, 300]} />
-                </directionalLight>
-                <hemisphereLight args={['#a3dcfc', '#201510', 0.8]} />
+                <WeatherLighting />
+                <WeatherParticles />
 
                 <VoxelCity />
                 <CinematicCamera />
             </Canvas>
 
-            {/* Vignette overlay */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(255,255,255,0.3)_100%)] pointer-events-none" />
+            {/* Vignette overlay — adapts to day/night */}
+            <div className={`absolute inset-0 pointer-events-none ${
+                isNight
+                    ? 'bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]'
+                    : 'bg-[radial-gradient(circle_at_center,transparent_0%,rgba(255,255,255,0.3)_100%)]'
+            }`} />
 
-            {/* Bottom gradient for section blend */}
-            <div className="absolute inset-0 bg-gradient-to-t from-white/90 via-transparent to-transparent pointer-events-none" />
+            {/* Bottom gradient for section blend — adapts to day/night */}
+            <div className={`absolute inset-0 pointer-events-none ${
+                isNight
+                    ? 'bg-gradient-to-t from-gray-950/90 via-transparent to-transparent'
+                    : 'bg-gradient-to-t from-white/90 via-transparent to-transparent'
+            }`} />
         </div>
     );
 }
