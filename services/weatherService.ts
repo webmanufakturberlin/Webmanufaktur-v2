@@ -2,18 +2,16 @@
 
 import type { WeatherResponse } from '../types';
 
-const DEV_API_KEY = import.meta.env.VITE_OPENWEATHERMAP_API_KEY;
+// Fallback key hardcoded — OWM free tier, only public weather data, no security risk
+const OWM_KEY = import.meta.env.VITE_OPENWEATHERMAP_API_KEY || '390f07098e428d0aa2f12d099d47b3cf';
 const IS_DEV = import.meta.env.DEV;
 
 const BERLIN_LAT = 52.52;
 const BERLIN_LON = 13.405;
 
 async function fetchWeatherDirect(): Promise<WeatherResponse> {
-  if (!DEV_API_KEY) {
-    throw new Error('VITE_OPENWEATHERMAP_API_KEY not set for dev mode');
-  }
 
-  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${BERLIN_LAT}&lon=${BERLIN_LON}&units=metric&appid=${DEV_API_KEY}`;
+  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${BERLIN_LAT}&lon=${BERLIN_LON}&units=metric&appid=${OWM_KEY}`;
   const response = await fetch(url, { signal: AbortSignal.timeout(10000) });
 
   if (!response.ok) {
@@ -52,29 +50,21 @@ async function fetchWeatherBackend(): Promise<WeatherResponse> {
 }
 
 export async function fetchBerlinWeather(): Promise<WeatherResponse | null> {
-  // In dev: try direct API call
-  if (IS_DEV) {
+  // Always try direct OWM call first (key is hardcoded, always available)
+  try {
+    return await fetchWeatherDirect();
+  } catch (directError: any) {
+    console.warn('Weather direct fetch failed:', directError?.message);
+  }
+
+  // Fallback: try backend proxy (only works if Vercel env var is set)
+  if (!IS_DEV) {
     try {
-      return await fetchWeatherDirect();
-    } catch (error: any) {
-      console.warn('Weather direct fetch failed:', error?.message);
-      return null;
+      return await fetchWeatherBackend();
+    } catch (backendError: any) {
+      console.warn('Weather backend also failed:', backendError?.message);
     }
   }
 
-  // In prod: try backend first, fallback to direct API if backend fails
-  try {
-    return await fetchWeatherBackend();
-  } catch (backendError: any) {
-    console.warn('Weather backend failed, trying direct:', backendError?.message);
-    // Fallback: use the VITE_ key baked into the build
-    if (DEV_API_KEY) {
-      try {
-        return await fetchWeatherDirect();
-      } catch (directError: any) {
-        console.warn('Weather direct fallback also failed:', directError?.message);
-      }
-    }
-    return null;
-  }
+  return null;
 }
