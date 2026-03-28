@@ -1,5 +1,6 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
+import { useInView } from 'framer-motion';
 import * as THREE from 'three';
 import WeatherSky from './weather/WeatherSky';
 import WeatherLighting from './weather/WeatherLighting';
@@ -822,6 +823,8 @@ const CinematicCamera = () => {
 export default function VoxelBerlinBackground({ onLoad }: { onLoad?: () => void }) {
     const isNight = useWeatherStore(s => s.isNight);
     const [contextLost, setContextLost] = React.useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const isInView = useInView(containerRef, { margin: "200px" });
 
     // Handle WebGL context loss (iPad / memory constrained devices)
     const handleCreated = React.useCallback(({ gl }: { gl: THREE.WebGLRenderer }) => {
@@ -846,7 +849,7 @@ export default function VoxelBerlinBackground({ onLoad }: { onLoad?: () => void 
     }, [onLoad]);
 
     return (
-        <div className={`absolute inset-0 z-[1] overflow-hidden pointer-events-none ${isNight ? 'bg-[#050510]' : 'bg-[#a3dcfc]'}`}>
+        <div ref={containerRef} className={`absolute inset-0 z-[1] overflow-hidden pointer-events-none ${isNight ? 'bg-[#050510]' : 'bg-[#a3dcfc]'}`}>
             {contextLost ? (
                 // Fallback gradient when WebGL dies (iPad)
                 <div className={`w-full h-full ${
@@ -856,6 +859,7 @@ export default function VoxelBerlinBackground({ onLoad }: { onLoad?: () => void 
                 }`} />
             ) : (
                 <Canvas
+                    frameloop={isInView ? 'always' : 'demand'}
                     camera={{ position: [0, 70, 150], fov: 60 }}
                     gl={{
                         antialias: true,
