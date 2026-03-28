@@ -104,6 +104,7 @@ export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
                                 animate={{ x: 0, opacity: 1 }}
                                 transition={{ duration: 4, ease: [0.16, 1, 0.3, 1] }}
                                 className={`block text-transparent bg-clip-text ${isNight ? 'bg-gradient-to-b from-white to-gray-300' : 'bg-gradient-to-b from-gray-900 to-gray-600'}`}
+                                style={{ willChange: 'transform, opacity' }}
                             >
                                 {t('hero.headline1')}
                             </motion.span>
@@ -112,6 +113,7 @@ export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
                                 animate={{ x: 0, opacity: 1 }}
                                 transition={{ duration: 5, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
                                 className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 pb-2"
+                                style={{ willChange: 'transform, opacity' }}
                             >
                                 {t('hero.headline2')}
                             </motion.span>

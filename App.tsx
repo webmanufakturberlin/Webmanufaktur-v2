@@ -79,10 +79,8 @@ const SectionReveal: React.FC<{
     // amount: 0.12 — trigger when 12% visible
     // margin: shrink viewport by 80px top & bottom for balanced enter/exit
     const isInView = useInView(ref, {
-        once: false,
+        once: true,
         amount: 0.08,
-        // Only negative bottom: delays enter until section is 40px inside viewport.
-        // No negative top: section stays "in view" until fully scrolled past.
         margin: '0px 0px -40px 0px',
     });
     const selectedVariant = ANIMATION_VARIANTS[variant];
@@ -102,8 +100,6 @@ const SectionReveal: React.FC<{
             className={className}
             style={{
                 ...(variant !== 'standard' ? { perspective: '2000px' } : {}),
-                contentVisibility: 'auto',
-                containIntrinsicSize: 'auto 600px',
             } as React.CSSProperties}
         >
             {children}
@@ -168,12 +164,14 @@ const App: React.FC = () => {
 
     const handleBack = useCallback(() => {
         setCurrentView('home');
+        // Use instant scroll to avoid visible scrolling from Hero
+        window.scrollTo(0, 0);
         setTimeout(() => {
             const element = document.getElementById('features');
             if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
+                element.scrollIntoView({ behavior: 'instant' as ScrollBehavior });
             }
-        }, 100);
+        }, 300);
     }, []);
 
     return (

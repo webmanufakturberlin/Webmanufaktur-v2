@@ -822,6 +822,7 @@ const CinematicCamera = () => {
 export default function VoxelBerlinBackground() {
     const isNight = useWeatherStore(s => s.isNight);
     const startPolling = useWeatherStore(s => s.startPolling);
+    const [contextLost, setContextLost] = React.useState(false);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
@@ -829,22 +830,51 @@ export default function VoxelBerlinBackground() {
         return cleanup;
     }, []);
 
+    // Handle WebGL context loss (iPad / memory constrained devices)
+    const handleCreated = React.useCallback(({ gl }: { gl: THREE.WebGLRenderer }) => {
+        const canvas = gl.domElement;
+        canvas.addEventListener('webglcontextlost', (e) => {
+            e.preventDefault();
+            console.warn('[VOXEL] WebGL context lost — showing fallback');
+            setContextLost(true);
+        });
+        canvas.addEventListener('webglcontextrestored', () => {
+            console.log('[VOXEL] WebGL context restored');
+            setContextLost(false);
+        });
+    }, []);
+
     return (
         <div className={`absolute inset-0 z-[1] overflow-hidden pointer-events-none ${isNight ? 'bg-[#050510]' : 'bg-[#a3dcfc]'}`}>
-            <Canvas
-                shadows
-                camera={{ position: [0, 70, 150], fov: 60 }}
-                gl={{ antialias: true, powerPreference: 'high-performance' }}
-                className="w-full h-full"
-            >
-                <WeatherSky />
-                <fogExp2 attach="fog" args={['#a3dcfc', 0.004]} />
-                <WeatherLighting />
-                <WeatherParticles />
+            {contextLost ? (
+                // Fallback gradient when WebGL dies (iPad)
+                <div className={`w-full h-full ${
+                    isNight
+                        ? 'bg-gradient-to-b from-[#050510] via-[#0a0a2e] to-[#050510]'
+                        : 'bg-gradient-to-b from-[#a3dcfc] via-[#c7e8ff] to-[#e8f4ff]'
+                }`} />
+            ) : (
+                <Canvas
+                    shadows
+                    camera={{ position: [0, 70, 150], fov: 60 }}
+                    gl={{
+                        antialias: true,
+                        powerPreference: 'high-performance',
+                        failIfMajorPerformanceCaveat: false,
+                    }}
+                    dpr={Math.min(window.devicePixelRatio, 1.5)}
+                    className="w-full h-full"
+                    onCreated={handleCreated}
+                >
+                    <WeatherSky />
+                    <fogExp2 attach="fog" args={['#a3dcfc', 0.004]} />
+                    <WeatherLighting />
+                    <WeatherParticles />
 
-                <VoxelCity />
-                <CinematicCamera />
-            </Canvas>
+                    <VoxelCity />
+                    <CinematicCamera />
+                </Canvas>
+            )}
 
             {/* Vignette overlay — adapts to day/night */}
             <div className={`absolute inset-0 pointer-events-none ${

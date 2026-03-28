@@ -16,7 +16,7 @@ export const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack })
     }, []);
 
     return (
-        <div className="min-h-screen relative font-sans text-ink">
+        <div className="min-h-screen relative font-sans text-ink bg-gray-50">
             <div className="relative z-20 container mx-auto px-6 py-20">
                 <button
                     onClick={onBack}
