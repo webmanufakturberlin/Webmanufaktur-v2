@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, Suspense } from 'react';
 import { Hero } from './components/Hero';
 import { Navbar } from './components/Navbar';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useScroll, useSpring } from 'framer-motion';
 
 // Lazy-load below-the-fold sections for faster initial paint
 const ImpactData = React.lazy(() => import('./components/ImpactData').then(m => ({ default: m.ImpactData })));
@@ -19,22 +19,27 @@ const KILabor = React.lazy(() => import('./components/KILabor').then(m => ({ def
 
 // --- Scroll Progress Bar ---
 const ScrollProgress: React.FC = () => {
-    const [progress, setProgress] = useState(0);
-
-    useEffect(() => {
-        const onScroll = () => {
-            const scrollTop = window.scrollY;
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            setProgress(docHeight > 0 ? (scrollTop / docHeight) * 100 : 0);
-        };
-        window.addEventListener('scroll', onScroll, { passive: true });
-        return () => window.removeEventListener('scroll', onScroll);
-    }, []);
+    const { scrollYProgress } = useScroll();
+    const scaleX = useSpring(scrollYProgress, {
+        stiffness: 100,
+        damping: 30,
+        restDelta: 0.001
+    });
 
     return (
-        <div
+        <motion.div
             className="scroll-progress"
-            style={{ width: `${progress}%` }}
+            style={{ 
+                scaleX, 
+                transformOrigin: "0%",
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "4px",
+                background: "linear-gradient(to right, #007cf0, #00dfd8)", // Adjust colors to match your theme
+                zIndex: 1000
+            }}
             aria-hidden="true"
         />
     );
