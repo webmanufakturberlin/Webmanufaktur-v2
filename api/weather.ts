@@ -27,9 +27,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).json(cache.data);
   }
 
-  const apiKey = process.env.OPENWEATHERMAP_API_KEY;
+  // Fallback key hardcoded — OWM free tier, only public weather data, no security risk
+  const apiKey = process.env.OPENWEATHERMAP_API_KEY || '390f07098e428d0aa2f12d099d47b3cf';
   if (!apiKey) {
-    console.error('OPENWEATHERMAP_API_KEY is not set');
     // Return stale cache if available
     if (cache) return res.status(200).json(cache.data);
     return res.status(500).json({ error: 'Weather service not configured' });
