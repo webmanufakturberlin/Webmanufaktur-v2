@@ -1,7 +1,8 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { ArrowRight, Terminal, ChevronDown } from 'lucide-react';
 import { useI18n } from '../i18n';
-import VoxelBerlinBackground from './ui/VoxelBerlinBackground';
+import PageLoader from './ui/PageLoader';
+const VoxelBerlinBackground = React.lazy(() => import('./ui/VoxelBerlinBackground'));
 import WeatherWidget from './ui/weather/WeatherWidget';
 import { useWeatherStore } from '../stores/weatherStore';
 import { motion } from 'framer-motion';
@@ -49,6 +50,7 @@ interface HeroProps {
 export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
     const { t } = useI18n();
     const isNight = useWeatherStore(s => s.isNight);
+    const [is3DLoaded, setIs3DLoaded] = useState(false);
 
     const scrollToContact = () => {
         document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
@@ -56,7 +58,10 @@ export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
 
     return (
         <section id="hero-section" className="relative min-h-screen flex flex-col items-center justify-center pt-24 md:pt-32 pb-4 overflow-hidden">
-            <VoxelBerlinBackground />
+            <PageLoader isLoading={!is3DLoaded} />
+            <React.Suspense fallback={null}>
+                <VoxelBerlinBackground onLoad={() => setIs3DLoaded(true)} />
+            </React.Suspense>
             <WeatherWidget />
 
             <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 text-center">

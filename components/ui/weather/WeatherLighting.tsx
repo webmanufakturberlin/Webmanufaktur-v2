@@ -111,11 +111,7 @@ export default function WeatherLighting() {
         position={[-100, 60, 50]}
         intensity={2.5}
         color="#ffd0a0"
-        castShadow
-        shadow-mapSize={[2048, 2048]}
-      >
-        <orthographicCamera attach="shadow-camera" args={[-120, 120, 120, -120, 0.5, 300]} />
-      </directionalLight>
+      />
       <hemisphereLight ref={hemiRef} args={['#a3dcfc', '#201510', 0.8]} />
     </>
   );

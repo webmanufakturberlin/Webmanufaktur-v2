@@ -78,31 +78,31 @@ export default function WeatherWidget() {
   const raw = useWeatherStore(s => s.raw);
   const weatherCondition = useWeatherStore(s => s.weatherCondition);
   const isNight = useWeatherStore(s => s.isNight);
+  const isLoading = useWeatherStore(s => s.isLoading);
+  const error = useWeatherStore(s => s.error);
+
+  // Always show widget — use fallback when no API data
+  const temp = raw ? `${raw.temp}°C` : isLoading ? '...' : 'Berlin';
 
   return (
-    <AnimatePresence>
-      {raw && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className={`
-            absolute top-4 right-4 z-20
-            flex items-center gap-2 px-3 py-1.5 rounded-full
-            backdrop-blur-md border
-            ${isNight
-              ? 'bg-white/10 border-white/20 text-white/90'
-              : 'bg-black/10 border-black/10 text-gray-800'
-            }
-            text-sm font-medium tracking-tight
-            pointer-events-auto select-none
-          `}
-        >
-          <WeatherIcon condition={weatherCondition} isNight={isNight} size={18} />
-          <span>{raw.temp}°C</span>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      className={`
+        absolute top-4 right-4 z-20
+        flex items-center gap-2 px-3 py-1.5 rounded-full
+        backdrop-blur-md border
+        ${isNight
+          ? 'bg-white/10 border-white/20 text-white/90'
+          : 'bg-black/10 border-black/10 text-gray-800'
+        }
+        text-sm font-medium tracking-tight
+        pointer-events-auto select-none
+      `}
+    >
+      <WeatherIcon condition={weatherCondition} isNight={isNight} size={18} />
+      <span>{temp}</span>
+    </motion.div>
   );
 }

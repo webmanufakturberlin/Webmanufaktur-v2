@@ -779,7 +779,7 @@ const VoxelCity = () => {
     }, [voxelCount, matrices, colors]);
 
     return (
-        <instancedMesh ref={meshRef} args={[geometry, material, voxelCount]} castShadow receiveShadow />
+        <instancedMesh ref={meshRef} args={[geometry, material, voxelCount]} />
     );
 };
 
@@ -819,7 +819,7 @@ const CinematicCamera = () => {
     return null;
 };
 
-export default function VoxelBerlinBackground() {
+export default function VoxelBerlinBackground({ onLoad }: { onLoad?: () => void }) {
     const isNight = useWeatherStore(s => s.isNight);
     const startPolling = useWeatherStore(s => s.startPolling);
     const [contextLost, setContextLost] = React.useState(false);
@@ -842,7 +842,15 @@ export default function VoxelBerlinBackground() {
             console.log('[VOXEL] WebGL context restored');
             setContextLost(false);
         });
-    }, []);
+        
+        // Notify parent that the 3D scene is ready
+        if (onLoad) {
+            // Slight delay ensures the first frame is painted before removing the PageLoader
+            requestAnimationFrame(() => {
+                onLoad();
+            });
+        }
+    }, [onLoad]);
 
     return (
         <div className={`absolute inset-0 z-[1] overflow-hidden pointer-events-none ${isNight ? 'bg-[#050510]' : 'bg-[#a3dcfc]'}`}>
@@ -855,7 +863,6 @@ export default function VoxelBerlinBackground() {
                 }`} />
             ) : (
                 <Canvas
-                    shadows
                     camera={{ position: [0, 70, 150], fov: 60 }}
                     gl={{
                         antialias: true,
