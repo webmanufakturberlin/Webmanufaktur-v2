@@ -823,10 +823,11 @@ export default function VoxelBerlinBackground() {
     const isNight = useWeatherStore(s => s.isNight);
     const startPolling = useWeatherStore(s => s.startPolling);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         const cleanup = startPolling();
         return cleanup;
-    }, [startPolling]);
+    }, []);
 
     return (
         <div className={`absolute inset-0 z-[1] overflow-hidden pointer-events-none ${isNight ? 'bg-[#050510]' : 'bg-[#a3dcfc]'}`}>

@@ -17,7 +17,7 @@ const SKY_PALETTES: Record<string, [string, string, string]> = {
   clouds_heavy_night: ['#060608', '#0a0a10', '#101018'],
   rain_day:           ['#3a4050', '#5a6070', '#7a8088'],
   rain_night:         ['#030306', '#060610', '#0a0a18'],
-  snow_day:           ['#6878888', '#8898a8', '#a8b8c8'],
+  snow_day:           ['#687888', '#8898a8', '#a8b8c8'],
   snow_night:         ['#080810', '#101020', '#181828'],
   thunderstorm_day:   ['#1a1a22', '#2a2a32', '#3a3a42'],
   thunderstorm_night: ['#020204', '#040408', '#060610'],

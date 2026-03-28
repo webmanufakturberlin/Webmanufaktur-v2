@@ -60,8 +60,8 @@ function getFallbackSunTimes(): { sunrise: number; sunset: number } {
   const sunriseHours = [7.5, 7, 6, 5.5, 4.5, 4, 4.5, 5, 5.5, 6.5, 7, 7.5];
   const sunsetHours = [16, 17, 18, 19, 20, 21, 21, 20, 19, 17.5, 16, 15.5];
 
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const todayUnix = Math.floor(today.getTime() / 1000);
+  // Use UTC midnight to match UTC-based sunrise/sunset hours
+  const todayUnix = Math.floor(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) / 1000);
 
   return {
     sunrise: todayUnix + Math.floor(sunriseHours[month] * 3600),

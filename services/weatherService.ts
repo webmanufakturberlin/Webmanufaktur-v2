@@ -52,13 +52,29 @@ async function fetchWeatherBackend(): Promise<WeatherResponse> {
 }
 
 export async function fetchBerlinWeather(): Promise<WeatherResponse | null> {
-  try {
-    if (IS_DEV) {
+  // In dev: try direct API call
+  if (IS_DEV) {
+    try {
       return await fetchWeatherDirect();
+    } catch (error: any) {
+      console.warn('Weather direct fetch failed:', error?.message);
+      return null;
     }
+  }
+
+  // In prod: try backend first, fallback to direct API if backend fails
+  try {
     return await fetchWeatherBackend();
-  } catch (error: any) {
-    console.warn('Weather fetch failed:', error?.message);
+  } catch (backendError: any) {
+    console.warn('Weather backend failed, trying direct:', backendError?.message);
+    // Fallback: use the VITE_ key baked into the build
+    if (DEV_API_KEY) {
+      try {
+        return await fetchWeatherDirect();
+      } catch (directError: any) {
+        console.warn('Weather direct fallback also failed:', directError?.message);
+      }
+    }
     return null;
   }
 }
