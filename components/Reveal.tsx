@@ -46,16 +46,16 @@ export const Reveal: React.FC<RevealProps> = ({
   const getTransform = () => {
     if (!isVisible) {
       switch (variant) {
-        case 'bottom':      return 'translateY(35px)';
-        case 'left':        return 'translateX(-35px)';
-        case 'right':       return 'translateX(35px)';
-        case 'scale':       return 'scale(0.95)';
-        case 'blur':        return 'scale(1.02)';
-        case 'clip-up':     return 'translateY(20px)';
-        case 'clip-left':   return 'translateX(-20px)';
-        case 'rotate-in':   return 'perspective(1200px) rotateY(-12deg) translateX(-15px)';
-        case 'parallax-up': return 'translateY(50px) scale(0.97)';
-        default:            return 'translateY(60px)';
+        case 'bottom':      return 'translateY(100px)';
+        case 'left':        return 'translateX(-80px)';
+        case 'right':       return 'translateX(80px)';
+        case 'scale':       return 'scale(0.92)';
+        case 'blur':        return 'scale(1.05)';
+        case 'clip-up':     return 'translateY(40px)';
+        case 'clip-left':   return 'translateX(-40px)';
+        case 'rotate-in':   return 'perspective(1200px) rotateY(-12deg) translateX(-30px)';
+        case 'parallax-up': return 'translateY(120px) scale(0.95)';
+        default:            return 'translateY(100px)';
       }
     }
     return 'translate(0) scale(1) rotateY(0deg)';
@@ -86,11 +86,11 @@ export const Reveal: React.FC<RevealProps> = ({
           transform: getTransform(),
           filter: getFilter(),
           ...(isClipVariant ? { clipPath: getClipPath() } : {}),
-          // In animation: respect delay for enter
-          // Out animation: no delay — reverse fires immediately and smoothly
+          // In animation: respect delay for enter (slow elegant)
+          // Out animation: no delay — reverse fires slightly quicker but still slow enough for bidirection
           transition: isVisible
-            ? `all 700ms cubic-bezier(0.25, 1, 0.3, 1) ${delay}s`
-            : 'all 500ms cubic-bezier(0.4, 0, 0.6, 1) 0s',
+            ? `all 1200ms cubic-bezier(0.16, 1, 0.3, 1) ${delay}s`
+            : 'all 800ms cubic-bezier(0.4, 0, 0.6, 1) 0s',
           willChange: isVisible ? 'auto' : 'transform, opacity, filter',
         }}
       >

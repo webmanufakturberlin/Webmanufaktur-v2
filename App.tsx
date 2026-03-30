@@ -61,15 +61,15 @@ const ANIMATION_VARIANTS = {
         visible: { filter: 'blur(0px)', scale: 1 }
     },
     'horizon-expand': {
-        hidden: { scaleX: 0.93, y: 35 },
+        hidden: { scaleX: 0.85, y: 70 },
         visible: { scaleX: 1, y: 0 }
     },
     'curtain-rise': {
-        hidden: { y: 45, scale: 0.97 },
+        hidden: { y: 100, scale: 0.95 },
         visible: { y: 0, scale: 1 }
     },
     'spiral-in': {
-        hidden: { rotate: -3, scale: 0.96, y: 45 },
+        hidden: { rotate: -6, scale: 0.9, y: 80 },
         visible: { rotate: 0, scale: 1, y: 0 }
     }
 };
@@ -81,12 +81,12 @@ const SectionReveal: React.FC<{
     sectionId?: string;
 }> = ({ children, variant = 'standard', className = "", sectionId }) => {
     const ref = React.useRef(null);
-    // amount: 0.12 — trigger when 12% visible
-    // margin: shrink viewport by 80px top & bottom for balanced enter/exit
+    // amount: 0.20 — trigger when 20% visible (sweet spot for slow animations)
+    // margin: shrink viewport by 40px top & bottom
     const isInView = useInView(ref, {
-        once: true,
-        amount: 0.08,
-        margin: '0px 0px -40px 0px',
+        once: false,
+        amount: 0.20,
+        margin: '-40px 0px -40px 0px',
     });
     const selectedVariant = ANIMATION_VARIANTS[variant];
 
@@ -99,8 +99,8 @@ const SectionReveal: React.FC<{
             variants={selectedVariant}
             transition={
                 isInView
-                    ? { duration: 0.7, ease: [0.16, 1, 0.3, 1] }           // Enter: spring ease
-                    : { duration: 0.45, ease: [0.4, 0, 0.6, 1] }           // Exit: quick, no bounce
+                    ? { duration: 1.2, ease: [0.16, 1, 0.3, 1] }           // Enter: slow majestic spring ease
+                    : { duration: 0.8, ease: [0.4, 0, 0.6, 1] }            // Exit: slightly faster but visible exit
             }
             className={className}
             style={{

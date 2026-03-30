@@ -6,7 +6,33 @@ import { motion, useAnimationFrame } from 'framer-motion';
 
 // --- Icon animations use Framer Motion variants propagated from parent ---
 
-const arrowVariants = {
+const staggerContainerVariants: any = {
+    hidden: {},
+    visible: {
+        transition: {
+            staggerChildren: 0.25,
+            delayChildren: 0.3,
+        }
+    }
+};
+
+const staggerItemVariants: any = {
+    hidden: { opacity: 0, y: 150, rotateX: 25, scale: 0.85 },
+    visible: { 
+        opacity: 1, 
+        y: 0, 
+        rotateX: 0, 
+        scale: 1,
+        transition: {
+            type: "spring",
+            stiffness: 70,
+            damping: 25,
+            restDelta: 0.001
+        }
+    }
+};
+
+const arrowVariants: any = {
     idle: { y: 0, scale: 1, rotate: 0 },
     hovered: {
         y: [0, -10, -4, 0],
@@ -16,7 +42,7 @@ const arrowVariants = {
     },
 };
 
-const clockHourVariants = {
+const clockHourVariants: any = {
     idle: { rotate: 0 },
     hovered: {
         rotate: 360,
@@ -24,7 +50,7 @@ const clockHourVariants = {
     },
 };
 
-const clockMinuteVariants = {
+const clockMinuteVariants: any = {
     idle: { rotate: 0 },
     hovered: {
         rotate: 360,
@@ -32,7 +58,7 @@ const clockMinuteVariants = {
     },
 };
 
-const eyeVariants = {
+const eyeVariants: any = {
     idle: { rotateY: 0, scaleY: 1 },
     hovered: {
         rotateY: [0, -25, 25, 0, 0],
@@ -168,10 +194,10 @@ export const ImpactData: React.FC = () => {
                         </Reveal>
                     </div>
 
-                    <div className="md:w-2/3 grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <motion.div variants={staggerContainerVariants} className="md:w-2/3 grid grid-cols-1 sm:grid-cols-3 gap-6">
 
                         {/* Card 1 — Arrow bounce */}
-                        <Reveal delay={0.1} variant="parallax-up">
+                        <motion.div variants={staggerItemVariants} style={{ perspective: 1000 }} className="h-full">
                             <MagneticTiltCard
                                 className="bg-gradient-to-br from-white to-purple-50/40 p-8 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] border-2 border-purple-300 hover:shadow-[0_8px_30px_rgba(147,51,234,0.25)] hover:border-purple-500 transition-[box-shadow,border-color] duration-300 cursor-default h-full relative overflow-hidden"
                                 glowColor="rgba(147, 51, 234, 0.15)"
@@ -187,10 +213,10 @@ export const ImpactData: React.FC = () => {
                                     <p className="text-sm text-gray-600 leading-relaxed font-medium">{t('impact.stat1.desc')}</p>
                                 </motion.div>
                             </MagneticTiltCard>
-                        </Reveal>
+                        </motion.div>
 
                         {/* Card 2 — Clock speed burst */}
-                        <Reveal delay={0.2} variant="parallax-up">
+                        <motion.div variants={staggerItemVariants} style={{ perspective: 1000 }} className="h-full">
                             <MagneticTiltCard
                                 className="bg-gradient-to-br from-white to-blue-50/40 p-8 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] border-2 border-blue-300 hover:shadow-[0_8px_30px_rgba(59,130,246,0.25)] hover:border-blue-500 transition-[box-shadow,border-color] duration-300 cursor-default h-full relative overflow-hidden"
                                 glowColor="rgba(59, 130, 246, 0.15)"
@@ -216,10 +242,10 @@ export const ImpactData: React.FC = () => {
                                     <p className="text-sm text-gray-600 leading-relaxed font-medium">{t('impact.stat2.desc')}</p>
                                 </motion.div>
                             </MagneticTiltCard>
-                        </Reveal>
+                        </motion.div>
 
                         {/* Card 3 — Eye scan + blink */}
-                        <Reveal delay={0.3} variant="parallax-up">
+                        <motion.div variants={staggerItemVariants} style={{ perspective: 1000 }} className="h-full">
                             <MagneticTiltCard
                                 className="bg-gradient-to-br from-white to-orange-50/40 p-8 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] border-2 border-orange-300 hover:shadow-[0_8px_30px_rgba(249,115,22,0.25)] hover:border-orange-500 transition-[box-shadow,border-color] duration-300 cursor-default h-full relative overflow-hidden"
                                 glowColor="rgba(249, 115, 22, 0.15)"
@@ -235,9 +261,9 @@ export const ImpactData: React.FC = () => {
                                     <p className="text-sm text-gray-600 leading-relaxed font-medium">{t('impact.stat3.desc')}</p>
                                 </motion.div>
                             </MagneticTiltCard>
-                        </Reveal>
+                        </motion.div>
 
-                    </div>
+                    </motion.div>
                 </div>
             </div>
         </section>

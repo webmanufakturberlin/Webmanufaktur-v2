@@ -1,5 +1,6 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { Droplets, Wind } from 'lucide-react';
 import { useWeatherStore } from '../../../stores/weatherStore';
 import type { WeatherCondition } from '../../../types';
 
@@ -87,28 +88,62 @@ export default function WeatherWidget() {
     return cleanup;
   }, []);
 
-  // Always show widget — use fallback when no API data
-  const temp = raw ? `${raw.temp}°C` : isLoading ? '...' : 'Berlin';
+  if (!raw && isLoading) return null;
+
+  const temp = raw ? `${Math.round(raw.temp)}°C` : '...';
+  // Check if raw data actually exists before accessing properties
+  const humidity = raw?.humidity ? `${raw.humidity}%` : '...';
+  const wind = raw?.windSpeed ? `${Math.round(raw.windSpeed * 3.6)} km/h` : '...';
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      initial={{ opacity: 0, y: -20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 1.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
       className={`
         absolute top-28 md:top-36 right-4 md:right-8 z-30
-        flex items-center gap-2 px-3 py-1.5 rounded-full
-        backdrop-blur-md border
+        flex flex-col gap-2 px-5 py-4 rounded-2xl
+        backdrop-blur-xl border shadow-2xl
         ${isNight
-          ? 'bg-white/10 border-white/20 text-white/90'
-          : 'bg-black/10 border-black/10 text-gray-800'
+          ? 'bg-black/40 border-white/10 text-white/90 shadow-black/50'
+          : 'bg-white/60 border-white/40 text-gray-800 shadow-blue-900/10'
         }
-        text-sm font-medium tracking-tight
-        pointer-events-auto select-none
+        pointer-events-auto select-none overflow-hidden
       `}
     >
-      <WeatherIcon condition={weatherCondition} isNight={isNight} size={18} />
-      <span>{temp}</span>
+      {/* Live Indicator Header */}
+      <div className="flex items-center gap-2 mb-1 border-b border-current/10 pb-2">
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+        </span>
+        <span className="text-[10px] uppercase font-bold tracking-widest opacity-80">Live Berlin Environment</span>
+      </div>
+
+      {/* Main Stats */}
+      <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3">
+          <WeatherIcon condition={weatherCondition} isNight={isNight} size={28} />
+          <span className="font-bold text-2xl tracking-tight leading-none">{temp}</span>
+        </div>
+        
+        <div className="flex flex-col gap-1 border-l border-current/10 pl-5 py-1">
+          <div className="flex items-center gap-2 opacity-80">
+            <Droplets size={12} />
+            <span className="text-xs font-medium">{humidity}</span>
+          </div>
+          <div className="flex items-center gap-2 opacity-80">
+            <Wind size={12} />
+            <span className="text-xs font-medium">{wind}</span>
+          </div>
+        </div>
+      </div>
+      
+      {/* Footer Tag */}
+      <div className="mt-1 flex items-center gap-2">
+         <div className="h-0.5 w-full bg-current/5 rounded-full" />
+         <span className="text-[9px] uppercase tracking-widest font-bold opacity-40 whitespace-nowrap">3D Sync Online</span>
+      </div>
     </motion.div>
   );
 }
