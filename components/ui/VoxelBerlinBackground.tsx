@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useInView } from 'framer-motion';
 import * as THREE from 'three';
@@ -265,22 +265,27 @@ const VoxelCity = () => {
         // --- Oberbaumbrücke (double-deck bridge with neo-gothic towers) ---
         function buildOberbaumBridge(ox: number, oz: number) {
             const halfLen = 9;
-            buildBlock(ox - halfLen, 2, oz - 2, halfLen * 2, 2, 4, PALETTE.bridgeStone);
+            // Bridge deck at Y=3 (above water at Y=0)
+            buildBlock(ox - halfLen, 3, oz - 2, halfLen * 2, 2, 4, PALETTE.bridgeStone);
+            // Pillars start at Y=1 so water at Y=0 remains visible beneath
             for (let x = -halfLen + 2; x < halfLen - 2; x += 4) {
-                buildBlock(ox + x, 0, oz - 1, 2, 2, 2, PALETTE.bridgeStone);
+                // Water voxels visible under each pillar
+                addVoxel(ox + x, 0, oz - 1, PALETTE.water);
+                addVoxel(ox + x + 1, 0, oz - 1, PALETTE.water);
+                buildBlock(ox + x, 1, oz - 1, 2, 2, 2, PALETTE.bridgeStone);
             }
             for (const side of [-1, 1]) {
                 const tx = ox + side * 5;
-                buildBlock(tx - 1, 4, oz - 2, 3, 10, 4, PALETTE.oberbaumRed);
-                buildBlock(tx, 14, oz - 1, 1, 3, 2, PALETTE.oberbaumRed);
-                addVoxel(tx, 17, oz, PALETTE.oberbaumRed);
-                for (let y = 6; y < 13; y += 2) {
+                buildBlock(tx - 1, 5, oz - 2, 3, 10, 4, PALETTE.oberbaumRed);
+                buildBlock(tx, 15, oz - 1, 1, 3, 2, PALETTE.oberbaumRed);
+                addVoxel(tx, 18, oz, PALETTE.oberbaumRed);
+                for (let y = 7; y < 14; y += 2) {
                     addVoxel(tx, y, oz + 2, PALETTE.windowDark);
                 }
             }
             for (let x = -halfLen; x <= halfLen; x += 2) {
-                addVoxel(ox + x, 4, oz - 2, PALETTE.oberbaumRed);
-                addVoxel(ox + x, 4, oz + 1, PALETTE.oberbaumRed);
+                addVoxel(ox + x, 5, oz - 2, PALETTE.oberbaumRed);
+                addVoxel(ox + x, 5, oz + 1, PALETTE.oberbaumRed);
             }
         }
 
@@ -530,6 +535,22 @@ const VoxelCity = () => {
                     }
                 }
             }
+            // Museum Island water arms — Spree branches around Berliner Dom (-12,-4)
+            // North arm: flows above the island
+            for (let x = -18; x <= -4; x++) {
+                for (let w = -1; w <= 1; w++) {
+                    addVoxel(x, 0, -12 + w, PALETTE.water);
+                    riverSet.add(`${x},${-12 + w}`);
+                }
+            }
+            // South arm: flows below the island
+            for (let x = -16; x <= -2; x++) {
+                for (let w = -1; w <= 1; w++) {
+                    addVoxel(x, 0, 4 + w, PALETTE.water);
+                    riverSet.add(`${x},${4 + w}`);
+                }
+            }
+
             return riverSet;
         }
 
@@ -668,17 +689,17 @@ const VoxelCity = () => {
                 }
             }
 
-            // --- Outer horizon ring (sparse, low buildings that fade into fog) ---
+            // --- Outer horizon ring (denser, hides map edge) ---
             const outerGridSize = 10;
             for (let x = -220; x < 220; x += outerGridSize) {
                 for (let z = -220; z < 220; z += outerGridSize) {
                     const dist = Math.sqrt(x * x + z * z);
                     if (dist < 145 || dist > 220) continue;
                     if (isExcluded(x, z)) continue;
-                    if (Math.random() > 0.45) continue;
-                    const width = Math.floor(Math.random() * 4) + 3;
-                    const depth = Math.floor(Math.random() * 4) + 3;
-                    const height = Math.floor(Math.random() * 5) + 2;
+                    if (Math.random() > 0.70) continue;
+                    const width = Math.floor(Math.random() * 5) + 3;
+                    const depth = Math.floor(Math.random() * 5) + 3;
+                    const height = Math.floor(Math.random() * 6) + 3;
                     const color = PALETTE.cityColors[Math.floor(Math.random() * PALETTE.cityColors.length)];
                     buildBlock(x, 0, z, width, height, depth, color);
                 }
@@ -791,7 +812,9 @@ const CinematicCamera = () => {
     const timeRef = React.useRef(0);
 
     useFrame((state, delta) => {
-        timeRef.current += delta;
+        // Clamp delta to max 50ms — prevents camera teleporting after tab-switch or GC pause
+        const dt = Math.min(delta, 0.05);
+        timeRef.current += dt;
         const t = timeRef.current;
         const cam = state.camera;
 
@@ -799,8 +822,8 @@ const CinematicCamera = () => {
         const angle = t * 0.1;
 
         // Radius oscillates: min 55 (safe above buildings) → max 150 (panorama)
-        const radiusBase = 102;
-        const radiusAmplitude = 48;
+        const radiusBase = 85;
+        const radiusAmplitude = 30;
         const radius = radiusBase + Math.sin(t * 0.25) * radiusAmplitude;
 
         // Height: 35 (safely above Dom dome at ~29) → 80 (panoramic)
@@ -809,9 +832,13 @@ const CinematicCamera = () => {
         const heightHigh = 80;
         const height = heightLow + radiusNorm * (heightHigh - heightLow);
 
-        cam.position.x = TV_TOWER.x + Math.sin(angle) * radius;
-        cam.position.z = TV_TOWER.z + Math.cos(angle) * radius;
-        cam.position.y = height;
+        const targetX = TV_TOWER.x + Math.sin(angle) * radius;
+        const targetZ = TV_TOWER.z + Math.cos(angle) * radius;
+
+        // Lerp camera position — smooths over any remaining delta spikes
+        cam.position.x += (targetX - cam.position.x) * 0.12;
+        cam.position.z += (targetZ - cam.position.z) * 0.12;
+        cam.position.y += (height - cam.position.y) * 0.12;
 
         const lookY = 28 + radiusNorm * 10;
         cam.lookAt(TV_TOWER.x, lookY, TV_TOWER.z);
@@ -880,11 +907,11 @@ export default function VoxelBerlinBackground({ onLoad }: { onLoad?: () => void 
                 </Canvas>
             )}
 
-            {/* Vignette overlay — adapts to day/night */}
+            {/* Vignette overlay — adapts to day/night, hides map edges */}
             <div className={`absolute inset-0 pointer-events-none ${
                 isNight
-                    ? 'bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]'
-                    : 'bg-[radial-gradient(circle_at_center,transparent_0%,rgba(255,255,255,0.3)_100%)]'
+                    ? 'bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.6)_100%)]'
+                    : 'bg-[radial-gradient(circle_at_center,transparent_0%,rgba(255,255,255,0.5)_100%)]'
             }`} />
 
             {/* Bottom gradient for section blend — adapts to day/night */}

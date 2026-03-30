@@ -123,6 +123,123 @@ function Stars() {
   );
 }
 
+// Sun component
+function Sun() {
+  const meshRef = useRef<THREE.Mesh>(null);
+
+  useFrame(() => {
+    if (!meshRef.current) return;
+    const { timePhase, weatherCondition, sunProgress } = useWeatherStore.getState();
+    const material = meshRef.current.material as THREE.MeshBasicMaterial;
+
+    // Visibility: bright on clear, dim on few clouds, hidden otherwise
+    let targetOpacity = 0;
+    if (weatherCondition === 'clear') {
+      if (timePhase === 'day') targetOpacity = 1.0;
+      else if (timePhase === 'sunrise' || timePhase === 'sunset') targetOpacity = 0.85;
+      else if (timePhase === 'dawn' || timePhase === 'dusk') targetOpacity = 0.3;
+    } else if (weatherCondition === 'clouds_few') {
+      if (timePhase === 'day') targetOpacity = 0.35;
+      else if (timePhase === 'sunrise' || timePhase === 'sunset') targetOpacity = 0.2;
+    }
+
+    material.opacity += (targetOpacity - material.opacity) * LERP_SPEED;
+    material.visible = material.opacity > 0.01;
+
+    // Sun color: warm yellow at day, orange-red at sunrise/sunset
+    let targetColor = '#fffbe0';
+    if (timePhase === 'sunrise') targetColor = '#ff9060';
+    else if (timePhase === 'sunset') targetColor = '#ff7040';
+    else if (timePhase === 'dawn' || timePhase === 'dusk') targetColor = '#ffb060';
+    tmpColor.set(targetColor);
+    material.color.lerp(tmpColor, LERP_SPEED);
+
+    // Position along same arc as directional light
+    const angle = sunProgress * Math.PI;
+    meshRef.current.position.x = -Math.cos(angle) * 350;
+    meshRef.current.position.y = Math.sin(angle) * 280 + 40;
+    meshRef.current.position.z = -200;
+  });
+
+  return (
+    <mesh ref={meshRef} position={[350, 40, -200]}>
+      <sphereGeometry args={[12, 16, 16]} />
+      <meshBasicMaterial color="#fffbe0" transparent opacity={0} depthWrite={false} />
+    </mesh>
+  );
+}
+
+// Cloud layer component — flat planes at Fernsehturm height (~Y=85-105)
+const CLOUD_PLANES = [
+  { x:   0, z:   0, rx: 0.05, rz: 0.0,  sx: 280, sz: 200 },
+  { x:  60, z: -40, rx: 0.0,  rz: 0.04, sx: 200, sz: 160 },
+  { x: -80, z:  30, rx: 0.03, rz: 0.0,  sx: 220, sz: 140 },
+  { x:  30, z:  70, rx: 0.0,  rz: 0.06, sx: 180, sz: 130 },
+  { x: -50, z: -60, rx: 0.04, rz: 0.02, sx: 160, sz: 120 },
+];
+
+function CloudLayer() {
+  const ref0 = useRef<THREE.Mesh>(null);
+  const ref1 = useRef<THREE.Mesh>(null);
+  const ref2 = useRef<THREE.Mesh>(null);
+  const ref3 = useRef<THREE.Mesh>(null);
+  const ref4 = useRef<THREE.Mesh>(null);
+  const refs = [ref0, ref1, ref2, ref3, ref4];
+
+  useFrame((_, delta) => {
+    const { weatherCondition, timePhase, windStrength } = useWeatherStore.getState();
+    const isNightPhase = timePhase === 'night' || timePhase === 'dawn' || timePhase === 'dusk';
+
+    let targetOpacity = 0;
+    let cloudColor = '#e8eef0';
+
+    if (weatherCondition === 'clouds_few') {
+      targetOpacity = isNightPhase ? 0.08 : 0.15;
+    } else if (weatherCondition === 'clouds_heavy') {
+      targetOpacity = isNightPhase ? 0.25 : 0.45;
+      cloudColor = '#c8d4dc';
+    } else if (weatherCondition === 'rain' || weatherCondition === 'drizzle') {
+      targetOpacity = isNightPhase ? 0.3 : 0.5;
+      cloudColor = '#909aaa';
+    } else if (weatherCondition === 'thunderstorm') {
+      targetOpacity = isNightPhase ? 0.5 : 0.7;
+      cloudColor = '#404050';
+    } else if (weatherCondition === 'snow') {
+      targetOpacity = isNightPhase ? 0.2 : 0.35;
+      cloudColor = '#d8e0e8';
+    }
+
+    refs.forEach((ref, i) => {
+      if (!ref.current) return;
+      const mat = ref.current.material as THREE.MeshBasicMaterial;
+      mat.opacity += (targetOpacity - mat.opacity) * LERP_SPEED;
+      mat.visible = mat.opacity > 0.005;
+      tmpColor.set(cloudColor);
+      mat.color.lerp(tmpColor, LERP_SPEED * 0.5);
+      // Slow drift based on wind
+      ref.current.position.x += windStrength * 0.08 * delta;
+      if (ref.current.position.x > 250) ref.current.position.x -= 500;
+    });
+  });
+
+  return (
+    <>
+      {CLOUD_PLANES.map((p, i) => (
+        <mesh
+          key={i}
+          ref={refs[i]}
+          position={[p.x, 88 + i * 4, p.z]}
+          rotation={[p.rx, 0, p.rz]}
+          scale={[p.sx, 1, p.sz]}
+        >
+          <planeGeometry args={[1, 1]} />
+          <meshBasicMaterial color="#e8eef0" transparent opacity={0} depthWrite={false} side={THREE.DoubleSide} />
+        </mesh>
+      ))}
+    </>
+  );
+}
+
 // Moon component
 function Moon() {
   const meshRef = useRef<THREE.Mesh>(null);
@@ -185,7 +302,9 @@ export default function WeatherSky() {
         />
       </mesh>
       <Stars />
+      <Sun />
       <Moon />
+      <CloudLayer />
     </>
   );
 }

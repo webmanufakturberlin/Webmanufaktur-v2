@@ -19,9 +19,9 @@ const PRESETS: Record<string, LightPreset> = {
   clear_night:        { ambient: { color: '#101830', intensity: 0.3 }, directional: { color: '#4060a0', intensity: 0.5 }, hemisphere: { sky: '#050510', ground: '#050505', intensity: 0.15 }, fog: { color: '#080818', density: 0.005 } },
   clear_dawn:         { ambient: { color: '#202840', intensity: 0.5 }, directional: { color: '#6080b0', intensity: 1.0 }, hemisphere: { sky: '#2a3a60', ground: '#101010', intensity: 0.3 }, fog: { color: '#3a4a6a', density: 0.005 } },
   clear_dusk:         { ambient: { color: '#201828', intensity: 0.4 }, directional: { color: '#5040a0', intensity: 0.8 }, hemisphere: { sky: '#2a2040', ground: '#080808', intensity: 0.25 }, fog: { color: '#2a2040', density: 0.005 } },
-  clouds_few_day:     { ambient: { color: '#606060', intensity: 1.4 }, directional: { color: '#e0e0d0', intensity: 1.8 }, hemisphere: { sky: '#8a9aaa', ground: '#2a2520', intensity: 0.7 }, fog: { color: '#9aacbc', density: 0.004 } },
-  clouds_heavy_day:   { ambient: { color: '#707070', intensity: 1.8 }, directional: { color: '#c0c0c0', intensity: 0.8 }, hemisphere: { sky: '#808890', ground: '#2a2520', intensity: 0.5 }, fog: { color: '#8a9098', density: 0.006 } },
-  rain_day:           { ambient: { color: '#505560', intensity: 1.5 }, directional: { color: '#808890', intensity: 0.6 }, hemisphere: { sky: '#6a7080', ground: '#1a1510', intensity: 0.4 }, fog: { color: '#6a7480', density: 0.008 } },
+  clouds_few_day:     { ambient: { color: '#606060', intensity: 1.4 }, directional: { color: '#e0e0d0', intensity: 1.8 }, hemisphere: { sky: '#8a9aaa', ground: '#2a2520', intensity: 0.7 }, fog: { color: '#b0c4d4', density: 0.003 } },
+  clouds_heavy_day:   { ambient: { color: '#707070', intensity: 1.8 }, directional: { color: '#c0c0c0', intensity: 0.8 }, hemisphere: { sky: '#808890', ground: '#2a2520', intensity: 0.5 }, fog: { color: '#a0b4c4', density: 0.003 } },
+  rain_day:           { ambient: { color: '#606870', intensity: 2.0 }, directional: { color: '#a0b0c0', intensity: 1.2 }, hemisphere: { sky: '#8090a0', ground: '#2a2520', intensity: 0.6 }, fog: { color: '#9aacbb', density: 0.004 } },
   rain_night:         { ambient: { color: '#080810', intensity: 0.25 }, directional: { color: '#203050', intensity: 0.3 }, hemisphere: { sky: '#040408', ground: '#030303', intensity: 0.1 }, fog: { color: '#060610', density: 0.009 } },
   snow_day:           { ambient: { color: '#707880', intensity: 1.6 }, directional: { color: '#c8d0d8', intensity: 1.0 }, hemisphere: { sky: '#8090a0', ground: '#404850', intensity: 0.6 }, fog: { color: '#a0aab8', density: 0.008 } },
   snow_night:         { ambient: { color: '#182030', intensity: 0.4 }, directional: { color: '#405060', intensity: 0.4 }, hemisphere: { sky: '#101820', ground: '#080810', intensity: 0.2 }, fog: { color: '#151d28', density: 0.009 } },
@@ -29,7 +29,7 @@ const PRESETS: Record<string, LightPreset> = {
   thunderstorm_night: { ambient: { color: '#060608', intensity: 0.2 }, directional: { color: '#101018', intensity: 0.2 }, hemisphere: { sky: '#030306', ground: '#020202', intensity: 0.08 }, fog: { color: '#050508', density: 0.010 } },
   fog_day:            { ambient: { color: '#808080', intensity: 2.0 }, directional: { color: '#a0a0a0', intensity: 0.4 }, hemisphere: { sky: '#a0a0a0', ground: '#606060', intensity: 0.5 }, fog: { color: '#a8a8a8', density: 0.015 } },
   fog_night:          { ambient: { color: '#181820', intensity: 0.4 }, directional: { color: '#303040', intensity: 0.2 }, hemisphere: { sky: '#101018', ground: '#080808', intensity: 0.15 }, fog: { color: '#101018', density: 0.013 } },
-  drizzle_day:        { ambient: { color: '#586068', intensity: 1.4 }, directional: { color: '#909898', intensity: 0.8 }, hemisphere: { sky: '#708088', ground: '#1a1818', intensity: 0.45 }, fog: { color: '#788088', density: 0.007 } },
+  drizzle_day:        { ambient: { color: '#586068', intensity: 1.6 }, directional: { color: '#a0a8b0', intensity: 1.0 }, hemisphere: { sky: '#7890a0', ground: '#1a1818', intensity: 0.55 }, fog: { color: '#9aabb8', density: 0.004 } },
 };
 
 function getPresetKey(weather: WeatherCondition, phase: TimePhase): string {

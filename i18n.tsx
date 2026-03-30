@@ -48,6 +48,10 @@ const translations: Record<string, Record<Lang, string>> = {
     'mega.method.ailab.desc': { en: 'See how we integrate Gemini and LLMs into modern web workflows.', de: 'Erfahren Sie, wie wir Gemini und LLMs in moderne Web-Workflows integrieren.' },
     'mega.method.ailab.btn': { en: 'Explore Lab', de: 'Labor erkunden' },
 
+    // Weather Widget
+    'weather.live':   { en: 'Live Berlin Environment', de: 'Live Berlin Umgebung' },
+    'weather.sync':   { en: '3D Sync Online', de: '3D Sync Online' },
+
     // Hero
     'hero.badge': { en: 'Made in Berlin', de: 'Made in Berlin' },
     'hero.headline1': { en: 'WE CODE', de: 'WIR GESTALTEN' },

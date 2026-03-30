@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Droplets, Wind } from 'lucide-react';
 import { useWeatherStore } from '../../../stores/weatherStore';
+import { useI18n } from '../../../i18n';
 import type { WeatherCondition } from '../../../types';
 
 // Simple SVG weather icons
@@ -88,6 +89,8 @@ export default function WeatherWidget() {
     return cleanup;
   }, []);
 
+  const { t } = useI18n();
+
   if (!raw && isLoading) return null;
 
   const temp = raw ? `${Math.round(raw.temp)}°C` : '...';
@@ -117,7 +120,7 @@ export default function WeatherWidget() {
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
         </span>
-        <span className="text-[10px] uppercase font-bold tracking-widest opacity-80">Live Berlin Environment</span>
+        <span className="text-[10px] uppercase font-bold tracking-widest opacity-80">{t('weather.live')}</span>
       </div>
 
       {/* Main Stats */}
@@ -142,7 +145,7 @@ export default function WeatherWidget() {
       {/* Footer Tag */}
       <div className="mt-1 flex items-center gap-2">
          <div className="h-0.5 w-full bg-current/5 rounded-full" />
-         <span className="text-[9px] uppercase tracking-widest font-bold opacity-40 whitespace-nowrap">3D Sync Online</span>
+         <span className="text-[9px] uppercase tracking-widest font-bold opacity-40 whitespace-nowrap">{t('weather.sync')}</span>
       </div>
     </motion.div>
   );
