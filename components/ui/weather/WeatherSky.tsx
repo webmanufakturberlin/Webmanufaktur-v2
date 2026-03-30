@@ -132,15 +132,26 @@ function Sun() {
     const { timePhase, weatherCondition, sunProgress } = useWeatherStore.getState();
     const material = meshRef.current.material as THREE.MeshBasicMaterial;
 
-    // Visibility: bright on clear, dim on few clouds, hidden otherwise
+    // Visibility: bright on clear, dimmer through clouds/rain, never fully hidden during day
+    const isDay = timePhase === 'day' || timePhase === 'sunrise' || timePhase === 'sunset';
+    const isDawn = timePhase === 'dawn' || timePhase === 'dusk';
     let targetOpacity = 0;
     if (weatherCondition === 'clear') {
-      if (timePhase === 'day') targetOpacity = 1.0;
-      else if (timePhase === 'sunrise' || timePhase === 'sunset') targetOpacity = 0.85;
-      else if (timePhase === 'dawn' || timePhase === 'dusk') targetOpacity = 0.3;
+      if (isDay) targetOpacity = timePhase === 'day' ? 1.0 : 0.85;
+      else if (isDawn) targetOpacity = 0.3;
     } else if (weatherCondition === 'clouds_few') {
-      if (timePhase === 'day') targetOpacity = 0.35;
-      else if (timePhase === 'sunrise' || timePhase === 'sunset') targetOpacity = 0.2;
+      if (isDay) targetOpacity = timePhase === 'day' ? 0.45 : 0.25;
+      else if (isDawn) targetOpacity = 0.1;
+    } else if (weatherCondition === 'clouds_heavy') {
+      if (isDay) targetOpacity = timePhase === 'day' ? 0.20 : 0.10;
+    } else if (weatherCondition === 'drizzle') {
+      if (isDay) targetOpacity = 0.15;
+    } else if (weatherCondition === 'rain') {
+      if (isDay) targetOpacity = 0.12;
+    } else if (weatherCondition === 'snow') {
+      if (isDay) targetOpacity = 0.18;
+    } else if (weatherCondition === 'thunderstorm') {
+      if (isDay) targetOpacity = 0.04;
     }
 
     material.opacity += (targetOpacity - material.opacity) * LERP_SPEED;
@@ -169,71 +180,71 @@ function Sun() {
   );
 }
 
-// Cloud layer component — flat planes at Fernsehturm height (~Y=85-105)
-const CLOUD_PLANES = [
-  { x:   0, z:   0, rx: 0.05, rz: 0.0,  sx: 280, sz: 200 },
-  { x:  60, z: -40, rx: 0.0,  rz: 0.04, sx: 200, sz: 160 },
-  { x: -80, z:  30, rx: 0.03, rz: 0.0,  sx: 220, sz: 140 },
-  { x:  30, z:  70, rx: 0.0,  rz: 0.06, sx: 180, sz: 130 },
-  { x: -50, z: -60, rx: 0.04, rz: 0.02, sx: 160, sz: 120 },
+// Cloud puffs — oblate spheroids (flat spheres) at Fernsehturm height
+// Each puff: [cx, cy, cz, scaleX, scaleY, scaleZ]
+const CLOUD_PUFFS: [number, number, number, number, number, number][] = [
+  [   0,  92,   0,  55, 10, 38 ],
+  [  45,  90,  15,  42,  9, 30 ],
+  [ -40,  94, -10,  48, 10, 34 ],
+  [  20,  91,  70,  38,  8, 28 ],
+  [ -75,  93, -25,  44,  9, 32 ],
+  [  65,  89, -55,  36,  8, 26 ],
+  [ -25,  95,  85,  50, 11, 36 ],
+  [  90,  91,  30,  34,  8, 24 ],
+  [ -90,  90,  50,  40,  9, 30 ],
+  [  10,  93, -85,  46, 10, 34 ],
 ];
 
 function CloudLayer() {
-  const ref0 = useRef<THREE.Mesh>(null);
-  const ref1 = useRef<THREE.Mesh>(null);
-  const ref2 = useRef<THREE.Mesh>(null);
-  const ref3 = useRef<THREE.Mesh>(null);
-  const ref4 = useRef<THREE.Mesh>(null);
-  const refs = [ref0, ref1, ref2, ref3, ref4];
+  const r0 = useRef<THREE.Mesh>(null); const r1 = useRef<THREE.Mesh>(null);
+  const r2 = useRef<THREE.Mesh>(null); const r3 = useRef<THREE.Mesh>(null);
+  const r4 = useRef<THREE.Mesh>(null); const r5 = useRef<THREE.Mesh>(null);
+  const r6 = useRef<THREE.Mesh>(null); const r7 = useRef<THREE.Mesh>(null);
+  const r8 = useRef<THREE.Mesh>(null); const r9 = useRef<THREE.Mesh>(null);
+  const refs = [r0, r1, r2, r3, r4, r5, r6, r7, r8, r9];
 
   useFrame((_, delta) => {
     const { weatherCondition, timePhase, windStrength } = useWeatherStore.getState();
     const isNightPhase = timePhase === 'night' || timePhase === 'dawn' || timePhase === 'dusk';
 
     let targetOpacity = 0;
-    let cloudColor = '#e8eef0';
+    let cloudColor = '#eef2f5';
 
     if (weatherCondition === 'clouds_few') {
-      targetOpacity = isNightPhase ? 0.08 : 0.15;
+      targetOpacity = isNightPhase ? 0.10 : 0.22;
     } else if (weatherCondition === 'clouds_heavy') {
-      targetOpacity = isNightPhase ? 0.25 : 0.45;
+      targetOpacity = isNightPhase ? 0.30 : 0.55;
       cloudColor = '#c8d4dc';
     } else if (weatherCondition === 'rain' || weatherCondition === 'drizzle') {
-      targetOpacity = isNightPhase ? 0.3 : 0.5;
-      cloudColor = '#909aaa';
+      targetOpacity = isNightPhase ? 0.35 : 0.60;
+      cloudColor = '#8898a8';
     } else if (weatherCondition === 'thunderstorm') {
-      targetOpacity = isNightPhase ? 0.5 : 0.7;
-      cloudColor = '#404050';
+      targetOpacity = isNightPhase ? 0.55 : 0.75;
+      cloudColor = '#3a3a48';
     } else if (weatherCondition === 'snow') {
-      targetOpacity = isNightPhase ? 0.2 : 0.35;
+      targetOpacity = isNightPhase ? 0.20 : 0.40;
       cloudColor = '#d8e0e8';
     }
 
-    refs.forEach((ref, i) => {
+    refs.forEach((ref) => {
       if (!ref.current) return;
       const mat = ref.current.material as THREE.MeshBasicMaterial;
       mat.opacity += (targetOpacity - mat.opacity) * LERP_SPEED;
       mat.visible = mat.opacity > 0.005;
       tmpColor.set(cloudColor);
       mat.color.lerp(tmpColor, LERP_SPEED * 0.5);
-      // Slow drift based on wind
-      ref.current.position.x += windStrength * 0.08 * delta;
-      if (ref.current.position.x > 250) ref.current.position.x -= 500;
+      // Slow wind drift
+      ref.current.position.x += windStrength * 0.06 * delta;
+      if (ref.current.position.x > 300) ref.current.position.x -= 600;
     });
   });
 
   return (
     <>
-      {CLOUD_PLANES.map((p, i) => (
-        <mesh
-          key={i}
-          ref={refs[i]}
-          position={[p.x, 88 + i * 4, p.z]}
-          rotation={[p.rx, 0, p.rz]}
-          scale={[p.sx, 1, p.sz]}
-        >
-          <planeGeometry args={[1, 1]} />
-          <meshBasicMaterial color="#e8eef0" transparent opacity={0} depthWrite={false} side={THREE.DoubleSide} />
+      {CLOUD_PUFFS.map(([cx, cy, cz, sx, sy, sz], i) => (
+        <mesh key={i} ref={refs[i]} position={[cx, cy, cz]} scale={[sx, sy, sz]}>
+          <sphereGeometry args={[1, 10, 7]} />
+          <meshBasicMaterial color="#eef2f5" transparent opacity={0} depthWrite={false} />
         </mesh>
       ))}
     </>

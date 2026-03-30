@@ -263,29 +263,31 @@ const VoxelCity = () => {
         }
 
         // --- Oberbaumbrücke (double-deck bridge with neo-gothic towers) ---
+        // Spree flows in X direction at (72,15) → bridge must span in Z direction (perpendicular)
         function buildOberbaumBridge(ox: number, oz: number) {
             const halfLen = 9;
-            // Bridge deck at Y=3 (above water at Y=0)
-            buildBlock(ox - halfLen, 3, oz - 2, halfLen * 2, 2, 4, PALETTE.bridgeStone);
-            // Pillars start at Y=1 so water at Y=0 remains visible beneath
-            for (let x = -halfLen + 2; x < halfLen - 2; x += 4) {
-                // Water voxels visible under each pillar
-                addVoxel(ox + x, 0, oz - 1, PALETTE.water);
-                addVoxel(ox + x + 1, 0, oz - 1, PALETTE.water);
-                buildBlock(ox + x, 1, oz - 1, 2, 2, 2, PALETTE.bridgeStone);
+            // Bridge deck spans Z: from oz-halfLen to oz+halfLen, 4 wide in X, at Y=3
+            buildBlock(ox - 2, 3, oz - halfLen, 4, 2, halfLen * 2, PALETTE.bridgeStone);
+            // Pillars at intervals along Z — water at Y=0 stays visible beneath
+            for (let z = -halfLen + 2; z < halfLen - 2; z += 4) {
+                addVoxel(ox - 1, 0, oz + z, PALETTE.water);
+                addVoxel(ox,     0, oz + z, PALETTE.water);
+                buildBlock(ox - 1, 1, oz + z, 2, 2, 2, PALETTE.bridgeStone);
             }
+            // Twin neo-gothic towers at oz±5 (straddle the river channel)
             for (const side of [-1, 1]) {
-                const tx = ox + side * 5;
-                buildBlock(tx - 1, 5, oz - 2, 3, 10, 4, PALETTE.oberbaumRed);
-                buildBlock(tx, 15, oz - 1, 1, 3, 2, PALETTE.oberbaumRed);
-                addVoxel(tx, 18, oz, PALETTE.oberbaumRed);
+                const tz = oz + side * 5;
+                buildBlock(ox - 2, 5, tz - 1, 4, 10, 3, PALETTE.oberbaumRed);
+                buildBlock(ox - 1, 15, tz,    2, 3,  1, PALETTE.oberbaumRed);
+                addVoxel(ox, 18, tz, PALETTE.oberbaumRed);
                 for (let y = 7; y < 14; y += 2) {
-                    addVoxel(tx, y, oz + 2, PALETTE.windowDark);
+                    addVoxel(ox + 2, y, tz, PALETTE.windowDark);
                 }
             }
-            for (let x = -halfLen; x <= halfLen; x += 2) {
-                addVoxel(ox + x, 5, oz - 2, PALETTE.oberbaumRed);
-                addVoxel(ox + x, 5, oz + 1, PALETTE.oberbaumRed);
+            // Decorative arch ribs along bridge length
+            for (let z = -halfLen; z <= halfLen; z += 2) {
+                addVoxel(ox - 2, 5, oz + z, PALETTE.oberbaumRed);
+                addVoxel(ox + 1, 5, oz + z, PALETTE.oberbaumRed);
             }
         }
 
