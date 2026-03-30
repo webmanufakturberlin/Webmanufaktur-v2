@@ -132,7 +132,7 @@ export const useWeatherStore = create<WeatherState>((set, get) => ({
       fogDensity = 0.003 + visFactor * 0.012; // 0.003 (clear) to 0.015 (zero visibility)
 
       if (weatherCondition === 'fog') fogDensity = Math.max(fogDensity, 0.012);
-      if (weatherCondition === 'rain' || weatherCondition === 'thunderstorm') fogDensity = Math.max(fogDensity, 0.004);
+      if (weatherCondition === 'thunderstorm') fogDensity = Math.max(fogDensity, 0.004);
       if (weatherCondition === 'snow') fogDensity = Math.max(fogDensity, 0.009);
       if (isNight) fogDensity = Math.max(fogDensity, 0.005);
     }
