@@ -112,7 +112,13 @@ const VoxelCity = () => {
                 for (let y = -sphereR; y <= sphereR; y++) {
                     for (let z = -sphereR; z <= sphereR; z++) {
                         if (x * x + y * y + z * z <= r2) {
-                            addVoxel(tx + x, sphereY + y, tz + z, 0xffffff);
+                            // Silver diamond-tile facets like the real Fernsehturm
+                            const hash = Math.abs(x * 73 + y * 137 + z * 211) % 6;
+                            let col: number;
+                            if (hash < 2) col = 0xf0f0f2;       // bright silver highlight
+                            else if (hash < 4) col = 0xd0d0d8;  // mid silver
+                            else col = 0xa8a8b4;                 // shadow silver
+                            addVoxel(tx + x, sphereY + y, tz + z, col);
                         }
                     }
                 }
