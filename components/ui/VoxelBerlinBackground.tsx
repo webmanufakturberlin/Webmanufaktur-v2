@@ -112,14 +112,7 @@ const VoxelCity = () => {
                 for (let y = -sphereR; y <= sphereR; y++) {
                     for (let z = -sphereR; z <= sphereR; z++) {
                         if (x * x + y * y + z * z <= r2) {
-                            // Glittering: mix bright highlight, medium, and dark facets
-                            const hash = Math.abs(x * 73 + y * 137 + z * 211) % 10;
-                            let col: number;
-                            if (hash < 2) col = 0xf0f0f8;       // bright highlight
-                            else if (hash < 5) col = 0xd8d8e0;  // light silver
-                            else if (hash < 8) col = PALETTE.towerDark; // dark facet
-                            else col = 0xc0c0c8;                // medium
-                            addVoxel(tx + x, sphereY + y, tz + z, col);
+                            addVoxel(tx + x, sphereY + y, tz + z, 0xffffff);
                         }
                     }
                 }
