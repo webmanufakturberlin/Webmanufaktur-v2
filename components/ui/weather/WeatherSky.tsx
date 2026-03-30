@@ -12,18 +12,18 @@ const SKY_PALETTES: Record<string, [string, string, string]> = {
   clear_night:        ['#050510', '#0a0a20', '#101030'],
   clear_dawn:         ['#0f1530', '#2a3a60', '#5a7090'],
   clear_dusk:         ['#0f1530', '#3a2a50', '#6a5070'],
-  clouds_few_day:     ['#4a7aaa', '#7a9ab8', '#a0bccc'],
-  clouds_heavy_day:   ['#5a6070', '#7a8088', '#9098a0'],
+  clouds_few_day:     ['#4a7aaa', '#7a9ab8', '#a8c4d8'],
+  clouds_heavy_day:   ['#6a7888', '#8a9aa8', '#aabbc8'],
   clouds_heavy_night: ['#060608', '#0a0a10', '#101018'],
-  rain_day:           ['#3a4050', '#5a6070', '#7a8088'],
+  rain_day:           ['#607080', '#8898a8', '#aab8c8'],
   rain_night:         ['#030306', '#060610', '#0a0a18'],
   snow_day:           ['#687888', '#8898a8', '#a8b8c8'],
   snow_night:         ['#080810', '#101020', '#181828'],
-  thunderstorm_day:   ['#1a1a22', '#2a2a32', '#3a3a42'],
+  thunderstorm_day:   ['#383840', '#484850', '#585860'],
   thunderstorm_night: ['#020204', '#040408', '#060610'],
   fog_day:            ['#8a8a8a', '#9a9a9a', '#aaaaaa'],
   fog_night:          ['#0a0a10', '#101018', '#181820'],
-  drizzle_day:        ['#4a5868', '#6a7888', '#8a98a0'],
+  drizzle_day:        ['#607080', '#8090a0', '#9aaab8'],
 };
 
 function getSkyKey(weather: WeatherCondition, phase: TimePhase): string {
@@ -165,11 +165,13 @@ function Sun() {
     tmpColor.set(targetColor);
     material.color.lerp(tmpColor, LERP_SPEED);
 
-    // Position along same arc as directional light
+    // Position: sun moves east→south→west on sky dome (r≈400)
+    // Y capped at ~130 so it stays within camera frustum (cam height 35-80, FOV 60°)
+    // Z moves toward south (+Z) at noon — Berlin sun transits in the south
     const angle = sunProgress * Math.PI;
-    meshRef.current.position.x = -Math.cos(angle) * 350;
-    meshRef.current.position.y = Math.sin(angle) * 280 + 40;
-    meshRef.current.position.z = -200;
+    meshRef.current.position.x = -Math.cos(angle) * 380;
+    meshRef.current.position.y = Math.sin(angle) * 95 + 25;
+    meshRef.current.position.z = Math.sin(angle) * 220;
   });
 
   return (
