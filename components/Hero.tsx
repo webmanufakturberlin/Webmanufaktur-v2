@@ -63,10 +63,10 @@ export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
             <React.Suspense fallback={null}>
                 <VoxelBerlinBackground onLoad={() => setIs3DLoaded(true)} />
             </React.Suspense>
-            <WeatherWidget />
+            <div className="hidden md:block"><WeatherWidget /></div>
 
-            {/* Scavenger Hunt Bear #0 — hidden in top-right corner */}
-            <BerlinBear bearId={0} alwaysVisible className="absolute top-20 right-8 z-20" />
+            {/* Scavenger Hunt Bear #0 — hidden on mobile */}
+            <BerlinBear bearId={0} alwaysVisible className="absolute top-20 right-8 z-20 hidden md:block" />
 
             <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 text-center">
                 <div className="flex flex-col items-center">
