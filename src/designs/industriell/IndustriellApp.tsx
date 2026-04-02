@@ -121,8 +121,6 @@ export default function IndustriellApp() {
           <span className="w-2 h-2 bg-[#EAB308] rounded-full animate-pulse"></span>
           SYSTEM ACTIVE
         </div>
-        {/* Scavenger Hunt Bear #1 */}
-        <BerlinBear bearId={1} className="absolute top-16 right-8 z-20" />
         <div className="absolute bottom-8 left-8 z-20 font-data text-xs text-[#B87333] opacity-70 font-[Fira_Code,monospace]">
           COORD: 52.5200° N, 13.4050° E<br/>
           STATUS: DEPLOYED
@@ -262,7 +260,9 @@ export default function IndustriellApp() {
       </section>
 
       {/* DISPATCH / ESTIMATE */}
-      <section id="dispatch" className="py-24 px-4 md:px-8 bg-[#0f0f0f] border-t-2 border-[#D1D5DB]/10">
+      <section id="dispatch" className="py-24 px-4 md:px-8 bg-[#0f0f0f] border-t-2 border-[#D1D5DB]/10 relative">
+        {/* Scavenger Hunt Bear #1 */}
+        <BerlinBear bearId={1} className="absolute top-6 right-8 z-20" />
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
           <div>
             <div className="mb-8 border-l-4 border-[#EAB308] pl-6">

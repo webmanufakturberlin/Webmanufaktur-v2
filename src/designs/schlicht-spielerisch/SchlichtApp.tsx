@@ -91,8 +91,6 @@ export default function SchlichtApp() {
         className="fixed top-0 left-0 h-3 bg-[#FF5722] border-b-4 border-r-4 border-black z-50 transition-all duration-75 ease-out"
         style={{ width: `${scrollProgress * 100}%` }}
       />
-      {/* Scavenger Hunt Bear #3 */}
-      <BerlinBear bearId={3} className="fixed top-4 right-4 z-40" />
 
       {/* WebGL Background */}
       <div className="fixed inset-0 z-[1] pointer-events-none">
@@ -199,7 +197,9 @@ export default function SchlichtApp() {
         </section>
 
         {/* 5. PORTFOLIO: "The Masterpieces" */}
-        <section className="min-h-screen flex flex-col justify-center items-center overflow-hidden py-24">
+        <section className="min-h-screen flex flex-col justify-center items-center overflow-hidden py-24 relative">
+          {/* Scavenger Hunt Bear #3 */}
+          <BerlinBear bearId={3} className="absolute top-8 right-8 z-20" />
           <h2 className="domino-flip text-4xl md:text-6xl font-black uppercase mb-24 brutal-box inline-block px-6 py-4 bg-[#E0E0E0]">
             Masterpieces
           </h2>

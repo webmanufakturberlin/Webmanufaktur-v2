@@ -125,8 +125,6 @@ export default function BrutalistGlassApp() {
 
       {/* FLOOR 1: THE HOOK (Zoom Parallax) */}
       <section className="relative w-full">
-        {/* Scavenger Hunt Bear #4 */}
-        <BerlinBear bearId={4} className="absolute top-8 left-8 z-20" />
         <div className="sticky top-0 h-screen w-full z-10 flex flex-col items-center justify-center pointer-events-none mix-blend-difference">
           <h1 className="font-display text-5xl sm:text-7xl md:text-[12vw] leading-[0.8] tracking-tighter text-white uppercase text-center brutal-text-reveal">
             Digital<br />Concrete
@@ -206,6 +204,8 @@ export default function BrutalistGlassApp() {
 
       {/* FLOOR 4: THE NEXUS (Footer/Contact) */}
       <section className="relative w-full min-h-screen flex items-center justify-center p-4 md:p-12 z-10">
+        {/* Scavenger Hunt Bear #4 */}
+        <BerlinBear bearId={4} className="absolute top-8 right-8 z-20" />
         <div className="w-full max-w-5xl border-4 border-[#1A1A1A] bg-black p-8 md:p-20 concrete-slab relative overflow-hidden group">
           <div className="absolute inset-0 bg-[#CCFF00] transform scale-y-0 origin-bottom transition-transform duration-700 ease-[cubic-bezier(0.87,0,0.13,1)] group-hover:scale-y-100 z-0"></div>
 

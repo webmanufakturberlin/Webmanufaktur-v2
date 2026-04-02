@@ -43,7 +43,7 @@ export const BerlinBear: React.FC<BerlinBearProps> = ({ bearId, className = '', 
   const isFound = foundBears.includes(bearId);
 
   const handleClick = () => {
-    if (isFound || alwaysVisible) return;
+    if (isFound) return;
     setJustFound(true);
     findBear(bearId);
     setTimeout(() => setJustFound(false), 800);
@@ -54,7 +54,7 @@ export const BerlinBear: React.FC<BerlinBearProps> = ({ bearId, className = '', 
       onClick={handleClick}
       className={`w-10 h-10 rounded-full p-0 border-0 bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 ${className}`}
       style={{
-        cursor: isFound || alwaysVisible ? 'default' : 'pointer',
+        cursor: isFound ? 'default' : 'pointer',
         filter: isFound ? 'drop-shadow(0 0 8px rgba(192,57,43,0.7))' : undefined,
         ...style,
       }}
