@@ -16,6 +16,14 @@ export default function SchlichtApp() {
   const setScrollProgress = useStore((state) => state.setScrollProgress);
   const setIsHoveringInteractable = useStore((state) => state.setIsHoveringInteractable);
   const setHoveredService = useStore((state) => state.setHoveredService);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   // Form State
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -92,11 +100,15 @@ export default function SchlichtApp() {
         style={{ width: `${scrollProgress * 100}%` }}
       />
 
-      {/* WebGL Background */}
+      {/* WebGL Background — desktop only; mobile gets a CSS gradient instead */}
       <div className="fixed inset-0 z-[1] pointer-events-none">
-        <Canvas shadows>
-          <VoxelScene />
-        </Canvas>
+        {isMobile ? (
+          <div className="w-full h-full bg-gradient-to-br from-[#f5f5f5] via-[#ebebeb] to-[#e0e0e0]" />
+        ) : (
+          <Canvas shadows>
+            <VoxelScene />
+          </Canvas>
+        )}
       </div>
 
       {/* DOM Content */}
@@ -144,6 +156,26 @@ export default function SchlichtApp() {
           </div>
         </section>
 
+        {/* 2b. THE NUMBERS — Impact Metrics */}
+        <section className="flex flex-col justify-center">
+          <h2 className="domino-flip text-4xl md:text-6xl font-black uppercase mb-12 brutal-box inline-block px-6 py-4 self-start bg-[#1A1A24] text-white">
+            The Numbers
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { value: '150+', label: 'Abgeschlossene Projekte', sub: 'seit 2012' },
+              { value: '98%', label: 'Kundenzufriedenheit', sub: 'durchschnittliche Bewertung' },
+              { value: '12',  label: 'Jahre Erfahrung', sub: 'Berlin & weltweit' },
+            ].map((stat, i) => (
+              <div key={i} className="domino-flip brutal-box p-8 md:p-10 bg-white flex flex-col gap-2">
+                <span className="text-6xl md:text-7xl font-black text-[#FF5722] leading-none">{stat.value}</span>
+                <span className="text-xl font-bold uppercase tracking-tight">{stat.label}</span>
+                <span className="text-sm font-medium text-black/50 uppercase tracking-widest">{stat.sub}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* 3. LEISTUNGEN (SERVICES): "The Core Modules" */}
         <section className="min-h-screen flex flex-col justify-center">
           <h2 className="domino-flip text-4xl md:text-6xl font-black uppercase mb-16 brutal-box inline-block px-6 py-4 self-end bg-[#FF5722] text-white">
@@ -151,21 +183,24 @@ export default function SchlichtApp() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {[
-              { id: 1, title: '3D WebGL Development', icon: <Box size={32} /> },
-              { id: 2, title: 'Frontend Engineering', icon: <Code size={32} /> },
-              { id: 3, title: 'UI/UX Design Systems', icon: <Layers size={32} /> },
-              { id: 4, title: 'Mobile Optimization', icon: <Smartphone size={32} /> },
+              { id: 1, title: '3D WebGL Development', desc: 'Three.js, React Three Fiber, immersive visuals', icon: <Box size={32} /> },
+              { id: 2, title: 'Frontend Engineering', desc: 'React, Next.js, TypeScript, Tailwind CSS', icon: <Code size={32} /> },
+              { id: 3, title: 'UI/UX Design Systems', desc: 'Figma, Framer, pixel-perfect delivery', icon: <Layers size={32} /> },
+              { id: 4, title: 'Mobile Optimization', desc: 'PWA, 60fps on all devices, touch-first', icon: <Smartphone size={32} /> },
             ].map((service) => (
-              <div 
-                key={service.id} 
-                className="domino-flip brutal-box p-8 flex items-center gap-6 cursor-pointer hover:bg-[#FF5722] hover:text-white transition-colors duration-500 ease-out group"
+              <div
+                key={service.id}
+                className="domino-flip brutal-box p-8 flex items-center gap-6 cursor-pointer hover:bg-[#FF5722] active:bg-[#FF5722] hover:text-white active:text-white transition-colors duration-300 ease-out group"
                 onMouseEnter={() => { handleInteractableEnter(); setHoveredService(service.id); }}
                 onMouseLeave={() => { handleInteractableLeave(); setHoveredService(null); }}
               >
-                <div className="p-4 border-4 border-black bg-white text-black group-hover:shadow-[6px_6px_0px_#1A1A24] transition-all duration-300 transform group-hover:-translate-y-2 group-hover:scale-110">
+                <div className="p-4 border-4 border-black bg-white text-black group-hover:shadow-[6px_6px_0px_#1A1A24] group-active:shadow-[6px_6px_0px_#1A1A24] transition-all duration-300 transform group-hover:-translate-y-2 group-active:-translate-y-2 group-hover:scale-110 group-active:scale-110 shrink-0">
                   <span className="service-icon-wrapper">{service.icon}</span>
                 </div>
-                <h3 className="text-2xl font-bold uppercase">{service.title}</h3>
+                <div>
+                  <h3 className="text-2xl font-bold uppercase">{service.title}</h3>
+                  <p className="text-sm font-medium mt-1 opacity-60 group-hover:opacity-80 group-active:opacity-80">{service.desc}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -204,26 +239,27 @@ export default function SchlichtApp() {
             Masterpieces
           </h2>
           
-          <div className="flex flex-wrap justify-center gap-24 md:gap-32 w-full">
+          <div className="flex flex-wrap justify-center gap-16 md:gap-24 w-full">
             {[
-              { title: 'Project Alpha', color: '#FF5722' },
-              { title: 'Project Beta', color: '#87CEEB' },
-              { title: 'Project Gamma', color: '#E0E0E0' }
+              { title: 'Webshop Alpha', sub: 'E-Commerce · 2024', color: '#FF5722' },
+              { title: 'Corporate Beta', sub: 'B2B SaaS · 2024', color: '#87CEEB' },
+              { title: '3D Konfigurator', sub: 'Automotive · 2025', color: '#E0E0E0' }
             ].map((project, i) => (
-              <div 
-                key={i} 
-                className="domino-flip iso-cube-container cursor-pointer"
+              <div
+                key={i}
+                className="domino-flip iso-cube-container cursor-pointer flex flex-col items-center gap-4"
                 onMouseEnter={handleInteractableEnter}
                 onMouseLeave={handleInteractableLeave}
               >
-                <div className="iso-cube">
-                  <div className="iso-face iso-face-front text-center p-4">{project.title}</div>
+                <div className="iso-cube w-32 h-32 md:w-48 md:h-48">
+                  <div className="iso-face iso-face-front text-center p-2 text-sm font-bold">{project.title}</div>
                   <div className="iso-face iso-face-back"></div>
                   <div className="iso-face iso-face-right" style={{ backgroundColor: project.color }}>View</div>
                   <div className="iso-face iso-face-left"></div>
                   <div className="iso-face iso-face-top"></div>
                   <div className="iso-face iso-face-bottom"></div>
                 </div>
+                <p className="text-xs font-bold uppercase tracking-widest text-black/50">{project.sub}</p>
               </div>
             ))}
           </div>

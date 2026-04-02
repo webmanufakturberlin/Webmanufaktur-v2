@@ -94,13 +94,18 @@ export default function SpatialMuseumApp() {
     return () => ctx.revert();
   }, [isMobile]);
 
-  // Navigation: 400vh scroll, 3 equal steps → each step = 4/3 viewport heights
+  // Navigation: container is 400vh, viewport is 1vh → max scroll = 300vh
+  // 3 equal steps of 100vh each
   const navItems = [
-    { id: 'home', icon: <Box />, label: 'The Hook', onClick: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
-    { id: 'arsenal', icon: <Layers />, label: 'The Arsenal', onClick: () => window.scrollTo({ top: window.innerHeight * (4 / 3), behavior: 'smooth' }) },
-    { id: 'exhibition', icon: <Sparkles />, label: 'The Exhibition', onClick: () => window.scrollTo({ top: window.innerHeight * (8 / 3), behavior: 'smooth' }) },
-    { id: 'nexus', icon: <Mail />, label: 'The Nexus', onClick: () => window.scrollTo({ top: window.innerHeight * 4, behavior: 'smooth' }) },
+    { id: 'home',       icon: <Box />,      label: 'The Hook',       onClick: () => window.scrollTo({ top: 0,                        behavior: 'smooth' }) },
+    { id: 'arsenal',    icon: <Layers />,   label: 'The Arsenal',    onClick: () => window.scrollTo({ top: window.innerHeight * 1,   behavior: 'smooth' }) },
+    { id: 'exhibition', icon: <Sparkles />, label: 'The Exhibition', onClick: () => window.scrollTo({ top: window.innerHeight * 2,   behavior: 'smooth' }) },
+    { id: 'nexus',      icon: <Mail />,     label: 'The Nexus',      onClick: () => window.scrollTo({ top: window.innerHeight * 3,   behavior: 'smooth' }) },
   ];
+
+  // Active nav item based on scroll progress (0–1 over 300vh)
+  const { scrollProgress } = useStore();
+  const activeNavIndex = Math.min(3, Math.floor(scrollProgress * 4));
 
   // Mobile navigation — simple anchors
   const mobileNavItems = [
@@ -169,13 +174,14 @@ export default function SpatialMuseumApp() {
               <p className="text-xl font-sans font-light text-black/70 mb-12">
                 Ready to transcend the standard web? Step into the void.
               </p>
-              <button
+              <a
+                href="mailto:hello@webmanufaktur.berlin"
                 className="group relative inline-flex items-center justify-center gap-4 px-10 py-5 bg-[#09090B] text-white rounded-full overflow-hidden transition-transform active:scale-95"
               >
                 <span className="relative z-10 font-mono text-sm uppercase tracking-widest">Enter the Nexus</span>
                 <ArrowRight className="relative z-10 w-5 h-5" />
                 <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
-              </button>
+              </a>
             </div>
           </section>
         </div>
@@ -191,7 +197,7 @@ export default function SpatialMuseumApp() {
 
       {/* Fixed Navigation */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[40]">
-        <LimelightNav items={navItems} />
+        <LimelightNav items={navItems} activeIndex={activeNavIndex} />
       </div>
 
       {/* Scroll Trigger Container */}
@@ -256,7 +262,8 @@ export default function SpatialMuseumApp() {
                   <p className="text-2xl font-sans font-light text-black/70 mb-16">
                     Ready to transcend the standard web? Step into the void.
                   </p>
-                  <button
+                  <a
+                    href="mailto:hello@webmanufaktur.berlin"
                     onMouseEnter={() => setCursorState('hover')}
                     onMouseLeave={() => setCursorState('default')}
                     className="group relative inline-flex items-center justify-center gap-4 px-12 py-6 bg-[#09090B] text-white rounded-full overflow-hidden transition-transform hover:scale-105"
@@ -264,7 +271,7 @@ export default function SpatialMuseumApp() {
                     <span className="relative z-10 font-mono text-sm uppercase tracking-widest">Enter the Nexus</span>
                     <ArrowRight className="relative z-10 w-5 h-5 transition-transform group-hover:translate-x-2" />
                     <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
-                  </button>
+                  </a>
                </div>
             </section>
 

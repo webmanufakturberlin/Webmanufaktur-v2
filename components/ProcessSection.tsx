@@ -12,18 +12,18 @@ export const ProcessSection: React.FC = () => {
             title: t('process.timeline.step1.title'),
             content: (
                 <div>
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                            <Search className="w-5 h-5 text-blue-600" />
+                    <div className="flex items-center gap-4 mb-5">
+                        <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center shadow-md shadow-blue-100/50 shrink-0">
+                            <Search className="w-7 h-7 text-blue-600" />
                         </div>
-                        <h4 className="text-xl font-bold text-gray-900">{t('process.timeline.step1.heading')}</h4>
+                        <h4 className="text-2xl font-bold text-gray-900">{t('process.timeline.step1.heading')}</h4>
                     </div>
-                    <p className="text-gray-600 mb-6 leading-relaxed">
+                    <p className="text-gray-600 mb-6 leading-relaxed text-base">
                         {t('process.timeline.step1.desc')}
                     </p>
                     <div className="flex flex-wrap gap-2">
                         {['Marktanalyse', 'Zielgruppen-Research', 'Content-Audit', 'Wettbewerbsanalyse'].map(tag => (
-                            <span key={tag} className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full">{tag}</span>
+                            <span key={tag} className="px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-100">{tag}</span>
                         ))}
                     </div>
                 </div>
@@ -33,18 +33,18 @@ export const ProcessSection: React.FC = () => {
             title: t('process.timeline.step2.title'),
             content: (
                 <div>
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
-                            <Palette className="w-5 h-5 text-purple-600" />
+                    <div className="flex items-center gap-4 mb-5">
+                        <div className="w-16 h-16 rounded-2xl bg-purple-50 flex items-center justify-center shadow-md shadow-purple-100/50 shrink-0">
+                            <Palette className="w-7 h-7 text-purple-600" />
                         </div>
-                        <h4 className="text-xl font-bold text-gray-900">{t('process.timeline.step2.heading')}</h4>
+                        <h4 className="text-2xl font-bold text-gray-900">{t('process.timeline.step2.heading')}</h4>
                     </div>
-                    <p className="text-gray-600 mb-6 leading-relaxed">
+                    <p className="text-gray-600 mb-6 leading-relaxed text-base">
                         {t('process.timeline.step2.desc')}
                     </p>
                     <div className="flex flex-wrap gap-2">
                         {['UI/UX Design', 'Wireframes', 'Prototyping', 'User Testing'].map(tag => (
-                            <span key={tag} className="px-3 py-1 bg-purple-50 text-purple-700 text-xs font-medium rounded-full">{tag}</span>
+                            <span key={tag} className="px-3 py-1.5 bg-purple-50 text-purple-700 text-xs font-semibold rounded-full border border-purple-100">{tag}</span>
                         ))}
                     </div>
                 </div>
@@ -54,18 +54,18 @@ export const ProcessSection: React.FC = () => {
             title: t('process.timeline.step3.title'),
             content: (
                 <div>
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
-                            <Code className="w-5 h-5 text-orange-600" />
+                    <div className="flex items-center gap-4 mb-5">
+                        <div className="w-16 h-16 rounded-2xl bg-orange-50 flex items-center justify-center shadow-md shadow-orange-100/50 shrink-0">
+                            <Code className="w-7 h-7 text-orange-600" />
                         </div>
-                        <h4 className="text-xl font-bold text-gray-900">{t('process.timeline.step3.heading')}</h4>
+                        <h4 className="text-2xl font-bold text-gray-900">{t('process.timeline.step3.heading')}</h4>
                     </div>
-                    <p className="text-gray-600 mb-6 leading-relaxed">
+                    <p className="text-gray-600 mb-6 leading-relaxed text-base">
                         {t('process.timeline.step3.desc')}
                     </p>
                     <div className="flex flex-wrap gap-2">
                         {['React / Next.js', 'TypeScript', 'Tailwind CSS', 'Performance'].map(tag => (
-                            <span key={tag} className="px-3 py-1 bg-orange-50 text-orange-700 text-xs font-medium rounded-full">{tag}</span>
+                            <span key={tag} className="px-3 py-1.5 bg-orange-50 text-orange-700 text-xs font-semibold rounded-full border border-orange-100">{tag}</span>
                         ))}
                     </div>
                 </div>
@@ -75,18 +75,18 @@ export const ProcessSection: React.FC = () => {
             title: t('process.timeline.step4.title'),
             content: (
                 <div>
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
-                            <Rocket className="w-5 h-5 text-green-600" />
+                    <div className="flex items-center gap-4 mb-5">
+                        <div className="w-16 h-16 rounded-2xl bg-green-50 flex items-center justify-center shadow-md shadow-green-100/50 shrink-0">
+                            <Rocket className="w-7 h-7 text-green-600" />
                         </div>
-                        <h4 className="text-xl font-bold text-gray-900">{t('process.timeline.step4.heading')}</h4>
+                        <h4 className="text-2xl font-bold text-gray-900">{t('process.timeline.step4.heading')}</h4>
                     </div>
-                    <p className="text-gray-600 mb-6 leading-relaxed">
+                    <p className="text-gray-600 mb-6 leading-relaxed text-base">
                         {t('process.timeline.step4.desc')}
                     </p>
                     <div className="flex flex-wrap gap-2">
                         {['Deployment', 'Analytics', 'SEO-Setup', 'Continuous Optimization'].map(tag => (
-                            <span key={tag} className="px-3 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-full">{tag}</span>
+                            <span key={tag} className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-full border border-green-100">{tag}</span>
                         ))}
                     </div>
                 </div>

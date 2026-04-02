@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Lenis from '@studio-freight/lenis';
 import gsap from 'gsap';
 import { BerlinBear } from '../../../components/ScavengerHunt/BerlinBear';
@@ -21,6 +21,14 @@ export default function BrutalistGlassApp() {
   const setScrollProgress = useAppStore((state) => state.setScrollProgress);
   const setIsHoveringInteractive = useAppStore((state) => state.setIsHoveringInteractive);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   useEffect(() => {
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -177,29 +185,52 @@ export default function BrutalistGlassApp() {
 
       {/* FLOOR 3: THE EXHIBITION (Container Scroll + Holographic Cards) */}
       <section className="relative w-full py-32 z-10 bg-black/50 backdrop-blur-sm">
-        <ContainerScroll
-          titleComponent={
+        {isMobile ? (
+          <div className="px-4">
             <div className="mb-8 concrete-slab">
-              <h2 className="font-display text-5xl md:text-8xl uppercase tracking-tighter text-white leading-none">
+              <h2 className="font-display text-5xl uppercase tracking-tighter text-white leading-none">
                 The Exhibition
               </h2>
-              <p className="font-mono text-[#CCFF00] mt-4 uppercase tracking-widest">Scroll to unlock the vault</p>
+              <p className="font-mono text-[#CCFF00] mt-4 uppercase tracking-widest">Selected Works</p>
             </div>
-          }
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full p-4 bg-[#0a0a0a]" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-            <HolographicCard
-              title="Project Alpha"
-              description="E-Commerce Redefined"
-              image="https://images.unsplash.com/photo-1600607686527-6fb886090705?w=800&h=600&fit=crop&q=80"
-            />
-            <HolographicCard
-              title="Project Beta"
-              description="Immersive WebGL Portfolio"
-              image="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&h=600&fit=crop&q=80"
-            />
+            <div className="flex flex-col gap-4 bg-[#0a0a0a] p-4">
+              <HolographicCard
+                title="Project Alpha"
+                description="E-Commerce Redefined"
+                image="https://images.unsplash.com/photo-1600607686527-6fb886090705?w=800&h=600&fit=crop&q=80"
+              />
+              <HolographicCard
+                title="Project Beta"
+                description="Immersive WebGL Portfolio"
+                image="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&h=600&fit=crop&q=80"
+              />
+            </div>
           </div>
-        </ContainerScroll>
+        ) : (
+          <ContainerScroll
+            titleComponent={
+              <div className="mb-8 concrete-slab">
+                <h2 className="font-display text-5xl md:text-8xl uppercase tracking-tighter text-white leading-none">
+                  The Exhibition
+                </h2>
+                <p className="font-mono text-[#CCFF00] mt-4 uppercase tracking-widest">Scroll to unlock the vault</p>
+              </div>
+            }
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full p-4 bg-[#0a0a0a]" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+              <HolographicCard
+                title="Project Alpha"
+                description="E-Commerce Redefined"
+                image="https://images.unsplash.com/photo-1600607686527-6fb886090705?w=800&h=600&fit=crop&q=80"
+              />
+              <HolographicCard
+                title="Project Beta"
+                description="Immersive WebGL Portfolio"
+                image="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&h=600&fit=crop&q=80"
+              />
+            </div>
+          </ContainerScroll>
+        )}
       </section>
 
       {/* FLOOR 4: THE NEXUS (Footer/Contact) */}
@@ -217,13 +248,14 @@ export default function BrutalistGlassApp() {
               Ready to cast your vision in digital concrete? We are accepting new clients for Q3.
             </p>
 
-            <button
+            <a
+              href="mailto:hello@webmanufaktur.berlin"
               className="mt-8 flex items-center gap-4 font-black uppercase tracking-widest text-xl border-b-4 border-white pb-2 hover:pr-8 transition-all duration-300"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
               Contact Us <ArrowRight className="w-6 h-6" />
-            </button>
+            </a>
           </div>
         </div>
       </section>

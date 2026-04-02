@@ -8,7 +8,7 @@ export const HuntHUD: React.FC = () => {
   const [showReset, setShowReset] = useState(false);
 
   return (
-    <div className="fixed bottom-6 left-6 z-[9999] font-sans select-none">
+    <div className="hidden md:block fixed bottom-6 left-6 z-[9999] font-sans select-none">
       <AnimatePresence>
         {showInfo && (
           <motion.div

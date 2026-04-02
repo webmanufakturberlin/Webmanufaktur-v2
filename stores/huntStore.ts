@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 
 const TOTAL_BEARS = 5;
 
@@ -30,42 +29,31 @@ interface HuntState {
   resetHunt: () => void;
 }
 
-export const useHuntStore = create<HuntState>()(
-  persist(
-    (set, get) => ({
-      foundBears: [],
-      pendingClue: null,
-      isCompleted: false,
-      showSecretPage: false,
+export const useHuntStore = create<HuntState>()((set, get) => ({
+  foundBears: [],
+  pendingClue: null,
+  isCompleted: false,
+  showSecretPage: false,
 
-      findBear: (id: number) => {
-        const { foundBears } = get();
-        if (foundBears.includes(id)) return;
-        const newFound = [...foundBears, id];
-        const isCompleted = newFound.length === TOTAL_BEARS;
-        set({
-          foundBears: newFound,
-          isCompleted,
-          pendingClue: {
-            bearId: id,
-            clue: CLUES[id],
-            isLast: isCompleted,
-          },
-        });
+  findBear: (id: number) => {
+    const { foundBears } = get();
+    if (foundBears.includes(id)) return;
+    const newFound = [...foundBears, id];
+    const isCompleted = newFound.length === TOTAL_BEARS;
+    set({
+      foundBears: newFound,
+      isCompleted,
+      pendingClue: {
+        bearId: id,
+        clue: CLUES[id],
+        isLast: isCompleted,
       },
+    });
+  },
 
-      dismissClue: () => set({ pendingClue: null }),
-      openSecretPage: () => set({ showSecretPage: true }),
-      closeSecretPage: () => set({ showSecretPage: false }),
-      resetHunt: () =>
-        set({ foundBears: [], isCompleted: false, pendingClue: null, showSecretPage: false }),
-    }),
-    {
-      name: 'wmb-bear-hunt',
-      partialize: (state) => ({
-        foundBears: state.foundBears,
-        isCompleted: state.isCompleted,
-      }),
-    }
-  )
-);
+  dismissClue: () => set({ pendingClue: null }),
+  openSecretPage: () => set({ showSecretPage: true }),
+  closeSecretPage: () => set({ showSecretPage: false }),
+  resetHunt: () =>
+    set({ foundBears: [], isCompleted: false, pendingClue: null, showSecretPage: false }),
+}));

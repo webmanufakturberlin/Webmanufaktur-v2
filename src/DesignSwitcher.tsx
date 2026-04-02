@@ -102,7 +102,7 @@ const DesignSwitcher: React.FC = () => {
         {!isOpen && (
           <div className="group flex flex-col items-end gap-2 relative">
             {/* Attention-grabbing Arrow Indicator */}
-            <div className="absolute bottom-[110%] mb-4 right-0 flex flex-col items-end animate-bounce pointer-events-none">
+            <div className="hidden md:flex absolute bottom-[110%] mb-4 right-0 flex-col items-end animate-bounce pointer-events-none">
               <div className="bg-blue-600 text-white text-[10px] font-bold uppercase tracking-widest font-mono py-1 px-3 rounded-md shadow-[0_0_15px_rgba(37,99,235,0.7)] mb-1 whitespace-nowrap">
                 Design Switcher
               </div>

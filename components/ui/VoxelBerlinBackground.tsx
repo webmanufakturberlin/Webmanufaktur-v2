@@ -341,7 +341,7 @@ const VoxelCity = () => {
             buildBlock(rx, 0, rz, w, h, d, bodyColor);
             for (let y = 2; y < h - 1; y += 2) {
                 for (let x = 1; x < w - 1; x += 2) {
-                    const winColor = Math.random() > 0.7 ? PALETTE.windowLit : PALETTE.windowDark;
+                    const winColor = Math.random() > 0.4 ? PALETTE.windowLit : PALETTE.windowDark;
                     addVoxel(rx + x, y, rz + d, winColor);
                     addVoxel(rx + x, y, rz - 1, winColor);
                 }
@@ -667,7 +667,7 @@ const VoxelCity = () => {
                             for (let wy = 2; wy < height - 1; wy += 2) {
                                 for (let wx = 1; wx < width - 1; wx += 2) {
                                     if (Math.random() > 0.3) {
-                                        const winColor = Math.random() > 0.85 ? PALETTE.windowLit : PALETTE.windowDark;
+                                        const winColor = Math.random() > 0.4 ? PALETTE.windowLit : PALETTE.windowDark;
                                         addVoxel(x + wx, wy, z + depth, winColor);
                                         addVoxel(x + wx, wy, z - 1, winColor);
                                     }
@@ -848,6 +848,78 @@ const CinematicCamera = () => {
     return null;
 };
 
+// Aviation light positions: [x, y, z, distance, sphere-size]
+const AVIATION_POSITIONS: [number, number, number, number, number][] = [
+    [15, 124, -5, 30, 1.2],    // TV Tower
+    [38, 46, -14, 22, 0.8],    // Hotel Park Inn
+    [-38, 33, 8, 22, 0.8],     // Potsdamer Platz
+    [-118, 28, 24, 18, 0.7],   // Gedächtniskirche area
+    [68, 22, -3, 16, 0.7],     // Frankfurter Tor
+    [-30, 25, -35, 16, 0.6],   // Prenzlauer Berg
+    [42, 20, 18, 14, 0.6],     // East Berlin high-rise
+    [-55, 20, -18, 14, 0.6],   // Mitte tall building
+];
+
+const CityLights = () => {
+    const isNight = useWeatherStore(s => s.isNight);
+    const timeRef = React.useRef(0);
+    const lightRefs = React.useRef<(THREE.PointLight | null)[]>([]);
+    const meshRefs = React.useRef<(THREE.Mesh | null)[]>([]);
+
+    useFrame((_, delta) => {
+        if (!isNight) return;
+        timeRef.current += delta;
+        const cycle = timeRef.current % 2.0;
+        const isOn = cycle < 0.2 || (cycle > 0.4 && cycle < 0.6);
+        const intensity = isOn ? 3.5 : 0.0;
+        const matColor = isOn ? 0xff3333 : 0x220000;
+
+        lightRefs.current.forEach(l => { if (l) l.intensity = intensity; });
+        meshRefs.current.forEach(m => {
+            if (m?.material) (m.material as THREE.MeshBasicMaterial).color.setHex(matColor);
+        });
+    });
+
+    if (!isNight) return null;
+
+    return (
+        <group>
+            {/* Aviation warning lights — tall buildings */}
+            {AVIATION_POSITIONS.map(([x, y, z, dist, size], i) => (
+                <group key={i}>
+                    <pointLight
+                        ref={(el) => { lightRefs.current[i] = el; }}
+                        position={[x, y, z]} color="#ff2222" distance={dist} decay={2} intensity={0} />
+                    <mesh ref={(el) => { meshRefs.current[i] = el; }} position={[x, y, z]}>
+                        <sphereGeometry args={[size, 8, 8]} />
+                        <meshBasicMaterial color="#220000" />
+                    </mesh>
+                </group>
+            ))}
+
+            {/* Street / neighbourhood illumination — brighter than before */}
+            <pointLight position={[-38, 6, 8]}   color="#ffbb77" intensity={2.8} distance={60} decay={2} />
+            <pointLight position={[15, 6, -5]}   color="#ffbb77" intensity={2.8} distance={60} decay={2} />
+            <pointLight position={[-55, 6, -5]}  color="#ffbb77" intensity={2.5} distance={55} decay={2} />
+            <pointLight position={[-12, 6, -4]}  color="#ffbb77" intensity={2.2} distance={50} decay={2} />
+            <pointLight position={[-118, 6, 24]} color="#ffbb77" intensity={2.5} distance={55} decay={2} />
+            <pointLight position={[38, 6, -14]}  color="#ffbb77" intensity={2.5} distance={55} decay={2} />
+            {/* Extra coverage for outer districts */}
+            <pointLight position={[80, 6, 0]}    color="#ffaa55" intensity={2.0} distance={50} decay={2} />
+            <pointLight position={[-80, 6, 0]}   color="#ffaa55" intensity={2.0} distance={50} decay={2} />
+            <pointLight position={[0, 6, 80]}    color="#ffaa55" intensity={2.0} distance={50} decay={2} />
+            <pointLight position={[0, 6, -80]}   color="#ffaa55" intensity={2.0} distance={50} decay={2} />
+            {/* Mid-height neighbourhood glow simulating lit windows */}
+            <pointLight position={[-20, 18, 10]}  color="#ffe8a0" intensity={1.2} distance={35} decay={2} />
+            <pointLight position={[20, 18, -10]}  color="#ffe8a0" intensity={1.2} distance={35} decay={2} />
+            <pointLight position={[-45, 15, -20]} color="#ffe8a0" intensity={1.0} distance={30} decay={2} />
+            <pointLight position={[50, 15, 20]}   color="#ffe8a0" intensity={1.0} distance={30} decay={2} />
+            <pointLight position={[-10, 20, -40]} color="#ffe8a0" intensity={1.0} distance={28} decay={2} />
+            <pointLight position={[30, 16, 35]}   color="#ffe8a0" intensity={1.0} distance={28} decay={2} />
+        </group>
+    );
+};
+
 export default function VoxelBerlinBackground({ onLoad }: { onLoad?: () => void }) {
     const isNight = useWeatherStore(s => s.isNight);
     const [contextLost, setContextLost] = React.useState(false);
@@ -859,11 +931,9 @@ export default function VoxelBerlinBackground({ onLoad }: { onLoad?: () => void 
         const canvas = gl.domElement;
         canvas.addEventListener('webglcontextlost', (e) => {
             e.preventDefault();
-            console.warn('[VOXEL] WebGL context lost — showing fallback');
             setContextLost(true);
         });
         canvas.addEventListener('webglcontextrestored', () => {
-            console.log('[VOXEL] WebGL context restored');
             setContextLost(false);
         });
         
@@ -904,6 +974,7 @@ export default function VoxelBerlinBackground({ onLoad }: { onLoad?: () => void 
                     <WeatherParticles />
 
                     <VoxelCity />
+                    <CityLights />
                     <CinematicCamera />
                 </Canvas>
             )}

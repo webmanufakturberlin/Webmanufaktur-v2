@@ -1,11 +1,33 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Zap, ShieldCheck, Wrench, ArrowRight, Phone, Mail, MapPin, Activity } from 'lucide-react';
+import { Zap, ShieldCheck, Wrench, ArrowRight, Phone, Mail, MapPin, Activity, ChevronDown, X } from 'lucide-react';
 import './industriell.css';
 import { BerlinBear } from '../../../components/ScavengerHunt/BerlinBear';
 
 gsap.registerPlugin(ScrollTrigger);
+
+const SERVICE_DETAILS = [
+  {
+    techs: ['Three.js', 'WebGL', 'React Three Fiber', 'GSAP'],
+    price: 'ab 8.500 €',
+    duration: '3–6 Wochen',
+    example: 'Interaktive 3D-Markenwelten, immersive Produktkonfiguratoren',
+  },
+  {
+    techs: ['OpenAI API', 'Custom LLMs', 'Langchain', 'Python'],
+    price: 'ab 5.000 €',
+    duration: '2–4 Wochen',
+    example: 'KI-Chatbots, automatisierte Content-Pipelines, Datenanalyse',
+  },
+  {
+    techs: ['Shopify', 'Next.js', 'Stripe', 'Headless CMS'],
+    price: 'ab 7.000 €',
+    duration: '4–8 Wochen',
+    example: 'Konversionsoptimierte Shops, B2B-Portale, Subscription-Modelle',
+  },
+];
 
 export default function IndustriellApp() {
   const mainRef = useRef<HTMLDivElement>(null);
@@ -14,17 +36,21 @@ export default function IndustriellApp() {
   const timelineRef = useRef<HTMLDivElement>(null);
   const timelineFillRef = useRef<HTMLDivElement>(null);
   const inspectionCardRef = useRef<HTMLDivElement>(null);
+  const [expandedCard, setExpandedCard] = useState<number | null>(null);
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   useEffect(() => {
     let ctx = gsap.context(() => {
-      // Hero Text Animation
-      gsap.from(".hero-text-line", {
-        y: -100,
-        opacity: 0,
-        duration: 1.2,
-        ease: "bounce.out",
-        stagger: 0.15,
-        delay: 0.2
+      // Hero Text Animation — wrapped in fonts.ready for Opera compatibility
+      document.fonts.ready.then(() => {
+        gsap.from(".hero-text-line", {
+          y: -100,
+          opacity: 0,
+          duration: 1.2,
+          ease: "bounce.out",
+          stagger: 0.15,
+          delay: 0.2
+        });
       });
 
       // Gauge Animation
@@ -153,60 +179,116 @@ export default function IndustriellApp() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          
+
           {/* Card 1: Blueprint Reveal */}
-          <div className="blueprint-reveal border-2 border-[#D1D5DB]/20 bg-[#121212] h-96 flex flex-col justify-end p-6 group cursor-crosshair">
-            <img 
-              src="https://images.unsplash.com/photo-1544724569-5f546fd6f2b6?q=80&w=2000&auto=format&fit=crop" 
-              alt="Server Room" 
-              className="absolute inset-0 w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-            />
-            <div className="relative z-10 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-              <div className="font-data text-[#EAB308] text-xs mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-[Fira_Code,monospace]">SCHEMATIC VIEW ACTIVE</div>
-              <h4 className="font-heading text-3xl text-white uppercase font-[Teko,sans-serif]">Spatial Web Design</h4>
-              <p className="font-data text-sm text-[#D1D5DB]/80 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-[Fira_Code,monospace]">
-                Immersive 3D-Welten und hochperformante Web-Erlebnisse, die echte Markenabgrenzung schaffen.
-              </p>
-            </div>
-          </div>
+          {(() => {
+            const idx = 0;
+            const isExp = expandedCard === idx;
+            return (
+              <div className="flex flex-col gap-0">
+                <div
+                  className="blueprint-reveal border-2 border-[#D1D5DB]/20 bg-[#121212] h-96 flex flex-col justify-end p-6 group cursor-pointer relative overflow-hidden"
+                  onClick={() => setExpandedCard(isExp ? null : idx)}
+                >
+                  <img src="https://images.unsplash.com/photo-1544724569-5f546fd6f2b6?q=80&w=2000&auto=format&fit=crop" alt="Server Room" className="absolute inset-0 w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  <div className="relative z-10 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                    <div className="font-data text-[#EAB308] text-xs mb-2 opacity-0 group-hover:opacity-100 transition-opacity font-[Fira_Code,monospace]">SCHEMATIC VIEW ACTIVE</div>
+                    <h4 className="font-heading text-3xl text-white uppercase font-[Teko,sans-serif]">Spatial Web Design</h4>
+                    <p className="font-data text-sm text-[#D1D5DB]/80 mt-2 opacity-0 group-hover:opacity-100 transition-opacity font-[Fira_Code,monospace]">Immersive 3D-Welten und hochperformante Web-Erlebnisse.</p>
+                  </div>
+                  <div className="absolute top-4 right-4 z-20 text-[#EAB308]">{isExp ? <X size={18} /> : <ChevronDown size={18} />}</div>
+                </div>
+                <AnimatePresence>
+                  {isExp && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }} className="overflow-hidden border-2 border-t-0 border-[#B87333]/40 bg-[#0d0d0d] font-[Fira_Code,monospace]">
+                      <div className="p-6 space-y-4">
+                        <div className="flex flex-wrap gap-2">{SERVICE_DETAILS[idx].techs.map(t => <span key={t} className="px-2 py-1 text-[10px] text-[#EAB308] border border-[#EAB308]/30 rounded font-data">{t}</span>)}</div>
+                        <div className="flex gap-6 text-sm"><span className="text-[#B87333]">{SERVICE_DETAILS[idx].price}</span><span className="text-[#D1D5DB]/50">{SERVICE_DETAILS[idx].duration}</span></div>
+                        <p className="text-xs text-[#D1D5DB]/60 leading-relaxed">{SERVICE_DETAILS[idx].example}</p>
+                        <a href="#dispatch" className="inline-flex items-center gap-2 text-xs text-[#EAB308] hover:text-white transition-colors">Anfrage starten <ArrowRight size={12} /></a>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })()}
 
           {/* Card 2: Calibration Gauge */}
-          <div className="gauge-container border-2 border-[#D1D5DB]/20 bg-[#1a1a1a] h-96 p-6 flex flex-col items-center justify-center relative">
-            <div className="absolute top-6 left-6 font-data text-[#B87333] text-xs font-[Fira_Code,monospace]">SYS.LOAD</div>
-            <svg className="w-48 h-48 transform -rotate-90" viewBox="0 0 120 120">
-              <circle cx="60" cy="60" r="54" fill="none" stroke="#333" strokeWidth="8" />
-              <circle 
-                ref={gaugeRef}
-                cx="60" cy="60" r="54" fill="none" stroke="#EAB308" strokeWidth="8" 
-                strokeDasharray="339.292" strokeDashoffset="339.292" 
-                strokeLinecap="square"
-              />
-            </svg>
-            <div className="absolute inset-0 flex items-center justify-center flex-col mt-4">
-              <span className="font-heading text-5xl text-white font-[Teko,sans-serif]">100<span className="text-2xl text-[#EAB308]">%</span></span>
-              <span className="font-data text-[10px] text-[#D1D5DB] tracking-widest font-[Fira_Code,monospace]">PRECISION</span>
-            </div>
-            <div className="absolute bottom-6 w-full px-6 text-center">
-              <h4 className="font-heading text-2xl text-white uppercase font-[Teko,sans-serif]">KI-Integration</h4>
-              <p className="font-data text-xs text-[#D1D5DB]/60 mt-1 font-[Fira_Code,monospace]">Automatisierung und intelligente Systeme für skalierbare Geschäftsprozesse.</p>
-            </div>
-          </div>
+          {(() => {
+            const idx = 1;
+            const isExp = expandedCard === idx;
+            return (
+              <div className="flex flex-col gap-0">
+                <div
+                  className="gauge-container border-2 border-[#D1D5DB]/20 bg-[#1a1a1a] h-96 p-6 flex flex-col items-center justify-center relative cursor-pointer"
+                  onClick={() => setExpandedCard(isExp ? null : idx)}
+                >
+                  <div className="absolute top-6 left-6 font-data text-[#B87333] text-xs font-[Fira_Code,monospace]">SYS.LOAD</div>
+                  <svg className="w-48 h-48 transform -rotate-90" viewBox="0 0 120 120">
+                    <circle cx="60" cy="60" r="54" fill="none" stroke="#333" strokeWidth="8" />
+                    <circle ref={gaugeRef} cx="60" cy="60" r="54" fill="none" stroke="#EAB308" strokeWidth="8" strokeDasharray="339.292" strokeDashoffset="339.292" strokeLinecap="square" />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center flex-col mt-4">
+                    <span className="font-heading text-5xl text-white font-[Teko,sans-serif]">100<span className="text-2xl text-[#EAB308]">%</span></span>
+                    <span className="font-data text-[10px] text-[#D1D5DB] tracking-widest font-[Fira_Code,monospace]">PRECISION</span>
+                  </div>
+                  <div className="absolute bottom-6 w-full px-6 text-center">
+                    <h4 className="font-heading text-2xl text-white uppercase font-[Teko,sans-serif]">KI-Integration</h4>
+                    <p className="font-data text-xs text-[#D1D5DB]/60 mt-1 font-[Fira_Code,monospace]">Automatisierung und intelligente Systeme.</p>
+                  </div>
+                  <div className="absolute top-4 right-4 text-[#EAB308]">{isExp ? <X size={18} /> : <ChevronDown size={18} />}</div>
+                </div>
+                <AnimatePresence>
+                  {isExp && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }} className="overflow-hidden border-2 border-t-0 border-[#B87333]/40 bg-[#0d0d0d] font-[Fira_Code,monospace]">
+                      <div className="p-6 space-y-4">
+                        <div className="flex flex-wrap gap-2">{SERVICE_DETAILS[idx].techs.map(t => <span key={t} className="px-2 py-1 text-[10px] text-[#EAB308] border border-[#EAB308]/30 rounded font-data">{t}</span>)}</div>
+                        <div className="flex gap-6 text-sm"><span className="text-[#B87333]">{SERVICE_DETAILS[idx].price}</span><span className="text-[#D1D5DB]/50">{SERVICE_DETAILS[idx].duration}</span></div>
+                        <p className="text-xs text-[#D1D5DB]/60 leading-relaxed">{SERVICE_DETAILS[idx].example}</p>
+                        <a href="#dispatch" className="inline-flex items-center gap-2 text-xs text-[#EAB308] hover:text-white transition-colors">Anfrage starten <ArrowRight size={12} /></a>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })()}
 
           {/* Card 3: Inspection Light */}
-          <div 
-            ref={inspectionCardRef}
-            onMouseMove={handleMouseMove}
-            className="inspection-card border-2 border-[#D1D5DB]/20 bg-[#0a0a0a] h-96 p-6 flex flex-col justify-end cursor-crosshair"
-          >
-            <div className="relative z-10">
-              <Activity className="text-[#B87333] w-8 h-8 mb-4 opacity-50" />
-              <h4 className="font-heading text-3xl text-white uppercase font-[Teko,sans-serif]">Premium E-Commerce</h4>
-              <p className="font-data text-sm text-[#D1D5DB]/80 mt-2 font-[Fira_Code,monospace]">
-                Konversionsstarke Online-Shops mit unvergleichlicher User Experience und robuster Architektur.
-              </p>
-            </div>
-          </div>
+          {(() => {
+            const idx = 2;
+            const isExp = expandedCard === idx;
+            return (
+              <div className="flex flex-col gap-0">
+                <div
+                  ref={inspectionCardRef}
+                  onMouseMove={handleMouseMove}
+                  className="inspection-card border-2 border-[#D1D5DB]/20 bg-[#0a0a0a] h-96 p-6 flex flex-col justify-end cursor-pointer relative"
+                  onClick={() => setExpandedCard(isExp ? null : idx)}
+                >
+                  <div className="relative z-10">
+                    <Activity className="text-[#B87333] w-8 h-8 mb-4 opacity-50" />
+                    <h4 className="font-heading text-3xl text-white uppercase font-[Teko,sans-serif]">Premium E-Commerce</h4>
+                    <p className="font-data text-sm text-[#D1D5DB]/80 mt-2 font-[Fira_Code,monospace]">Konversionsstarke Online-Shops mit unvergleichlicher User Experience.</p>
+                  </div>
+                  <div className="absolute top-4 right-4 z-20 text-[#EAB308]">{isExp ? <X size={18} /> : <ChevronDown size={18} />}</div>
+                </div>
+                <AnimatePresence>
+                  {isExp && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }} className="overflow-hidden border-2 border-t-0 border-[#B87333]/40 bg-[#0d0d0d] font-[Fira_Code,monospace]">
+                      <div className="p-6 space-y-4">
+                        <div className="flex flex-wrap gap-2">{SERVICE_DETAILS[idx].techs.map(t => <span key={t} className="px-2 py-1 text-[10px] text-[#EAB308] border border-[#EAB308]/30 rounded font-data">{t}</span>)}</div>
+                        <div className="flex gap-6 text-sm"><span className="text-[#B87333]">{SERVICE_DETAILS[idx].price}</span><span className="text-[#D1D5DB]/50">{SERVICE_DETAILS[idx].duration}</span></div>
+                        <p className="text-xs text-[#D1D5DB]/60 leading-relaxed">{SERVICE_DETAILS[idx].example}</p>
+                        <a href="#dispatch" className="inline-flex items-center gap-2 text-xs text-[#EAB308] hover:text-white transition-colors">Anfrage starten <ArrowRight size={12} /></a>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })()}
 
         </div>
       </section>
@@ -306,27 +388,38 @@ export default function IndustriellApp() {
               <span className="text-[#EAB308]">#WM-{Math.floor(Math.random() * 10000)}</span>
             </h3>
             
-            <form className="space-y-6 font-data font-[Fira_Code,monospace]" onSubmit={(e) => e.preventDefault()}>
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-xs text-[#D1D5DB]/60 mb-2">NAME / UNTERNEHMEN</label>
-                  <input type="text" className="w-full bg-[#121212] border-2 border-[#333] p-3 text-white focus:border-[#B87333] outline-none transition-colors" placeholder="Name eingeben..." />
-                </div>
-                <div>
-                  <label className="block text-xs text-[#D1D5DB]/60 mb-2">KONTAKTDATEN</label>
-                  <input type="text" className="w-full bg-[#121212] border-2 border-[#333] p-3 text-white focus:border-[#B87333] outline-none transition-colors" placeholder="Telefon / E-Mail..." />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs text-[#D1D5DB]/60 mb-2">PROJEKT PARAMETER</label>
-                <textarea rows={4} className="w-full bg-[#121212] border-2 border-[#333] p-3 text-white focus:border-[#B87333] outline-none transition-colors resize-none" placeholder="Beschreibe die digitalen Anforderungen..."></textarea>
-              </div>
-              <div className="pt-4">
-                <button className="btn-mechanical w-full bg-[#B87333] text-white font-heading font-[Teko,sans-serif] text-2xl py-4 border-b-[#8B5A2B] hover:bg-[#c9823f] flex items-center justify-center gap-3">
-                  <Wrench className="w-6 h-6" /> ANFRAGE SENDEN
+            {formSubmitted ? (
+              <div className="flex flex-col items-center justify-center py-16 gap-6">
+                <ShieldCheck className="w-16 h-16 text-[#B87333]" />
+                <p className="font-data font-[Fira_Code,monospace] text-white text-xl text-center">ANFRAGE ÜBERMITTELT</p>
+                <p className="font-data font-[Fira_Code,monospace] text-[#D1D5DB]/60 text-sm text-center">Wir melden uns innerhalb von 24 Stunden.</p>
+                <button onClick={() => setFormSubmitted(false)} className="font-data font-[Fira_Code,monospace] text-xs text-[#B87333] underline mt-2">
+                  Neue Anfrage
                 </button>
               </div>
-            </form>
+            ) : (
+              <form className="space-y-6 font-data font-[Fira_Code,monospace]" onSubmit={(e) => { e.preventDefault(); setFormSubmitted(true); }}>
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-xs text-[#D1D5DB]/60 mb-2">NAME / UNTERNEHMEN</label>
+                    <input type="text" className="w-full bg-[#121212] border-2 border-[#333] p-3 text-white focus:border-[#B87333] outline-none transition-colors" placeholder="Name eingeben..." />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-[#D1D5DB]/60 mb-2">KONTAKTDATEN</label>
+                    <input type="text" className="w-full bg-[#121212] border-2 border-[#333] p-3 text-white focus:border-[#B87333] outline-none transition-colors" placeholder="Telefon / E-Mail..." />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs text-[#D1D5DB]/60 mb-2">PROJEKT PARAMETER</label>
+                  <textarea rows={4} className="w-full bg-[#121212] border-2 border-[#333] p-3 text-white focus:border-[#B87333] outline-none transition-colors resize-none" placeholder="Beschreibe die digitalen Anforderungen..."></textarea>
+                </div>
+                <div className="pt-4">
+                  <button type="submit" className="btn-mechanical w-full bg-[#B87333] text-white font-heading font-[Teko,sans-serif] text-2xl py-4 border-b-[#8B5A2B] hover:bg-[#c9823f] flex items-center justify-center gap-3">
+                    <Wrench className="w-6 h-6" /> ANFRAGE SENDEN
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       </section>

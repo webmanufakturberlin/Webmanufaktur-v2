@@ -192,7 +192,7 @@ export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
             </div>
 
             {/* Scroll indicator */}
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[16] flex flex-col items-center gap-2 animate-bounce pointer-events-none" style={{ animationDuration: '2s' }}>
+            <div className="absolute bottom-10 left-0 right-0 z-[16] flex flex-col items-center gap-2 animate-bounce pointer-events-none" style={{ animationDuration: '2s' }}>
                 <span className={`text-[10px] font-bold uppercase tracking-widest ${isNight ? 'text-gray-500' : 'text-gray-400'}`}>{t('hero.scroll')}</span>
                 <ChevronDown size={20} className={isNight ? 'text-gray-500' : 'text-gray-400'} />
             </div>

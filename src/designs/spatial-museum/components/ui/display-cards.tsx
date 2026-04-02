@@ -1,5 +1,5 @@
 import { cn } from "../../utils";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Brain, ShoppingBag } from "lucide-react";
 import { useStore } from "../../store";
 
 interface DisplayCardProps {
@@ -51,12 +51,30 @@ interface DisplayCardsProps {
 export default function DisplayCards({ cards }: DisplayCardsProps) {
   const defaultCards = [
     {
+      icon: <Sparkles className="size-4 text-[#6366f1]" />,
+      title: "Spatial Web Design",
+      description: "Immersive 3D-Erlebnisse",
+      date: "Three.js · WebGL · R3F",
+      iconClassName: "text-[#6366f1]",
+      titleClassName: "text-[#09090B]",
       className: "[grid-area:stack] hover:-translate-y-10 before:absolute before:w-[100%] before:outline-1 before:rounded-2xl before:outline-border before:h-[100%] before:content-[''] before:bg-blend-overlay before:bg-white/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
     },
     {
+      icon: <Brain className="size-4 text-[#8b5cf6]" />,
+      title: "KI-Integration",
+      description: "Intelligente Systeme",
+      date: "OpenAI · Langchain · Python",
+      iconClassName: "text-[#8b5cf6]",
+      titleClassName: "text-[#09090B]",
       className: "[grid-area:stack] translate-x-16 translate-y-10 hover:-translate-y-1 before:absolute before:w-[100%] before:outline-1 before:rounded-2xl before:outline-border before:h-[100%] before:content-[''] before:bg-blend-overlay before:bg-white/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
     },
     {
+      icon: <ShoppingBag className="size-4 text-[#a855f7]" />,
+      title: "Premium E-Commerce",
+      description: "Shops die konvertieren",
+      date: "Next.js · Shopify · Stripe",
+      iconClassName: "text-[#a855f7]",
+      titleClassName: "text-[#09090B]",
       className: "[grid-area:stack] translate-x-32 translate-y-20 hover:translate-y-10",
     },
   ];

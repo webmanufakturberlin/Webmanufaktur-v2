@@ -21,6 +21,7 @@ const defaultNavItems: NavItem[] = [
 type LimelightNavProps = {
   items?: NavItem[];
   defaultActiveIndex?: number;
+  activeIndex?: number;
   onTabChange?: (index: number) => void;
   className?: string;
   limelightClassName?: string;
@@ -31,13 +32,15 @@ type LimelightNavProps = {
 export const LimelightNav = ({
   items = defaultNavItems,
   defaultActiveIndex = 0,
+  activeIndex: controlledIndex,
   onTabChange,
   className,
   limelightClassName,
   iconContainerClassName,
   iconClassName,
 }: LimelightNavProps) => {
-  const [activeIndex, setActiveIndex] = useState(defaultActiveIndex);
+  const [internalIndex, setActiveIndex] = useState(defaultActiveIndex);
+  const activeIndex = controlledIndex !== undefined ? controlledIndex : internalIndex;
   const [isReady, setIsReady] = useState(false);
   const navItemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
   const limelightRef = useRef<HTMLDivElement | null>(null);
@@ -64,7 +67,7 @@ export const LimelightNav = ({
   }
 
   const handleItemClick = (index: number, itemOnClick?: () => void) => {
-    setActiveIndex(index);
+    setActiveIndex(index); // updates internalIndex
     onTabChange?.(index);
     itemOnClick?.();
   };
