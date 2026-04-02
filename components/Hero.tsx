@@ -6,6 +6,7 @@ const VoxelBerlinBackground = React.lazy(() => import('./ui/VoxelBerlinBackgroun
 import WeatherWidget from './ui/weather/WeatherWidget';
 import { useWeatherStore } from '../stores/weatherStore';
 import { motion } from 'framer-motion';
+import { BerlinBear } from './ScavengerHunt/BerlinBear';
 
 // Magnetic CTA button — follows cursor slightly with spring return
 const MagneticBtn: React.FC<{
@@ -63,6 +64,9 @@ export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
                 <VoxelBerlinBackground onLoad={() => setIs3DLoaded(true)} />
             </React.Suspense>
             <WeatherWidget />
+
+            {/* Scavenger Hunt Bear #0 — hidden in top-right corner */}
+            <BerlinBear bearId={0} alwaysVisible className="absolute top-20 right-8 z-20" />
 
             <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 text-center">
                 <div className="flex flex-col items-center">

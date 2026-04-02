@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Zap, ShieldCheck, Wrench, ArrowRight, Phone, Mail, MapPin, Activity } from 'lucide-react';
 import './industriell.css';
+import { BerlinBear } from '../../../components/ScavengerHunt/BerlinBear';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -120,6 +121,8 @@ export default function IndustriellApp() {
           <span className="w-2 h-2 bg-[#EAB308] rounded-full animate-pulse"></span>
           SYSTEM ACTIVE
         </div>
+        {/* Scavenger Hunt Bear #1 */}
+        <BerlinBear bearId={1} className="absolute top-16 right-8 z-20" />
         <div className="absolute bottom-8 left-8 z-20 font-data text-xs text-[#B87333] opacity-70 font-[Fira_Code,monospace]">
           COORD: 52.5200° N, 13.4050° E<br/>
           STATUS: DEPLOYED

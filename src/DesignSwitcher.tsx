@@ -2,11 +2,16 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { DESIGN_VARIANTS } from './designs/registry';
 import App from '../App';
 import { Palette, X } from 'lucide-react';
+import { HuntHUD } from '../components/ScavengerHunt/HuntHUD';
+import { ClueModal } from '../components/ScavengerHunt/ClueModal';
+import { SecretPage } from '../components/ScavengerHunt/SecretPage';
+import { useHuntStore } from '../stores/huntStore';
 
 const DesignSwitcher: React.FC = () => {
   const [activeDesignId, setActiveDesignId] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
+  const showSecretPage = useHuntStore((s) => s.showSecretPage);
   const activeDesign = DESIGN_VARIANTS.find(d => d.id === activeDesignId);
 
   // Load from session storage on mount & prevent scroll restoration
@@ -86,6 +91,11 @@ const DesignSwitcher: React.FC = () => {
       <Suspense fallback={<div className="min-h-screen bg-black text-white flex items-center justify-center font-mono">Initializing Simulation...</div>}>
         {ActiveComponent ? <ActiveComponent /> : <App />}
       </Suspense>
+
+      {/* Scavenger Hunt UI — global across all designs */}
+      <HuntHUD />
+      <ClueModal />
+      {showSecretPage && <SecretPage />}
 
       {/* Floating UI */}
       <div className="fixed bottom-6 right-6 z-[99999] font-sans">

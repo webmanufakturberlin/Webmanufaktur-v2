@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Scene } from './components/Scene';
+import { BerlinBear } from '../../../components/ScavengerHunt/BerlinBear';
 import { LiquidCursor } from './components/LiquidCursor';
 import { LimelightNav } from './components/ui/limelight-nav';
 import DisplayCards from './components/ui/display-cards';
@@ -160,7 +161,9 @@ export default function SpatialMuseumApp() {
           </section>
 
           {/* SECTION 4: THE NEXUS */}
-          <section id="sm-nexus" className="min-h-screen flex items-center justify-center px-6 py-20">
+          <section id="sm-nexus" className="relative min-h-screen flex items-center justify-center px-6 py-20">
+            {/* Scavenger Hunt Bear #2 */}
+            <BerlinBear bearId={2} className="absolute top-8 right-8 z-20" />
             <div className="max-w-4xl text-center">
               <h2 className="text-5xl sm:text-6xl font-serif mb-10">Initiate Contact</h2>
               <p className="text-xl font-sans font-light text-black/70 mb-12">
@@ -246,6 +249,8 @@ export default function SpatialMuseumApp() {
 
             {/* SECTION 4: THE NEXUS (Bottom-Left) */}
             <section className="absolute top-[100vh] left-0 w-screen h-screen flex items-center justify-center px-6 md:px-12">
+              {/* Scavenger Hunt Bear #2 — desktop */}
+              <BerlinBear bearId={2} className="absolute top-8 right-8 z-20" />
                <div className="max-w-4xl text-center museum-artifact">
                   <h2 className="text-6xl md:text-8xl font-serif mb-12">Initiate Contact</h2>
                   <p className="text-2xl font-sans font-light text-black/70 mb-16">

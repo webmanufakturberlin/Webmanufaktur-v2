@@ -3,6 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useStore } from './store';
+import { BerlinBear } from '../../../components/ScavengerHunt/BerlinBear';
 import VoxelScene from './components/VoxelScene';
 import { ArrowRight, Box, Code, Layers, Smartphone, Zap } from 'lucide-react';
 import './schlicht.css';
@@ -86,10 +87,12 @@ export default function SchlichtApp() {
   return (
     <div ref={containerRef} className="design-schlicht relative w-full min-h-screen">
       {/* Scroll Progress Bar */}
-      <div 
+      <div
         className="fixed top-0 left-0 h-3 bg-[#FF5722] border-b-4 border-r-4 border-black z-50 transition-all duration-75 ease-out"
         style={{ width: `${scrollProgress * 100}%` }}
       />
+      {/* Scavenger Hunt Bear #3 */}
+      <BerlinBear bearId={3} className="fixed top-4 right-4 z-40" />
 
       {/* WebGL Background */}
       <div className="fixed inset-0 z-[1] pointer-events-none">

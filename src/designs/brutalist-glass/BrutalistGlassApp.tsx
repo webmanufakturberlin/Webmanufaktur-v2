@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import Lenis from '@studio-freight/lenis';
 import gsap from 'gsap';
+import { BerlinBear } from '../../../components/ScavengerHunt/BerlinBear';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useAppStore } from './store';
 
@@ -124,6 +125,8 @@ export default function BrutalistGlassApp() {
 
       {/* FLOOR 1: THE HOOK (Zoom Parallax) */}
       <section className="relative w-full">
+        {/* Scavenger Hunt Bear #4 */}
+        <BerlinBear bearId={4} className="absolute top-8 left-8 z-20" />
         <div className="sticky top-0 h-screen w-full z-10 flex flex-col items-center justify-center pointer-events-none mix-blend-difference">
           <h1 className="font-display text-5xl sm:text-7xl md:text-[12vw] leading-[0.8] tracking-tighter text-white uppercase text-center brutal-text-reveal">
             Digital<br />Concrete
