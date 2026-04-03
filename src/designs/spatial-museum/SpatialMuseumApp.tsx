@@ -48,9 +48,9 @@ export default function SpatialMuseumApp() {
       });
 
       // Spatial Path: U-Shape (optimized using xPercent/yPercent for hardware acceleration)
-      tl.to(canvasRef.current, { xPercent: -50, ease: "power1.inOut", duration: 1 })
-        .to(canvasRef.current, { yPercent: -50, ease: "power1.inOut", duration: 1 })
-        .to(canvasRef.current, { xPercent: 0, ease: "power1.inOut", duration: 1 });
+      tl.to(canvasRef.current, { xPercent: -50, ease: "power1.inOut", duration: 1.8 })
+        .to(canvasRef.current, { yPercent: -50, ease: "power1.inOut", duration: 1.8 })
+        .to(canvasRef.current, { xPercent: 0, ease: "power1.inOut", duration: 1.8 });
 
       // Breathing Animation for Artifacts
       gsap.to(".museum-artifact", {
@@ -68,9 +68,9 @@ export default function SpatialMuseumApp() {
         gsap.to(".hero-text-line", {
           y: 0,
           opacity: 1,
-          duration: 1.5,
+          duration: 2.2,
           ease: "expo.out",
-          stagger: 0.1,
+          stagger: 0.2,
           delay: 0.5
         });
       });
@@ -96,9 +96,9 @@ export default function SpatialMuseumApp() {
         gsap.to(".hero-text-line", {
           y: 0,
           opacity: 1,
-          duration: 1.2,
+          duration: 1.8,
           ease: "expo.out",
-          stagger: 0.08,
+          stagger: 0.15,
           delay: 0.3
         });
       });

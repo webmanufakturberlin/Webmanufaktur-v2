@@ -46,9 +46,9 @@ export default function IndustriellApp() {
         gsap.to(".hero-text-line", {
           y: 0,
           opacity: 1,
-          duration: 1.2,
+          duration: 2.0,
           ease: "bounce.out",
-          stagger: 0.15,
+          stagger: 0.25,
           delay: 0.2
         });
       });
@@ -86,7 +86,7 @@ export default function IndustriellApp() {
             { 
               opacity: 1, 
               x: 0,
-              duration: 0.5,
+              duration: 0.85,
               scrollTrigger: {
                 trigger: step,
                 start: "top center",

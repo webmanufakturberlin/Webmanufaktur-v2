@@ -54,8 +54,22 @@ const PALETTE = {
 
 const VOXEL_GAP = 0.92;
 
+interface CityData {
+    geometry: THREE.BoxGeometry;
+    material: THREE.MeshLambertMaterial;
+    voxelCount: number;
+    matrices: Float32Array;
+    colors: Float32Array;
+    windowMat: THREE.MeshStandardMaterial;
+    windowCount: number;
+    windowMatrices: Float32Array;
+}
+
 const VoxelCity = () => {
-    const { geometry, material, voxelCount, matrices, colors, windowMat, windowCount, windowMatrices } = useMemo(() => {
+    const [cityData, setCityData] = useState<CityData | null>(null);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
         const voxels: { x: number; y: number; z: number; color: number }[] = [];
 
         function addVoxel(x: number, y: number, z: number, colorHex: number) {
@@ -798,48 +812,52 @@ const VoxelCity = () => {
             dummy.matrix.toArray(windowMatricesArr, i * 16);
         }
 
-        return {
+        setCityData({
             geometry: geo, material: mat, voxelCount: mainVoxels.length, matrices: matricesArr, colors: colorsArr,
             windowMat, windowCount: windowVoxels.length, windowMatrices: windowMatricesArr,
-        };
+        });
+        }, 10);
+        return () => clearTimeout(timer);
     }, []);
 
     const meshRef = React.useRef<THREE.InstancedMesh>(null);
     const windowMeshRef = React.useRef<THREE.InstancedMesh>(null);
 
     React.useEffect(() => {
-        if (!meshRef.current) return;
+        if (!meshRef.current || !cityData) return;
         const mesh = meshRef.current;
         const dummy = new THREE.Matrix4();
-        for (let i = 0; i < voxelCount; i++) {
-            dummy.fromArray(matrices, i * 16);
+        for (let i = 0; i < cityData.voxelCount; i++) {
+            dummy.fromArray(cityData.matrices, i * 16);
             mesh.setMatrixAt(i, dummy);
         }
         mesh.instanceMatrix.needsUpdate = true;
 
         const tempColor = new THREE.Color();
-        for (let i = 0; i < voxelCount; i++) {
-            tempColor.setRGB(colors[i * 3], colors[i * 3 + 1], colors[i * 3 + 2]);
+        for (let i = 0; i < cityData.voxelCount; i++) {
+            tempColor.setRGB(cityData.colors[i * 3], cityData.colors[i * 3 + 1], cityData.colors[i * 3 + 2]);
             mesh.setColorAt(i, tempColor);
         }
         if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
-    }, [voxelCount, matrices, colors]);
+    }, [cityData]);
 
     React.useEffect(() => {
-        if (!windowMeshRef.current) return;
+        if (!windowMeshRef.current || !cityData) return;
         const mesh = windowMeshRef.current;
         const dummy = new THREE.Matrix4();
-        for (let i = 0; i < windowCount; i++) {
-            dummy.fromArray(windowMatrices, i * 16);
+        for (let i = 0; i < cityData.windowCount; i++) {
+            dummy.fromArray(cityData.windowMatrices, i * 16);
             mesh.setMatrixAt(i, dummy);
         }
         mesh.instanceMatrix.needsUpdate = true;
-    }, [windowCount, windowMatrices]);
+    }, [cityData]);
+
+    if (!cityData) return null;
 
     return (
         <>
-            <instancedMesh ref={meshRef} args={[geometry, material, voxelCount]} />
-            <instancedMesh ref={windowMeshRef} args={[geometry, windowMat, windowCount]} />
+            <instancedMesh ref={meshRef} args={[cityData.geometry, cityData.material, cityData.voxelCount]} />
+            <instancedMesh ref={windowMeshRef} args={[cityData.geometry, cityData.windowMat, cityData.windowCount]} />
         </>
     );
 };
@@ -955,7 +973,7 @@ export default function VoxelBerlinBackground({ onLoad }: { onLoad?: () => void 
     const isNight = useWeatherStore(s => s.isNight);
     const [contextLost, setContextLost] = React.useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
-    const isInView = useInView(containerRef, { margin: "200px" });
+    const isInView = useInView(containerRef, { margin: "0px" });
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
