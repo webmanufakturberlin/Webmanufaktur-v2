@@ -1,7 +1,9 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { DESIGN_VARIANTS } from './designs/registry';
 import App from '../App';
+import { useI18n } from '../i18n';
 import { Palette, X } from 'lucide-react';
+
 import { HuntHUD } from '../components/ScavengerHunt/HuntHUD';
 import { ClueModal } from '../components/ScavengerHunt/ClueModal';
 import { SecretPage } from '../components/ScavengerHunt/SecretPage';
@@ -12,6 +14,21 @@ const DesignSwitcher: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
   const showSecretPage = useHuntStore((s) => s.showSecretPage);
+  const { lang, setLang } = useI18n();
+
+  // Sync language with URL and update document lang
+  useEffect(() => {
+    if (window.location.pathname.startsWith('/en')) {
+      setLang('en');
+    } else {
+      setLang('de');
+    }
+  }, [setLang]);
+
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
+
   const activeDesign = DESIGN_VARIANTS.find(d => d.id === activeDesignId);
 
   // Load from session storage on mount & prevent scroll restoration

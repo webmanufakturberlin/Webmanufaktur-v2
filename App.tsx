@@ -3,6 +3,8 @@ import { Hero } from './components/Hero';
 import { Navbar } from './components/Navbar';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { motion, useInView, useScroll, useSpring } from 'framer-motion';
+import { useI18n } from './i18n';
+
 
 // Lazy-load below-the-fold sections for faster initial paint
 const ImpactData = React.lazy(() => import('./components/ImpactData').then(m => ({ default: m.ImpactData })));
@@ -121,6 +123,35 @@ const SectionDivider: React.FC = () => (
 const App: React.FC = () => {
     const [currentView, setCurrentView] = useState<'home' | 'service-detail' | 'about' | 'impressum' | 'ki-labor' | 'references'>('home');
     const [selectedService, setSelectedService] = useState<ServiceData | null>(null);
+    const { setLang } = useI18n();
+
+    // --- URL Path Synchronization ---
+    useEffect(() => {
+        const path = window.location.pathname;
+        let p = path;
+        
+        // Detect Language
+        if (path.startsWith('/en')) {
+            setLang('en');
+            p = path.replace(/^\/en/, '') || '/';
+        } else {
+            setLang('de');
+        }
+
+        // Detect View
+        if (p.includes('about')) {
+            setCurrentView('about');
+        } else if (p.includes('references')) {
+            setCurrentView('references');
+        } else if (p.includes('impressum')) {
+            setCurrentView('impressum');
+        } else if (p.includes('ki-labor') || p.includes('ai-lab')) {
+            setCurrentView('ki-labor');
+        } else {
+            setCurrentView('home');
+        }
+    }, [setLang]);
+
 
     const handleNavigate = useCallback((id: string) => {
         if (id === 'about') {

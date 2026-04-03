@@ -1,33 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://www.webmanufakturberlin.de/</loc>
-    <lastmod>2026-03-19</lastmod>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.webmanufakturberlin.de/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.webmanufakturberlin.de/en/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.webmanufakturberlin.de/" />
+    <lastmod>2026-04-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.webmanufakturberlin.de/en/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.webmanufakturberlin.de/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.webmanufakturberlin.de/en/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.webmanufakturberlin.de/" />
+    <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.webmanufakturberlin.de/about</loc>
-    <lastmod>2026-03-19</lastmod>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.webmanufakturberlin.de/about" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.webmanufakturberlin.de/en/about" />
+    <lastmod>2026-04-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.webmanufakturberlin.de/en/about</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.webmanufakturberlin.de/about" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.webmanufakturberlin.de/en/about" />
+    <lastmod>2026-04-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.webmanufakturberlin.de/references</loc>
-    <lastmod>2026-03-19</lastmod>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.webmanufakturberlin.de/references" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.webmanufakturberlin.de/en/references" />
+    <lastmod>2026-04-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.webmanufakturberlin.de/en/references</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.webmanufakturberlin.de/references" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.webmanufakturberlin.de/en/references" />
+    <lastmod>2026-04-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.webmanufakturberlin.de/impressum</loc>
-    <lastmod>2026-03-19</lastmod>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.webmanufakturberlin.de/impressum" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.webmanufakturberlin.de/en/impressum" />
+    <lastmod>2026-04-03</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.webmanufakturberlin.de/en/impressum</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.webmanufakturberlin.de/impressum" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.webmanufakturberlin.de/en/impressum" />
+    <lastmod>2026-04-03</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://www.webmanufakturberlin.de/ki-labor</loc>
-    <lastmod>2026-03-19</lastmod>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.webmanufakturberlin.de/ki-labor" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.webmanufakturberlin.de/en/ki-labor" />
+    <lastmod>2026-04-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.webmanufakturberlin.de/en/ki-labor</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.webmanufakturberlin.de/ki-labor" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.webmanufakturberlin.de/en/ki-labor" />
+    <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 </urlset>
+
