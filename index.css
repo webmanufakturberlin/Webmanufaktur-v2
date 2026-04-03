@@ -103,7 +103,14 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.35) 50%, transparent 100%);
+  z-index: 10;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(99, 102, 241, 0.3) 40%,
+    rgba(147, 51, 234, 0.25) 60%,
+    transparent 100%
+  );
   animation: shimmer 1.5s ease-out forwards;
   pointer-events: none;
 }

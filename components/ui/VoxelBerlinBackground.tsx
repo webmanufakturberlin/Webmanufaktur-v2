@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useInView } from 'framer-motion';
 import * as THREE from 'three';
@@ -962,6 +962,14 @@ export default function VoxelBerlinBackground({ onLoad }: { onLoad?: () => void 
     const [contextLost, setContextLost] = React.useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const isInView = useInView(containerRef, { margin: "200px" });
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const check = () => setIsMobile(window.innerWidth < 768);
+        check();
+        window.addEventListener('resize', check);
+        return () => window.removeEventListener('resize', check);
+    }, []);
 
     // Handle WebGL context loss (iPad / memory constrained devices)
     const handleCreated = React.useCallback(({ gl }: { gl: THREE.WebGLRenderer }) => {
@@ -997,21 +1005,22 @@ export default function VoxelBerlinBackground({ onLoad }: { onLoad?: () => void 
                     frameloop={isInView ? 'always' : 'demand'}
                     camera={{ position: [0, 70, 150], fov: 60 }}
                     gl={{
-                        antialias: true,
+                        antialias: !isMobile,
                         powerPreference: 'high-performance',
                         failIfMajorPerformanceCaveat: false,
                     }}
-                    dpr={Math.min(window.devicePixelRatio, 1.5)}
+                    shadows={!isMobile}
+                    dpr={isMobile ? 1 : Math.min(window.devicePixelRatio, 1.5)}
                     className="w-full h-full"
                     onCreated={handleCreated}
                 >
                     <WeatherSky />
                     <fogExp2 attach="fog" args={['#a3dcfc', 0.004]} />
                     <WeatherLighting />
-                    <WeatherParticles />
+                    {!isMobile && <WeatherParticles />}
 
                     <VoxelCity />
-                    <CityLights />
+                    {!isMobile && <CityLights />}
                     <CinematicCamera />
                 </Canvas>
             )}
