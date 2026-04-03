@@ -69,7 +69,7 @@ export default function IndustriellApp() {
       // Timeline Fill Animation
       if (timelineRef.current && timelineFillRef.current) {
         gsap.to(timelineFillRef.current, {
-          height: "100%",
+          scaleY: 1,
           ease: "none",
           scrollTrigger: {
             trigger: timelineRef.current,
@@ -198,7 +198,21 @@ export default function IndustriellApp() {
                   className="blueprint-reveal border-2 border-[#D1D5DB]/20 bg-[#121212] h-96 flex flex-col justify-end p-6 group cursor-pointer relative overflow-hidden"
                   onClick={() => setExpandedCard(isExp ? null : idx)}
                 >
-                  <img src="https://images.unsplash.com/photo-1544724569-5f546fd6f2b6?q=80&w=2000&auto=format&fit=crop" alt="Server Room" className="absolute inset-0 w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  <div className="absolute inset-0 bg-[#050505] overflow-hidden">
+                    {/* Animated Spatial HUD Grid */}
+                    <div className="absolute inset-0 opacity-15" style={{
+                      backgroundImage: 'linear-gradient(#B87333 1px, transparent 1px), linear-gradient(90deg, #B87333 1px, transparent 1px)',
+                      backgroundSize: '40px 40px',
+                      transformOrigin: '50% 100%',
+                      transform: 'perspective(600px) rotateX(60deg) scale(2)'
+                    }} />
+                    {/* Abstract Spatial Object */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] w-24 h-24 opacity-60">
+                      <div className="absolute inset-0 border border-[#EAB308] animate-[spin_10s_linear_infinite]" />
+                      <div className="absolute inset-2 border border-[#B87333] animate-[spin_8s_linear_infinite_reverse]" />
+                      <div className="absolute inset-4 border border-[#D1D5DB]/40 animate-[spin_6s_linear_infinite]" />
+                    </div>
+                  </div>
                   <div className="relative z-10 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                     <div className="font-data text-[#EAB308] text-xs mb-2 opacity-0 group-hover:opacity-100 transition-opacity font-[Fira_Code,monospace]">SCHEMATIC VIEW ACTIVE</div>
                     <h4 className="font-heading text-3xl text-white uppercase font-[Teko,sans-serif]">Spatial Web Design</h4>
@@ -272,10 +286,32 @@ export default function IndustriellApp() {
                 <div
                   ref={inspectionCardRef}
                   onMouseMove={handleMouseMove}
-                  className="inspection-card border-2 border-[#D1D5DB]/20 bg-[#0a0a0a] h-96 p-6 flex flex-col justify-end cursor-pointer relative"
+                  className="inspection-card border-2 border-[#D1D5DB]/20 bg-[#0a0a0a] h-96 p-6 flex flex-col justify-end cursor-pointer relative overflow-hidden group"
                   onClick={() => setExpandedCard(isExp ? null : idx)}
                 >
-                  <div className="relative z-10">
+                  {/* Abstract E-Commerce Dashboard Skeleton */}
+                  <div className="absolute inset-0 flex items-start justify-end p-6 pointer-events-none opacity-40 group-hover:opacity-70 transition-opacity duration-500">
+                     <div className="w-48 h-full border border-[#B87333]/30 bg-[#121212]/80 flex flex-col gap-2 p-3 transform rotate-6 translate-x-4 -translate-y-4 group-hover:rotate-0 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-700">
+                        {/* Header skeleton */}
+                        <div className="flex justify-between items-center border-b border-[#333] pb-2">
+                           <div className="w-12 h-2 bg-[#D1D5DB]/20 rounded" />
+                           <div className="w-4 h-4 rounded-full bg-[#EAB308]/60" />
+                        </div>
+                        {/* Main Product Placeholder */}
+                        <div className="w-full h-24 bg-[#D1D5DB]/10 rounded flex items-center justify-center relative overflow-hidden">
+                           <Activity className="text-[#B87333]/40 w-6 h-6 absolute animate-pulse" />
+                           <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent w-[200%] animate-[translateX_2s_infinite]" />
+                        </div>
+                        {/* Text Lines */}
+                        <div className="w-full h-2 bg-[#D1D5DB]/20 rounded mt-2" />
+                        <div className="w-2/3 h-2 bg-[#D1D5DB]/10 rounded" />
+                        {/* Cyber Checkout Button */}
+                        <div className="mt-auto w-full h-8 border border-[#EAB308]/50 bg-[#EAB308]/10 rounded flex items-center justify-center relative overflow-hidden">
+                           <div className="w-1/2 h-1 bg-[#EAB308] absolute bottom-1 left-1 animate-[pulse_2s_infinite_reverse]" />
+                        </div>
+                     </div>
+                  </div>
+                  <div className="relative z-10 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                     <Activity className="text-[#B87333] w-8 h-8 mb-4 opacity-50" />
                     <h4 className="font-heading text-3xl text-white uppercase font-[Teko,sans-serif]">Premium E-Commerce</h4>
                     <p className="font-data text-sm text-[#D1D5DB]/80 mt-2 font-[Fira_Code,monospace]">Konversionsstarke Online-Shops mit unvergleichlicher User Experience.</p>
@@ -327,7 +363,7 @@ export default function IndustriellApp() {
           {/* The Pipe */}
           <div className="absolute left-0 top-0 bottom-0 w-4 bg-[#222] border-x border-[#333]">
             {/* The Fill */}
-            <div ref={timelineFillRef} className="w-full bg-[#B87333] h-0 shadow-[0_0_15px_rgba(184,115,51,0.5)]"></div>
+            <div ref={timelineFillRef} className="w-full h-full origin-top scale-y-0 bg-[#B87333] shadow-[0_0_15px_rgba(184,115,51,0.5)]"></div>
           </div>
 
           {/* Steps */}

@@ -47,10 +47,10 @@ export default function SpatialMuseumApp() {
         }
       });
 
-      // Spatial Path: U-Shape (pixel-based for Opera compatibility)
-      tl.to(canvasRef.current, { x: () => -window.innerWidth, ease: "power1.inOut", duration: 1 })
-        .to(canvasRef.current, { y: () => -window.innerHeight, ease: "power1.inOut", duration: 1 })
-        .to(canvasRef.current, { x: 0, ease: "power1.inOut", duration: 1 });
+      // Spatial Path: U-Shape (optimized using xPercent/yPercent for hardware acceleration)
+      tl.to(canvasRef.current, { xPercent: -50, ease: "power1.inOut", duration: 1 })
+        .to(canvasRef.current, { yPercent: -50, ease: "power1.inOut", duration: 1 })
+        .to(canvasRef.current, { xPercent: 0, ease: "power1.inOut", duration: 1 });
 
       // Breathing Animation for Artifacts
       gsap.to(".museum-artifact", {
@@ -224,10 +224,10 @@ export default function SpatialMuseumApp() {
         {/* Viewport for the Spatial Canvas */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
 
-          {/* The Massive Spatial Canvas — uses pixel dimensions for Opera compatibility */}
+          {/* The Massive Spatial Canvas — optimized with will-change */}
           <div
             ref={canvasRef}
-            className="absolute top-0 left-0 pointer-events-auto"
+            className="absolute top-0 left-0 pointer-events-auto will-change-transform"
             style={{ width: '200vw', height: '200vh' }}
           >
 

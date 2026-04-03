@@ -1,7 +1,7 @@
 import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment, Float, MeshTransmissionMaterial } from '@react-three/drei';
-import { EffectComposer, SSAO, Noise } from '@react-three/postprocessing';
+import { EffectComposer, SSAO, Noise, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { useStore } from '../store';
 
@@ -58,11 +58,14 @@ export const Scene = () => {
   const materialProps = {
     transmission: 1,
     thickness: 1.5,
-    roughness: 0.1,
+    roughness: 0.05,
     ior: 1.5,
+    chromaticAberration: 0.08,
+    clearcoat: 1,
+    clearcoatRoughness: 0,
     color: '#c8c0f8',
-    attenuationColor: '#c0b8f0',
-    attenuationDistance: 2,
+    attenuationColor: '#e0d8ff',
+    attenuationDistance: 3,
   };
 
   return (
@@ -89,6 +92,7 @@ export const Scene = () => {
         <FloatingShape position={[0, 0, -5]} geometry={geometries[4]} materialProps={materialProps} index={4} />
         <EffectComposer enableNormalPass>
           <SSAO radius={0.4} intensity={50} luminanceInfluence={0.5} color={new THREE.Color('black')} />
+          <Bloom luminanceThreshold={0.8} luminanceSmoothing={0.9} intensity={0.5} />
           <Noise opacity={0.02} />
         </EffectComposer>
       </Canvas>
