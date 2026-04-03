@@ -4,7 +4,7 @@ interface ErrorBoundaryState {
   hasError: boolean;
 }
 
-export class ErrorBoundary extends React.Component<{ children: React.ReactNode; fallbackMessage?: string }, ErrorBoundaryState> {
+export class ErrorBoundary extends React.Component<{ children: React.ReactNode; fallbackMessage?: string; fallbackNode?: React.ReactNode }, ErrorBoundaryState> {
   state: ErrorBoundaryState = { hasError: false };
 
   static getDerivedStateFromError() {
@@ -17,6 +17,10 @@ export class ErrorBoundary extends React.Component<{ children: React.ReactNode; 
 
   render() {
     if (this.state.hasError) {
+      if (this.props.fallbackNode) {
+        return <>{this.props.fallbackNode}</>;
+      }
+
       return (
         <div className="flex items-center justify-center min-h-[300px] text-center p-8">
           <div>

@@ -62,8 +62,8 @@
       mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
     }
 
-    /* Shimmer Mask */
-    .shimmer-mask {
+    /* Shimmer Mask — scoped to grid background only */
+    .bg-grid-light.shimmer-mask {
       mask-image: linear-gradient(60deg, black 40%, rgba(0, 0, 0, 0.2) 50%, black 60%);
       mask-size: 200% 200%;
       animation: gridShimmer 8s linear infinite;

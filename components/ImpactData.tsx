@@ -2,11 +2,11 @@ import React, { useRef, useCallback, useState } from 'react';
 import { ArrowUpRight, ExternalLink, TrendingUp, Eye } from 'lucide-react';
 import { Reveal } from './Reveal';
 import { useI18n } from '../i18n';
-import { motion, useAnimationFrame } from 'framer-motion';
+import { motion, useAnimationFrame, type Variants } from 'framer-motion';
 
 // --- Icon animations use Framer Motion variants propagated from parent ---
 
-const staggerContainerVariants: any = {
+const staggerContainerVariants: Variants = {
     hidden: {},
     visible: {
         transition: {
@@ -16,7 +16,7 @@ const staggerContainerVariants: any = {
     }
 };
 
-const staggerItemVariants: any = {
+const staggerItemVariants: Variants = {
     hidden: { opacity: 0, y: 150, rotateX: 25, scale: 0.85 },
     visible: { 
         opacity: 1, 
@@ -32,7 +32,7 @@ const staggerItemVariants: any = {
     }
 };
 
-const arrowVariants: any = {
+const arrowVariants: Variants = {
     idle: { y: 0, scale: 1, rotate: 0 },
     hovered: {
         y: [0, -10, -4, 0],
@@ -42,7 +42,7 @@ const arrowVariants: any = {
     },
 };
 
-const clockHourVariants: any = {
+const clockHourVariants: Variants = {
     idle: { rotate: 0 },
     hovered: {
         rotate: 360,
@@ -50,7 +50,7 @@ const clockHourVariants: any = {
     },
 };
 
-const clockMinuteVariants: any = {
+const clockMinuteVariants: Variants = {
     idle: { rotate: 0 },
     hovered: {
         rotate: 360,
@@ -58,7 +58,7 @@ const clockMinuteVariants: any = {
     },
 };
 
-const eyeVariants: any = {
+const eyeVariants: Variants = {
     idle: { rotateY: 0, scaleY: 1 },
     hovered: {
         rotateY: [0, -25, 25, 0, 0],

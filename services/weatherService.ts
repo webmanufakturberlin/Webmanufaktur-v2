@@ -54,8 +54,7 @@ export async function fetchBerlinWeather(): Promise<WeatherResponse | null> {
     // Dev: direct OWM call (no backend proxy available)
     try {
       return await fetchWeatherDirect();
-    } catch (e: any) {
-      console.warn('Weather direct fetch failed:', e?.message);
+    } catch {
       return null;
     }
   }
@@ -63,15 +62,15 @@ export async function fetchBerlinWeather(): Promise<WeatherResponse | null> {
   // Production: backend proxy first (same-origin, no CORS issues)
   try {
     return await fetchWeatherBackend();
-  } catch (backendError: any) {
-    console.warn('Weather backend proxy failed:', backendError?.message);
+  } catch {
+    // fall through to direct OWM
   }
 
   // Fallback: try direct OWM (may fail due to CORS)
   try {
     return await fetchWeatherDirect();
-  } catch (directError: any) {
-    console.warn('Weather direct fetch also failed:', directError?.message);
+  } catch {
+    // all sources failed
   }
 
   return null;

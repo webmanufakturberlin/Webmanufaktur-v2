@@ -63,8 +63,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     cache = { data, fetchedAt: now };
     return res.status(200).json(data);
-  } catch (error: any) {
-    console.error('Weather API error:', error?.message);
+  } catch {
     // Return stale cache on failure
     if (cache) return res.status(200).json(cache.data);
     return res.status(503).json({ error: 'Weather service unavailable' });

@@ -53,6 +53,12 @@ export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
     const isNight = useWeatherStore(s => s.isNight);
     const [is3DLoaded, setIs3DLoaded] = useState(false);
 
+    // Safety: dismiss loader after 6s even if Canvas fails to initialize
+    useEffect(() => {
+        const timer = setTimeout(() => setIs3DLoaded(true), 6000);
+        return () => clearTimeout(timer);
+    }, []);
+
     const scrollToContact = () => {
         document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
     };

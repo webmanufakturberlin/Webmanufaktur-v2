@@ -58,8 +58,8 @@ export const BusinessAI: React.FC = () => {
     try {
       const advice = await getStrategyAdvice(currentPrompt);
       setResponse(advice);
-    } catch (err: any) {
-      const code = err?.code || 'UNKNOWN';
+    } catch (err: unknown) {
+      const code = (err instanceof Error && 'code' in err) ? String((err as Error & { code: unknown }).code) : 'UNKNOWN';
       setError(true);
       setErrorCode(code);
       setResponse(getErrorMessage(code, t));

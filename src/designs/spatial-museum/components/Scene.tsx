@@ -66,7 +66,7 @@ export const Scene = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-[1] pointer-events-none bg-[#EEEAF8]">
+    <div className="fixed inset-0 z-[-1] pointer-events-none bg-[#EEEAF8]">
       <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 0, 10], fov: 45 }}>
         <color attach="background" args={['#EEEAF8']} />
         <ambientLight intensity={0.4} />

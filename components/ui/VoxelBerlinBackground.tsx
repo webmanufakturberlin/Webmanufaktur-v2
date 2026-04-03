@@ -6,6 +6,7 @@ import WeatherSky from './weather/WeatherSky';
 import WeatherLighting from './weather/WeatherLighting';
 import WeatherParticles from './weather/WeatherParticles';
 import { useWeatherStore } from '../../stores/weatherStore';
+import { ErrorBoundary } from '../ErrorBoundary';
 
 // Palette from Voxel-Berlin3
 const PALETTE = {
@@ -54,7 +55,7 @@ const PALETTE = {
 const VOXEL_GAP = 0.92;
 
 const VoxelCity = () => {
-    const { geometry, material, voxelCount, matrices, colors } = useMemo(() => {
+    const { geometry, material, voxelCount, matrices, colors, windowMat, windowCount, windowMatrices } = useMemo(() => {
         const voxels: { x: number; y: number; z: number; color: number }[] = [];
 
         function addVoxel(x: number, y: number, z: number, colorHex: number) {
@@ -626,10 +627,10 @@ const VoxelCity = () => {
             // Build parks
             parkZones.forEach(p => buildPark(p.x, p.z, p.w, p.d));
 
-            // --- Inner city buildings (grid-based, -150 to 150) ---
+            // --- Inner city buildings (grid-based, -100 to 100) ---
             const gridSize = 6;
-            for (let x = -150; x < 150; x += gridSize) {
-                for (let z = -150; z < 150; z += gridSize) {
+            for (let x = -100; x < 100; x += gridSize) {
+                for (let z = -100; z < 100; z += gridSize) {
                     if (isExcluded(x, z)) continue;
                     if (Math.random() > 0.15) {
                         const width = Math.floor(Math.random() * 4) + 3;
@@ -691,11 +692,11 @@ const VoxelCity = () => {
             }
 
             // --- Outer horizon ring (denser, hides map edge) ---
-            const outerGridSize = 10;
-            for (let x = -220; x < 220; x += outerGridSize) {
-                for (let z = -220; z < 220; z += outerGridSize) {
+            const outerGridSize = 12;
+            for (let x = -160; x < 160; x += outerGridSize) {
+                for (let z = -160; z < 160; z += outerGridSize) {
                     const dist = Math.sqrt(x * x + z * z);
-                    if (dist < 145 || dist > 220) continue;
+                    if (dist < 100 || dist > 160) continue;
                     if (isExcluded(x, z)) continue;
                     if (Math.random() > 0.70) continue;
                     const width = Math.floor(Math.random() * 5) + 3;
@@ -934,25 +935,18 @@ const CityLights = () => {
                 </group>
             ))}
 
-            {/* Street / neighbourhood illumination — brighter than before */}
+            {/* Street / neighbourhood illumination — optimized for performance */}
             <pointLight position={[-38, 6, 8]}   color="#ffbb77" intensity={2.8} distance={60} decay={2} />
             <pointLight position={[15, 6, -5]}   color="#ffbb77" intensity={2.8} distance={60} decay={2} />
             <pointLight position={[-55, 6, -5]}  color="#ffbb77" intensity={2.5} distance={55} decay={2} />
             <pointLight position={[-12, 6, -4]}  color="#ffbb77" intensity={2.2} distance={50} decay={2} />
             <pointLight position={[-118, 6, 24]} color="#ffbb77" intensity={2.5} distance={55} decay={2} />
-            <pointLight position={[38, 6, -14]}  color="#ffbb77" intensity={2.5} distance={55} decay={2} />
-            {/* Extra coverage for outer districts */}
-            <pointLight position={[80, 6, 0]}    color="#ffaa55" intensity={2.0} distance={50} decay={2} />
-            <pointLight position={[-80, 6, 0]}   color="#ffaa55" intensity={2.0} distance={50} decay={2} />
-            <pointLight position={[0, 6, 80]}    color="#ffaa55" intensity={2.0} distance={50} decay={2} />
-            <pointLight position={[0, 6, -80]}   color="#ffaa55" intensity={2.0} distance={50} decay={2} />
+            {/* Reduced outer coverage to save fragment shader instructions */}
+            <pointLight position={[60, 6, 0]}    color="#ffaa55" intensity={2.0} distance={50} decay={2} />
+            <pointLight position={[-60, 6, 0]}   color="#ffaa55" intensity={2.0} distance={50} decay={2} />
             {/* Mid-height neighbourhood glow simulating lit windows */}
-            <pointLight position={[-20, 18, 10]}  color="#ffe8a0" intensity={1.2} distance={35} decay={2} />
-            <pointLight position={[20, 18, -10]}  color="#ffe8a0" intensity={1.2} distance={35} decay={2} />
-            <pointLight position={[-45, 15, -20]} color="#ffe8a0" intensity={1.0} distance={30} decay={2} />
-            <pointLight position={[50, 15, 20]}   color="#ffe8a0" intensity={1.0} distance={30} decay={2} />
-            <pointLight position={[-10, 20, -40]} color="#ffe8a0" intensity={1.0} distance={28} decay={2} />
-            <pointLight position={[30, 16, 35]}   color="#ffe8a0" intensity={1.0} distance={28} decay={2} />
+            <pointLight position={[-20, 18, 10]}  color="#ffe8a0" intensity={1.2} distance={40} decay={2} />
+            <pointLight position={[20, 18, -10]}  color="#ffe8a0" intensity={1.2} distance={40} decay={2} />
         </group>
     );
 };
@@ -1001,28 +995,30 @@ export default function VoxelBerlinBackground({ onLoad }: { onLoad?: () => void 
                         : 'bg-gradient-to-b from-[#a3dcfc] via-[#c7e8ff] to-[#e8f4ff]'
                 }`} />
             ) : (
-                <Canvas
-                    frameloop={isInView ? 'always' : 'demand'}
-                    camera={{ position: [0, 70, 150], fov: 60 }}
-                    gl={{
-                        antialias: !isMobile,
-                        powerPreference: 'high-performance',
-                        failIfMajorPerformanceCaveat: false,
-                    }}
-                    shadows={!isMobile}
-                    dpr={isMobile ? 1 : Math.min(window.devicePixelRatio, 1.5)}
-                    className="w-full h-full"
-                    onCreated={handleCreated}
-                >
-                    <WeatherSky />
-                    <fogExp2 attach="fog" args={['#a3dcfc', 0.004]} />
-                    <WeatherLighting />
-                    {!isMobile && <WeatherParticles />}
+                <ErrorBoundary fallbackNode={<div className={`w-full h-full ${isNight ? 'bg-gradient-to-b from-[#050510] via-[#0a0a2e] to-[#050510]' : 'bg-gradient-to-b from-[#a3dcfc] via-[#c7e8ff] to-[#e8f4ff]'}`} />}>
+                    <Canvas
+                        frameloop={isInView ? 'always' : 'demand'}
+                        camera={{ position: [0, 70, 150], fov: 60 }}
+                        gl={{
+                            antialias: !isMobile,
+                            powerPreference: 'high-performance',
+                            failIfMajorPerformanceCaveat: false,
+                        }}
+                        shadows={!isMobile}
+                        dpr={isMobile ? 1 : Math.min(window.devicePixelRatio, 1.5)}
+                        className="w-full h-full"
+                        onCreated={handleCreated}
+                    >
+                        <WeatherSky />
+                        <fogExp2 attach="fog" args={['#a3dcfc', 0.004]} />
+                        <WeatherLighting />
+                        {!isMobile && <WeatherParticles />}
 
-                    <VoxelCity />
-                    {!isMobile && <CityLights />}
-                    <CinematicCamera />
-                </Canvas>
+                        <VoxelCity />
+                        {!isMobile && <CityLights />}
+                        <CinematicCamera />
+                    </Canvas>
+                </ErrorBoundary>
             )}
 
             {/* Vignette overlay — adapts to day/night, hides map edges */}
