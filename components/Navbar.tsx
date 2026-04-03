@@ -20,9 +20,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView, onHome,
     const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
 
     useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 12);
+        let timer: ReturnType<typeof setTimeout>;
+        const onScroll = () => {
+            clearTimeout(timer);
+            timer = setTimeout(() => setScrolled(window.scrollY > 12), 50);
+        };
         window.addEventListener('scroll', onScroll, { passive: true });
-        return () => window.removeEventListener('scroll', onScroll);
+        return () => { window.removeEventListener('scroll', onScroll); clearTimeout(timer); };
     }, []);
 
     const navLinks = [

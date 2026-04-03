@@ -38,6 +38,11 @@
   background: #D1D5DB;
 }
 
+/* Hero text starts hidden — GSAP animates to visible; timeout fallback ensures visibility */
+.design-spatial-museum .hero-text-line {
+  opacity: 0;
+}
+
 /* Typography utilities */
 .design-spatial-museum .text-drama {
   font-family: "Cinzel", serif;

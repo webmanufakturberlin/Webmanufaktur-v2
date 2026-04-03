@@ -60,15 +60,15 @@ export const Scene = () => {
     thickness: 1.5,
     roughness: 0.1,
     ior: 1.5,
-    color: '#ffffff',
-    attenuationColor: '#ffffff',
+    color: '#c8c0f8',
+    attenuationColor: '#c0b8f0',
     attenuationDistance: 2,
   };
 
   return (
-    <div className="fixed inset-0 z-[-1] pointer-events-none bg-[#FAFAFA]">
+    <div className="fixed inset-0 z-[-1] pointer-events-none bg-[#EEEAF8]">
       <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 0, 10], fov: 45 }}>
-        <color attach="background" args={['#FAFAFA']} />
+        <color attach="background" args={['#EEEAF8']} />
         <ambientLight intensity={0.4} />
         <directionalLight
           castShadow

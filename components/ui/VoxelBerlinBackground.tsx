@@ -758,17 +758,20 @@ const VoxelCity = () => {
         buildPotsdamerPlatz(-38, 8);       // Between Gate and center
         buildGedaechtniskirche(-118, 24);  // Kurfürstendamm, far west
 
-        // Create single InstancedMesh with per-instance colors
+        // Split into main voxels and lit-window voxels (windows get emissive material)
+        const mainVoxels = voxels.filter(v => v.color !== PALETTE.windowLit);
+        const windowVoxels = voxels.filter(v => v.color === PALETTE.windowLit);
+
         const geo = new THREE.BoxGeometry(VOXEL_GAP, VOXEL_GAP, VOXEL_GAP);
         const mat = new THREE.MeshLambertMaterial({ color: 0xffffff });
 
         const dummy = new THREE.Object3D();
         const tempColor = new THREE.Color();
-        const matricesArr = new Float32Array(voxels.length * 16);
-        const colorsArr = new Float32Array(voxels.length * 3);
+        const matricesArr = new Float32Array(mainVoxels.length * 16);
+        const colorsArr = new Float32Array(mainVoxels.length * 3);
 
-        for (let i = 0; i < voxels.length; i++) {
-            const v = voxels[i];
+        for (let i = 0; i < mainVoxels.length; i++) {
+            const v = mainVoxels[i];
             dummy.position.set(v.x, v.y, v.z);
             dummy.updateMatrix();
             dummy.matrix.toArray(matricesArr, i * 16);
@@ -778,10 +781,30 @@ const VoxelCity = () => {
             colorsArr[i * 3 + 2] = tempColor.b;
         }
 
-        return { geometry: geo, material: mat, voxelCount: voxels.length, matrices: matricesArr, colors: colorsArr };
+        // Window mesh: emissive material for glowing windows
+        const windowMat = new THREE.MeshStandardMaterial({
+            color: new THREE.Color(0xffe8a0),
+            emissive: new THREE.Color(0xffe8a0),
+            emissiveIntensity: 1.8,
+            roughness: 0.4,
+            metalness: 0.0,
+        });
+        const windowMatricesArr = new Float32Array(windowVoxels.length * 16);
+        for (let i = 0; i < windowVoxels.length; i++) {
+            const v = windowVoxels[i];
+            dummy.position.set(v.x, v.y, v.z);
+            dummy.updateMatrix();
+            dummy.matrix.toArray(windowMatricesArr, i * 16);
+        }
+
+        return {
+            geometry: geo, material: mat, voxelCount: mainVoxels.length, matrices: matricesArr, colors: colorsArr,
+            windowMat, windowCount: windowVoxels.length, windowMatrices: windowMatricesArr,
+        };
     }, []);
 
     const meshRef = React.useRef<THREE.InstancedMesh>(null);
+    const windowMeshRef = React.useRef<THREE.InstancedMesh>(null);
 
     React.useEffect(() => {
         if (!meshRef.current) return;
@@ -801,8 +824,22 @@ const VoxelCity = () => {
         if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
     }, [voxelCount, matrices, colors]);
 
+    React.useEffect(() => {
+        if (!windowMeshRef.current) return;
+        const mesh = windowMeshRef.current;
+        const dummy = new THREE.Matrix4();
+        for (let i = 0; i < windowCount; i++) {
+            dummy.fromArray(windowMatrices, i * 16);
+            mesh.setMatrixAt(i, dummy);
+        }
+        mesh.instanceMatrix.needsUpdate = true;
+    }, [windowCount, windowMatrices]);
+
     return (
-        <instancedMesh ref={meshRef} args={[geometry, material, voxelCount]} />
+        <>
+            <instancedMesh ref={meshRef} args={[geometry, material, voxelCount]} />
+            <instancedMesh ref={windowMeshRef} args={[geometry, windowMat, windowCount]} />
+        </>
     );
 };
 

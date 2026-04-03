@@ -73,6 +73,11 @@
   filter: grayscale(100%) invert(100%) contrast(150%);
   mix-blend-mode: screen;
 }
+/* Hero text starts hidden — GSAP animates to visible; timeout fallback ensures visibility */
+.design-industriell .hero-text-line {
+  opacity: 0;
+}
+
 .design-industriell .blueprint-reveal::after {
   content: '';
   position: absolute;

@@ -63,35 +63,53 @@ export default function SpatialMuseumApp() {
         stagger: { amount: 2, from: "random" }
       });
 
-      // Entrance Animations
-      gsap.from(".hero-text-line", {
-        y: 100,
-        opacity: 0,
-        duration: 1.5,
-        ease: "expo.out",
-        stagger: 0.1,
-        delay: 0.5
+      // Entrance Animations — fonts.ready for Opera compatibility
+      document.fonts.ready.then(() => {
+        gsap.to(".hero-text-line", {
+          y: 0,
+          opacity: 1,
+          duration: 1.5,
+          ease: "expo.out",
+          stagger: 0.1,
+          delay: 0.5
+        });
       });
 
     }, scrollContainerRef);
 
-    return () => ctx.revert();
+    // Fallback: force visibility after 2.5s in case fonts.ready or GSAP fails (Opera)
+    const fallbackTimer = setTimeout(() => {
+      document.querySelectorAll('.hero-text-line').forEach(el => {
+        (el as HTMLElement).style.opacity = '1';
+        (el as HTMLElement).style.transform = 'none';
+      });
+    }, 2500);
+
+    return () => { ctx.revert(); clearTimeout(fallbackTimer); };
   }, [setScrollProgress, isMobile]);
 
   // Mobile entrance animation (simple fade-in)
   useEffect(() => {
     if (!isMobile) return;
     let ctx = gsap.context(() => {
-      gsap.from(".hero-text-line", {
-        y: 60,
-        opacity: 0,
-        duration: 1.2,
-        ease: "expo.out",
-        stagger: 0.08,
-        delay: 0.3
+      document.fonts.ready.then(() => {
+        gsap.to(".hero-text-line", {
+          y: 0,
+          opacity: 1,
+          duration: 1.2,
+          ease: "expo.out",
+          stagger: 0.08,
+          delay: 0.3
+        });
       });
     });
-    return () => ctx.revert();
+    const fallbackTimer = setTimeout(() => {
+      document.querySelectorAll('.hero-text-line').forEach(el => {
+        (el as HTMLElement).style.opacity = '1';
+        (el as HTMLElement).style.transform = 'none';
+      });
+    }, 2500);
+    return () => { ctx.revert(); clearTimeout(fallbackTimer); };
   }, [isMobile]);
 
   // Navigation: container is 400vh, viewport is 1vh → max scroll = 300vh

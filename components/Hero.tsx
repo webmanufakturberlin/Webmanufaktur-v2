@@ -52,6 +52,14 @@ export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
     const { t } = useI18n();
     const isNight = useWeatherStore(s => s.isNight);
     const [is3DLoaded, setIs3DLoaded] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const check = () => setIsMobile(window.innerWidth < 768);
+        check();
+        window.addEventListener('resize', check);
+        return () => window.removeEventListener('resize', check);
+    }, []);
 
     const scrollToContact = () => {
         document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
@@ -59,10 +67,16 @@ export const Hero: React.FC<HeroProps> = ({ onReferences }) => {
 
     return (
         <section id="hero-section" className="relative min-h-screen flex flex-col items-center justify-center pt-24 md:pt-32 pb-4 overflow-hidden">
-            <PageLoader isLoading={!is3DLoaded} />
-            <React.Suspense fallback={null}>
-                <VoxelBerlinBackground onLoad={() => setIs3DLoaded(true)} />
-            </React.Suspense>
+            {isMobile ? (
+                <div className="absolute inset-0 bg-gradient-to-b from-[#040406] via-[#080b14] to-[#040406]" />
+            ) : (
+                <>
+                    <PageLoader isLoading={!is3DLoaded} />
+                    <React.Suspense fallback={null}>
+                        <VoxelBerlinBackground onLoad={() => setIs3DLoaded(true)} />
+                    </React.Suspense>
+                </>
+            )}
             <div className="hidden md:block"><WeatherWidget /></div>
 
             {/* Scavenger Hunt Bear #0 — hidden on mobile */}

@@ -41,11 +41,11 @@ export default function IndustriellApp() {
 
   useEffect(() => {
     let ctx = gsap.context(() => {
-      // Hero Text Animation — wrapped in fonts.ready for Opera compatibility
+      // Hero Text Animation — fonts.ready for Opera; gsap.to (not from) to avoid invisible-on-fail
       document.fonts.ready.then(() => {
-        gsap.from(".hero-text-line", {
-          y: -100,
-          opacity: 0,
+        gsap.to(".hero-text-line", {
+          y: 0,
+          opacity: 1,
           duration: 1.2,
           ease: "bounce.out",
           stagger: 0.15,
@@ -98,7 +98,15 @@ export default function IndustriellApp() {
       }
     }, mainRef);
 
-    return () => ctx.revert();
+    // Fallback: force visibility after 2.5s in case fonts.ready or GSAP fails (Opera)
+    const fallbackTimer = setTimeout(() => {
+      document.querySelectorAll('.hero-text-line').forEach(el => {
+        (el as HTMLElement).style.opacity = '1';
+        (el as HTMLElement).style.transform = 'none';
+      });
+    }, 2500);
+
+    return () => { ctx.revert(); clearTimeout(fallbackTimer); };
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -132,7 +140,7 @@ export default function IndustriellApp() {
       </nav>
 
       {/* HERO SECTION */}
-      <section className="relative h-[85vh] border-b-4 border-[#121212]/50 overflow-hidden p-4 md:p-8">
+      <section className="relative isolate h-[85vh] border-b-4 border-[#121212]/50 overflow-hidden p-4 md:p-8">
         <div className="absolute inset-4 border-4 border-[#B87333]/30 z-10 pointer-events-none"></div>
         <div className="absolute inset-0 bg-[#121212]/60 z-0"></div>
         <img 
