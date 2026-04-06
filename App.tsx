@@ -4,6 +4,7 @@ import { Navbar } from './components/Navbar';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { motion, useInView, useScroll, useSpring } from 'framer-motion';
 import { useI18n } from './i18n';
+import { useSEO } from './useSEO';
 
 
 // Lazy-load below-the-fold sections for faster initial paint
@@ -123,7 +124,10 @@ const SectionDivider: React.FC = () => (
 const App: React.FC = () => {
     const [currentView, setCurrentView] = useState<'home' | 'service-detail' | 'about' | 'impressum' | 'ki-labor' | 'references'>('home');
     const [selectedService, setSelectedService] = useState<ServiceData | null>(null);
-    const { setLang } = useI18n();
+    const { lang, setLang } = useI18n();
+
+    // --- Dynamic SEO per route ---
+    useSEO(currentView, lang);
 
     // --- URL Path Synchronization ---
     useEffect(() => {
