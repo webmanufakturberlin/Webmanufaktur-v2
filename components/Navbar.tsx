@@ -38,6 +38,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView, onHome,
         { name: t('nav.about'), id: 'about', hasDropdown: false, isPage: true },
     ];
 
+    const getNavHref = (linkId: string): string => {
+        const prefix = lang === 'en' ? '/en' : '';
+        switch (linkId) {
+            case 'about': return `${prefix}/about`;
+            case 'references': return `${prefix}/references`;
+            case 'ai-lab': return `${prefix}/ki-labor`;
+            default: return `${lang === 'en' ? '/en/' : '/'}#${linkId}`;
+        }
+    };
+
     const handleKeyDown = useCallback((e: KeyboardEvent) => {
         if (e.key === 'Escape') {
             setHoveredItem(null);
@@ -113,7 +123,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView, onHome,
                                 onMouseEnter={() => link.hasDropdown && setHoveredItem(link.id)}
                             >
                                 <a
-                                    href={`#${link.id}`}
+                                    href={getNavHref(link.id)}
                                     onClick={(e) => {
                                         e.preventDefault();
                                         handleNavClick(link);

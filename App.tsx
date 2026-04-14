@@ -129,11 +129,24 @@ const App: React.FC = () => {
     // --- Dynamic SEO per route ---
     useSEO(currentView, lang);
 
-    // --- URL Path Synchronization ---
+    // --- URL path helper ---
+    const getPath = useCallback((view: string, language: string): string => {
+        const prefix = language === 'en' ? '/en' : '';
+        switch (view) {
+            case 'about': return `${prefix}/about`;
+            case 'references': return `${prefix}/references`;
+            case 'impressum': return `${prefix}/impressum`;
+            case 'ki-labor': return `${prefix}/ki-labor`;
+            case 'home':
+            default: return language === 'en' ? '/en/' : '/';
+        }
+    }, []);
+
+    // --- URL Path Synchronization on initial load ---
     useEffect(() => {
         const path = window.location.pathname;
         let p = path;
-        
+
         // Detect Language
         if (path.startsWith('/en')) {
             setLang('en');
@@ -154,6 +167,35 @@ const App: React.FC = () => {
         } else {
             setCurrentView('home');
         }
+    }, [setLang]);
+
+    // --- Push URL state on view/lang change ---
+    useEffect(() => {
+        const newPath = getPath(currentView, lang);
+        if (window.location.pathname !== newPath) {
+            window.history.pushState({ view: currentView, lang }, '', newPath);
+        }
+    }, [currentView, lang, getPath]);
+
+    // --- Handle browser back/forward ---
+    useEffect(() => {
+        const handlePopState = () => {
+            const path = window.location.pathname;
+            let p = path;
+            if (path.startsWith('/en')) {
+                setLang('en');
+                p = path.replace(/^\/en/, '') || '/';
+            } else {
+                setLang('de');
+            }
+            if (p.includes('about')) setCurrentView('about');
+            else if (p.includes('references')) setCurrentView('references');
+            else if (p.includes('impressum')) setCurrentView('impressum');
+            else if (p.includes('ki-labor')) setCurrentView('ki-labor');
+            else setCurrentView('home');
+        };
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
     }, [setLang]);
 
 
@@ -283,7 +325,7 @@ const App: React.FC = () => {
                                     <p className="text-xs font-mono uppercase tracking-[0.3em] text-gray-500">© {new Date().getFullYear()} Webmanufaktur Berlin</p>
                                     <div className="flex items-center gap-6 text-sm">
                                         <a
-                                            href="#impressum"
+                                            href={lang === 'en' ? '/en/impressum' : '/impressum'}
                                             onClick={(e) => { e.preventDefault(); handleNavigate('impressum'); }}
                                             className="text-gray-500 hover:text-gray-900 transition-colors font-medium"
                                         >
