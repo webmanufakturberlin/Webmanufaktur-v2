@@ -1,15 +1,11 @@
 /// <reference types="vite/client" />
 
-// In production (Vercel), /api/chat is a serverless function that hides the API key.
-// In dev, we fall back to calling Gemini directly since there's no serverless runtime.
-const DEV_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const IS_DEV = import.meta.env.DEV;
+// All requests flow through /api/chat (Vercel serverless function that hides the API key).
+// For dev, run `vercel dev` alongside `vite` — vite.config.ts proxies /api to the Vercel dev port.
 
-// ── Client-side rate limiting ────────────────────────────────────────
 let lastRequestTime = 0;
-const MIN_REQUEST_INTERVAL = 5000; // 5 seconds between requests
+const MIN_REQUEST_INTERVAL = 5000;
 
-// ── Error code mapping from HTTP status ──────────────────────────────
 function mapHttpStatusToCode(status: number): string {
   switch (status) {
     case 400: return 'BAD_REQUEST';
@@ -28,43 +24,6 @@ function createCodedError(message: string, code: string): Error & { code: string
   return err;
 }
 
-async function callGeminiDirect(userPrompt: string): Promise<string> {
-  if (!DEV_API_KEY) {
-    throw createCodedError('API key not configured for dev mode', 'API_KEY_MISSING');
-  }
-
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${DEV_API_KEY}`;
-  const payload = {
-    systemInstruction: {
-      parts: [{
-        text: "You are the 'WebManufaktur Strategic Consultant'. We are a high-end web design and content agency in Berlin (WebManufaktur Berlin). The user will describe their business or a content need. You will provide a punchy, high-value strategic tip, a potential slogan, or a content hook. Keep the tone professional, modern, 'Berlin-cool' (minimalist and direct), and authoritative. Keep the response under 60 words."
-      }]
-    },
-    contents: [{ parts: [{ text: userPrompt }] }],
-  };
-
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-    signal: AbortSignal.timeout(15000),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    const code = mapHttpStatusToCode(response.status);
-    const geminiMsg = errorData?.error?.message || `HTTP ${response.status}`;
-    throw createCodedError(geminiMsg, code);
-  }
-
-  const data = await response.json();
-  if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
-    return data.candidates[0].content.parts[0].text;
-  }
-
-  throw createCodedError('Unexpected API response', 'AI_ERROR');
-}
-
 async function callBackendAPI(userPrompt: string): Promise<string> {
   const response = await fetch('/api/chat', {
     method: 'POST',
@@ -75,7 +34,6 @@ async function callBackendAPI(userPrompt: string): Promise<string> {
 
   if (!response.ok) {
     const data = await response.json().catch(() => ({}));
-    // Backend already sends a code — use it, or derive from HTTP status
     const code = data.code || mapHttpStatusToCode(response.status);
     const message = data.error || `Request failed (HTTP ${response.status})`;
     throw createCodedError(message, code);
@@ -86,7 +44,6 @@ async function callBackendAPI(userPrompt: string): Promise<string> {
 }
 
 export const getStrategyAdvice = async (userPrompt: string): Promise<string> => {
-  // ── Client-side rate limiting ────────────────────────────────────
   const now = Date.now();
   const elapsed = now - lastRequestTime;
   if (lastRequestTime > 0 && elapsed < MIN_REQUEST_INTERVAL) {
@@ -96,11 +53,6 @@ export const getStrategyAdvice = async (userPrompt: string): Promise<string> => 
   lastRequestTime = now;
 
   try {
-    // Dev: call Gemini directly (no serverless runtime)
-    // Prod: call /api/chat (Vercel serverless, hides API key)
-    if (IS_DEV) {
-      return await callGeminiDirect(userPrompt);
-    }
     return await callBackendAPI(userPrompt);
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -110,7 +62,6 @@ export const getStrategyAdvice = async (userPrompt: string): Promise<string> => 
       if (error instanceof TypeError && error.message.includes('fetch')) {
         throw createCodedError('Network error', 'NETWORK_ERROR');
       }
-      // Re-throw if it already has a code (from our handlers above)
       if ('code' in error) throw error;
       throw createCodedError(error.message, 'UNKNOWN');
     }

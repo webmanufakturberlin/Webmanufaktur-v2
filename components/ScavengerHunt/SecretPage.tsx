@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useHuntStore } from '@/stores/huntStore';
+import { CONTACT_EMAIL } from '../../constants';
 
 const DISCOUNT_CODE = 'BERLIN10';
 
@@ -121,7 +122,7 @@ export const SecretPage: React.FC = () => {
 
           <p className="text-white/30 text-xs mb-6 px-4">
             Schreib uns mit dem Code:{' '}
-            <span className="text-white/50 font-mono">webmanufaktur.berlin@googlemail.com</span>
+            <span className="text-white/50 font-mono">{CONTACT_EMAIL}</span>
           </p>
 
           <button

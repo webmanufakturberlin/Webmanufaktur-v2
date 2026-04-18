@@ -11,6 +11,14 @@ interface NavbarProps {
     onReferences: () => void;
 }
 
+interface NavLink {
+    name: string;
+    id: string;
+    hasDropdown: boolean;
+    isPage?: boolean;
+    isRefPage?: boolean;
+}
+
 export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView, onHome, onAbout, onReferences }) => {
     const { lang, setLang, t } = useI18n();
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
@@ -29,7 +37,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView, onHome,
         return () => { window.removeEventListener('scroll', onScroll); clearTimeout(timer); };
     }, []);
 
-    const navLinks = [
+    const navLinks: NavLink[] = [
         { name: t('nav.work'), id: 'work', hasDropdown: false },
         { name: t('nav.solutions'), id: 'solutions', hasDropdown: true },
         { name: t('nav.methodology'), id: 'methodology', hasDropdown: true },
@@ -70,10 +78,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView, onHome,
         return () => { document.body.style.overflow = ''; };
     }, [mobileOpen]);
 
-    const handleNavClick = (link: typeof navLinks[0]) => {
-        if ((link as any).isPage) {
+    const handleNavClick = (link: NavLink) => {
+        if (link.isPage) {
             onAbout();
-        } else if ((link as any).isRefPage) {
+        } else if (link.isRefPage) {
             onReferences();
         } else {
             onNavigate(link.id);

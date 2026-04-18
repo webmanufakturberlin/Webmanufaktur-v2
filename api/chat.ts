@@ -21,9 +21,22 @@ function isRateLimited(ip: string): boolean {
   return entry.count > RATE_LIMIT;
 }
 
+const ALLOWED_ORIGINS = new Set([
+  'https://www.webmanufakturberlin.de',
+  'https://webmanufakturberlin.de',
+  'https://www.webmanufaktur.berlin',
+  'https://webmanufaktur.berlin',
+  'http://localhost:3000',
+  'http://localhost:5173',
+]);
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // CORS — only allow the production domain and local dev ports.
+  const origin = (req.headers.origin as string | undefined) ?? '';
+  if (ALLOWED_ORIGINS.has(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -88,9 +101,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     return res.status(200).json({ text: response.text || 'Analyzing market data...' });
-  } catch (error: any) {
-    const status = error?.status || error?.httpStatusCode || error?.code;
-    const message = error?.message || 'Unknown error';
+  } catch (error: unknown) {
+    const err = error as { status?: number; httpStatusCode?: number; code?: number; message?: string } | null;
+    const status = err?.status ?? err?.httpStatusCode ?? err?.code;
+    const message = err?.message ?? 'Unknown error';
     console.error(`[CHATBOT API ERR] status=${status} message=${message}`);
 
     // ── Differentiated Gemini API errors ──────────────────────────

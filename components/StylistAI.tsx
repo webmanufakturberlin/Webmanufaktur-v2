@@ -3,6 +3,7 @@ import { getStrategyAdvice } from '../services/geminiService';
 import { Bot, Send, Loader2, Sparkles, RefreshCw, Mail } from 'lucide-react';
 import { Reveal } from './Reveal';
 import { useI18n } from '../i18n';
+import { CONTACT_EMAIL } from '../constants';
 
 function getErrorMessage(code: string, t: (key: string) => string): string {
   switch (code) {
@@ -155,7 +156,7 @@ export const BusinessAI: React.FC = () => {
                             </button>
                           )}
                           <a
-                            href="mailto:webmanufaktur.berlin@googlemail.com"
+                            href={`mailto:${CONTACT_EMAIL}`}
                             className="flex items-center gap-1.5 px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-all"
                           >
                             <Mail size={14} />

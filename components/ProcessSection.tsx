@@ -22,7 +22,7 @@ export const ProcessSection: React.FC = () => {
                         {t('process.timeline.step1.desc')}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                        {['Marktanalyse', 'Zielgruppen-Research', 'Content-Audit', 'Wettbewerbsanalyse'].map(tag => (
+                        {t('process.timeline.step1.tags').split(',').map(tag => (
                             <span key={tag} className="px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-100">{tag}</span>
                         ))}
                     </div>
@@ -43,7 +43,7 @@ export const ProcessSection: React.FC = () => {
                         {t('process.timeline.step2.desc')}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                        {['UI/UX Design', 'Wireframes', 'Prototyping', 'User Testing'].map(tag => (
+                        {t('process.timeline.step2.tags').split(',').map(tag => (
                             <span key={tag} className="px-3 py-1.5 bg-purple-50 text-purple-700 text-xs font-semibold rounded-full border border-purple-100">{tag}</span>
                         ))}
                     </div>
@@ -64,7 +64,7 @@ export const ProcessSection: React.FC = () => {
                         {t('process.timeline.step3.desc')}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                        {['React / Next.js', 'TypeScript', 'Tailwind CSS', 'Performance'].map(tag => (
+                        {t('process.timeline.step3.tags').split(',').map(tag => (
                             <span key={tag} className="px-3 py-1.5 bg-orange-50 text-orange-700 text-xs font-semibold rounded-full border border-orange-100">{tag}</span>
                         ))}
                     </div>
@@ -85,7 +85,7 @@ export const ProcessSection: React.FC = () => {
                         {t('process.timeline.step4.desc')}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                        {['Deployment', 'Analytics', 'SEO-Setup', 'Continuous Optimization'].map(tag => (
+                        {t('process.timeline.step4.tags').split(',').map(tag => (
                             <span key={tag} className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-full border border-green-100">{tag}</span>
                         ))}
                     </div>

@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .brand-gradient-text {
+    background-image: linear-gradient(to right, #2563EB, #9333EA, #F97316);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
 /* === Base Reset & Globals === */
 *,
 *::before,

@@ -5,6 +5,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { motion, useInView, useScroll, useSpring } from 'framer-motion';
 import { useI18n } from './i18n';
 import { useSEO } from './useSEO';
+import { CONTACT_EMAIL } from './constants';
 
 
 // Lazy-load below-the-fold sections for faster initial paint
@@ -19,6 +20,7 @@ const Impressum = React.lazy(() => import('./components/Impressum').then(m => ({
 const References = React.lazy(() => import('./components/References').then(m => ({ default: m.References })));
 const ServiceDetail = React.lazy(() => import('./components/ServiceDetail').then(m => ({ default: m.ServiceDetail })));
 const KILabor = React.lazy(() => import('./components/KILabor').then(m => ({ default: m.KILabor })));
+const NotFound = React.lazy(() => import('./components/NotFound').then(m => ({ default: m.NotFound })));
 
 // --- Scroll Progress Bar ---
 const ScrollProgress: React.FC = () => {
@@ -122,7 +124,7 @@ const SectionDivider: React.FC = () => (
 // --- Main App Component ---
 
 const App: React.FC = () => {
-    const [currentView, setCurrentView] = useState<'home' | 'service-detail' | 'about' | 'impressum' | 'ki-labor' | 'references'>('home');
+    const [currentView, setCurrentView] = useState<'home' | 'service-detail' | 'about' | 'impressum' | 'ki-labor' | 'references' | 'not-found'>('home');
     const [selectedService, setSelectedService] = useState<ServiceData | null>(null);
     const { lang, setLang } = useI18n();
 
@@ -156,21 +158,25 @@ const App: React.FC = () => {
         }
 
         // Detect View
-        if (p.includes('about')) {
+        const normalized = p.replace(/\/+$/, '') || '/';
+        if (normalized === '/' || normalized === '') {
+            setCurrentView('home');
+        } else if (normalized === '/about') {
             setCurrentView('about');
-        } else if (p.includes('references')) {
+        } else if (normalized === '/references') {
             setCurrentView('references');
-        } else if (p.includes('impressum')) {
+        } else if (normalized === '/impressum') {
             setCurrentView('impressum');
-        } else if (p.includes('ki-labor') || p.includes('ai-lab')) {
+        } else if (normalized === '/ki-labor' || normalized === '/ai-lab') {
             setCurrentView('ki-labor');
         } else {
-            setCurrentView('home');
+            setCurrentView('not-found');
         }
     }, [setLang]);
 
     // --- Push URL state on view/lang change ---
     useEffect(() => {
+        if (currentView === 'not-found') return;
         const newPath = getPath(currentView, lang);
         if (window.location.pathname !== newPath) {
             window.history.pushState({ view: currentView, lang }, '', newPath);
@@ -188,11 +194,13 @@ const App: React.FC = () => {
             } else {
                 setLang('de');
             }
-            if (p.includes('about')) setCurrentView('about');
-            else if (p.includes('references')) setCurrentView('references');
-            else if (p.includes('impressum')) setCurrentView('impressum');
-            else if (p.includes('ki-labor')) setCurrentView('ki-labor');
-            else setCurrentView('home');
+            const normalized = p.replace(/\/+$/, '') || '/';
+            if (normalized === '/' || normalized === '') setCurrentView('home');
+            else if (normalized === '/about') setCurrentView('about');
+            else if (normalized === '/references') setCurrentView('references');
+            else if (normalized === '/impressum') setCurrentView('impressum');
+            else if (normalized === '/ki-labor' || normalized === '/ai-lab') setCurrentView('ki-labor');
+            else setCurrentView('not-found');
         };
         window.addEventListener('popstate', handlePopState);
         return () => window.removeEventListener('popstate', handlePopState);
@@ -275,6 +283,8 @@ const App: React.FC = () => {
                 <KILabor onBack={handleHome} onNavigate={handleNavigate} />
             ) : currentView === 'references' ? (
                 <References onBack={handleHome} />
+            ) : currentView === 'not-found' ? (
+                <NotFound onHome={handleHome} />
             ) : (
                 <main id="main-content" className="flex flex-col">
                     <Hero onReferences={handleReferences} />
@@ -333,10 +343,10 @@ const App: React.FC = () => {
                                         </a>
                                         <span className="text-gray-300">|</span>
                                         <a
-                                            href="mailto:webmanufaktur.berlin@googlemail.com"
+                                            href={`mailto:${CONTACT_EMAIL}`}
                                             className="text-gray-500 hover:text-blue-600 transition-colors font-medium"
                                         >
-                                            webmanufaktur.berlin@googlemail.com
+                                            {CONTACT_EMAIL}
                                         </a>
                                     </div>
                                 </div>

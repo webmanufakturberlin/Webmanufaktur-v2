@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowLeft, Mail, MapPin, Phone, Building2, FileText, Shield } from 'lucide-react';
 import { useI18n } from '../i18n';
+import { CONTACT_EMAIL } from '../constants';
 
 interface ImpressumProps {
     onBack: () => void;
@@ -75,8 +76,8 @@ export const Impressum: React.FC<ImpressumProps> = ({ onBack }) => {
                             <div className="space-y-3 pl-7">
                                 <div className="flex items-center gap-3">
                                     <Mail size={16} className="text-gray-400" />
-                                    <a href="mailto:webmanufaktur.berlin@googlemail.com" className="text-blue-600 hover:underline font-medium">
-                                        webmanufaktur.berlin@googlemail.com
+                                    <a href={`mailto:${CONTACT_EMAIL}`} className="text-blue-600 hover:underline font-medium">
+                                        {CONTACT_EMAIL}
                                     </a>
                                 </div>
                                 <div className="flex items-center gap-3 text-gray-600">

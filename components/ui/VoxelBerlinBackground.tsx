@@ -65,7 +65,11 @@ interface CityData {
     windowMatrices: Float32Array;
 }
 
-const VoxelCity = () => {
+interface VoxelCityProps {
+    lowDetail?: boolean;
+}
+
+const VoxelCity = ({ lowDetail = false }: VoxelCityProps) => {
     const [cityData, setCityData] = useState<CityData | null>(null);
 
     useEffect(() => {
@@ -81,6 +85,25 @@ const VoxelCity = () => {
                 for (let y = 0; y < height; y++) {
                     for (let z = 0; z < depth; z++) {
                         addVoxel(startX + x, startY + y, startZ + z, colorHex);
+                    }
+                }
+            }
+        }
+
+        // Hollow block — only the outer shell. Used for generic city buildings
+        // where the camera never sees the interior. Saves ~35-50% of voxels per building.
+        function buildHollowBlock(startX: number, startY: number, startZ: number, width: number, height: number, depth: number, colorHex: number) {
+            for (let x = 0; x < width; x++) {
+                for (let y = 0; y < height; y++) {
+                    for (let z = 0; z < depth; z++) {
+                        const isShell = (
+                            x === 0 || x === width - 1 ||
+                            y === height - 1 ||
+                            z === 0 || z === depth - 1
+                        );
+                        if (isShell) {
+                            addVoxel(startX + x, startY + y, startZ + z, colorHex);
+                        }
                     }
                 }
             }
@@ -353,7 +376,7 @@ const VoxelCity = () => {
         function buildResidentialBlock(rx: number, rz: number, w: number, d: number, h: number, warm: boolean) {
             const palette = warm ? PALETTE.residentialWarm : PALETTE.residentialCool;
             const bodyColor = palette[Math.floor(Math.random() * palette.length)];
-            buildBlock(rx, 0, rz, w, h, d, bodyColor);
+            buildHollowBlock(rx, 0, rz, w, h, d, bodyColor);
             for (let y = 2; y < h - 1; y += 2) {
                 for (let x = 1; x < w - 1; x += 2) {
                     const winColor = Math.random() > 0.4 ? PALETTE.windowLit : PALETTE.windowDark;
@@ -472,7 +495,7 @@ const VoxelCity = () => {
                 new THREE.Vector2(68, 18),     // meets Spree near Oberbaumbrücke
             ];
             const curve = new THREE.SplineCurve(points);
-            const samples = curve.getPoints(300);
+            const samples = curve.getPoints(120);
             const canalSet = new Set<string>();
             const canalWidth = 2;
 
@@ -527,7 +550,7 @@ const VoxelCity = () => {
                 new THREE.Vector2(160, 2),      // east exit
             ];
             const curve = new THREE.SplineCurve(points);
-            const samples = curve.getPoints(500);
+            const samples = curve.getPoints(200);
             const riverSet = new Set<string>();
             const riverWidth = 3;
 
@@ -572,8 +595,8 @@ const VoxelCity = () => {
 
         // --- Full City ---
         function buildFullCity() {
-            // Ground plane — large enough to never see edges
-            buildBlock(-250, -1, -250, 500, 1, 500, PALETTE.cityColors[0]);
+            // Ground plane: rendered as a single mesh in the Canvas (see GroundPlane),
+            // no voxels needed — saves ~250k voxel instances.
 
             // Build Spree first
             const riverCells = buildSpreeRiver();
@@ -642,7 +665,8 @@ const VoxelCity = () => {
             parkZones.forEach(p => buildPark(p.x, p.z, p.w, p.d));
 
             // --- Inner city buildings (grid-based, -100 to 100) ---
-            const gridSize = 6;
+            // On mobile: larger grid (8 vs 6) halves the building count.
+            const gridSize = lowDetail ? 8 : 6;
             for (let x = -100; x < 100; x += gridSize) {
                 for (let z = -100; z < 100; z += gridSize) {
                     if (isExcluded(x, z)) continue;
@@ -675,7 +699,7 @@ const VoxelCity = () => {
                             ? (Math.random() > 0.5 ? PALETTE.modernGlass : PALETTE.modernSteel)
                             : PALETTE.cityColors[Math.floor(Math.random() * PALETTE.cityColors.length)];
 
-                        buildBlock(x, 0, z, width, height, depth, color);
+                        buildHollowBlock(x, 0, z, width, height, depth, color);
 
                         // Windows on facade
                         if (height > 6 && Math.random() > 0.35) {
@@ -706,23 +730,28 @@ const VoxelCity = () => {
             }
 
             // --- Outer horizon ring (denser, hides map edge) ---
-            const outerGridSize = 12;
+            // Wider grid + lower density: barely visible through fog, saves ~15k voxels.
+            // Skipped entirely on mobile (obscured by fog anyway).
+            if (!lowDetail) {
+            const outerGridSize = 16;
             for (let x = -160; x < 160; x += outerGridSize) {
                 for (let z = -160; z < 160; z += outerGridSize) {
                     const dist = Math.sqrt(x * x + z * z);
                     if (dist < 100 || dist > 160) continue;
                     if (isExcluded(x, z)) continue;
-                    if (Math.random() > 0.70) continue;
+                    if (Math.random() > 0.50) continue;
                     const width = Math.floor(Math.random() * 5) + 3;
                     const depth = Math.floor(Math.random() * 5) + 3;
                     const height = Math.floor(Math.random() * 6) + 3;
                     const color = PALETTE.cityColors[Math.floor(Math.random() * PALETTE.cityColors.length)];
-                    buildBlock(x, 0, z, width, height, depth, color);
+                    buildHollowBlock(x, 0, z, width, height, depth, color);
                 }
             }
+            }
 
-            // Residential neighborhoods (outer ring)
-            for (let i = 0; i < 90; i++) {
+            // Residential neighborhoods (outer ring) — reduced from 90 to 60 (or 20 on mobile)
+            const residentialCount = lowDetail ? 20 : 60;
+            for (let i = 0; i < residentialCount; i++) {
                 const angle = Math.random() * Math.PI * 2;
                 const dist = 50 + Math.random() * 80;
                 const rx = Math.round(Math.cos(angle) * dist);
@@ -734,15 +763,15 @@ const VoxelCity = () => {
                 buildResidentialBlock(rx, rz, w, d, h, Math.random() > 0.5);
             }
 
-            // Plattenbau clusters
-            const plattenAreas = [
+            // Plattenbau clusters — reduced from 8 areas x 4 buildings to 5 areas x 3 buildings.
+            // Skipped on mobile entirely.
+            const plattenAreas = lowDetail ? [] : [
                 { cx: 70, cz: -50 }, { cx: -100, cz: -60 },
                 { cx: 80, cz: 40 }, { cx: -110, cz: 50 },
-                { cx: 100, cz: -20 }, { cx: -120, cz: -30 },
-                { cx: 50, cz: 80 }, { cx: -60, cz: -90 },
+                { cx: 100, cz: -20 },
             ];
             plattenAreas.forEach(area => {
-                for (let i = 0; i < 4; i++) {
+                for (let i = 0; i < 3; i++) {
                     const px = area.cx + (i % 2) * 16;
                     const pz = area.cz + Math.floor(i / 2) * 12;
                     if (isExcluded(px, pz)) continue;
@@ -751,8 +780,9 @@ const VoxelCity = () => {
                 }
             });
 
-            // Scatter individual trees
-            for (let i = 0; i < 150; i++) {
+            // Scatter individual trees — reduced from 150 to 50 on mobile.
+            const treeCount = lowDetail ? 50 : 150;
+            for (let i = 0; i < treeCount; i++) {
                 const tx = Math.floor(Math.random() * 300) - 150;
                 const tz = Math.floor(Math.random() * 300) - 150;
                 if (isExcluded(tx, tz)) continue;
@@ -818,7 +848,7 @@ const VoxelCity = () => {
         });
         }, 10);
         return () => clearTimeout(timer);
-    }, []);
+    }, [lowDetail]);
 
     const meshRef = React.useRef<THREE.InstancedMesh>(null);
     const windowMeshRef = React.useRef<THREE.InstancedMesh>(null);
@@ -861,6 +891,16 @@ const VoxelCity = () => {
         </>
     );
 };
+
+// Single flat ground plane — replaces 250k voxel instances that previously tiled the floor.
+// Sits at y = -0.5 so the top surface is at y = 0, matching where voxels start.
+const GROUND_COLOR = new THREE.Color(PALETTE.cityColors[0]);
+const GroundPlane = () => (
+    <mesh position={[0, -0.5, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[500, 500]} />
+        <meshLambertMaterial color={GROUND_COLOR} />
+    </mesh>
+);
 
 // TV Tower position — camera always orbits around this
 const TV_TOWER = new THREE.Vector3(15, 0, -5);
@@ -905,15 +945,21 @@ const CinematicCamera = () => {
 };
 
 // Aviation light positions: [x, y, z, distance, sphere-size]
+// Reduced to 3 closest-to-camera landmarks — the others are obscured by fog anyway.
 const AVIATION_POSITIONS: [number, number, number, number, number][] = [
     [15, 124, -5, 30, 1.2],    // TV Tower
     [38, 46, -14, 22, 0.8],    // Hotel Park Inn
     [-38, 33, 8, 22, 0.8],     // Potsdamer Platz
-    [-118, 28, 24, 18, 0.7],   // Gedächtniskirche area
-    [68, 22, -3, 16, 0.7],     // Frankfurter Tor
-    [-30, 25, -35, 16, 0.6],   // Prenzlauer Berg
-    [42, 20, 18, 14, 0.6],     // East Berlin high-rise
-    [-55, 20, -18, 14, 0.6],   // Mitte tall building
+];
+
+// Distant aviation markers rendered as emissive spheres only (no pointLight).
+// Keeps the visual cue at night without extra fragment shader cost.
+const DISTANT_AVIATION: [number, number, number, number][] = [
+    [-118, 28, 24, 0.7],   // Gedächtniskirche area
+    [68, 22, -3, 0.7],     // Frankfurter Tor
+    [-30, 25, -35, 0.6],   // Prenzlauer Berg
+    [42, 20, 18, 0.6],     // East Berlin high-rise
+    [-55, 20, -18, 0.6],   // Mitte tall building
 ];
 
 const CityLights = () => {
@@ -940,31 +986,36 @@ const CityLights = () => {
 
     return (
         <group>
-            {/* Aviation warning lights — tall buildings */}
+            {/* Aviation warning lights — tall buildings (close to camera) */}
             {AVIATION_POSITIONS.map(([x, y, z, dist, size], i) => (
                 <group key={i}>
                     <pointLight
                         ref={(el) => { lightRefs.current[i] = el; }}
                         position={[x, y, z]} color="#ff2222" distance={dist} decay={2} intensity={0} />
                     <mesh ref={(el) => { meshRefs.current[i] = el; }} position={[x, y, z]}>
-                        <sphereGeometry args={[size, 8, 8]} />
+                        <sphereGeometry args={[size, 6, 6]} />
                         <meshBasicMaterial color="#220000" />
                     </mesh>
                 </group>
             ))}
 
-            {/* Street / neighbourhood illumination — optimized for performance */}
-            <pointLight position={[-38, 6, 8]}   color="#ffbb77" intensity={2.8} distance={60} decay={2} />
-            <pointLight position={[15, 6, -5]}   color="#ffbb77" intensity={2.8} distance={60} decay={2} />
-            <pointLight position={[-55, 6, -5]}  color="#ffbb77" intensity={2.5} distance={55} decay={2} />
-            <pointLight position={[-12, 6, -4]}  color="#ffbb77" intensity={2.2} distance={50} decay={2} />
-            <pointLight position={[-118, 6, 24]} color="#ffbb77" intensity={2.5} distance={55} decay={2} />
-            {/* Reduced outer coverage to save fragment shader instructions */}
-            <pointLight position={[60, 6, 0]}    color="#ffaa55" intensity={2.0} distance={50} decay={2} />
-            <pointLight position={[-60, 6, 0]}   color="#ffaa55" intensity={2.0} distance={50} decay={2} />
-            {/* Mid-height neighbourhood glow simulating lit windows */}
-            <pointLight position={[-20, 18, 10]}  color="#ffe8a0" intensity={1.2} distance={40} decay={2} />
-            <pointLight position={[20, 18, -10]}  color="#ffe8a0" intensity={1.2} distance={40} decay={2} />
+            {/* Distant aviation markers — sphere only, no pointLight (fragment shader savings) */}
+            {DISTANT_AVIATION.map(([x, y, z, size], i) => (
+                <mesh
+                    key={`distant-${i}`}
+                    ref={(el) => { meshRefs.current[AVIATION_POSITIONS.length + i] = el; }}
+                    position={[x, y, z]}
+                >
+                    <sphereGeometry args={[size, 6, 6]} />
+                    <meshBasicMaterial color="#220000" />
+                </mesh>
+            ))}
+
+            {/* Street / neighbourhood illumination — reduced from 9 to 4 point lights */}
+            <pointLight position={[-20, 6, 0]}   color="#ffbb77" intensity={3.2} distance={80} decay={2} />
+            <pointLight position={[20, 6, -5]}   color="#ffbb77" intensity={3.0} distance={70} decay={2} />
+            <pointLight position={[-80, 6, 8]}   color="#ffaa55" intensity={2.2} distance={60} decay={2} />
+            <pointLight position={[0, 18, 0]}    color="#ffe8a0" intensity={1.4} distance={55} decay={2} />
         </group>
     );
 };
@@ -1032,7 +1083,8 @@ export default function VoxelBerlinBackground({ onLoad }: { onLoad?: () => void 
                         <WeatherLighting />
                         {!isMobile && <WeatherParticles />}
 
-                        <VoxelCity />
+                        <GroundPlane />
+                        <VoxelCity lowDetail={isMobile} />
                         {!isMobile && <CityLights />}
                         <CinematicCamera />
                     </Canvas>

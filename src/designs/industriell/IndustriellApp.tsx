@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Zap, ShieldCheck, Wrench, ArrowRight, Phone, Mail, MapPin, Activity, ChevronDown, X } from 'lucide-react';
 import './industriell.css';
 import { BerlinBear } from '../../../components/ScavengerHunt/BerlinBear';
+import { CONTACT_EMAIL } from '../../../constants';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -411,7 +412,7 @@ export default function IndustriellApp() {
                 <Mail className="text-[#B87333] w-6 h-6" />
                 <div>
                   <div className="text-[#D1D5DB]/60 text-xs">PROJEKTANFRAGEN</div>
-                  <div className="text-white text-lg break-all">webmanufaktur.berlin@googlemail.com</div>
+                  <div className="text-white text-lg break-all">{CONTACT_EMAIL}</div>
                 </div>
               </div>
               <div className="flex items-center gap-4 border-2 border-[#D1D5DB]/20 p-4 bg-[#121212]">

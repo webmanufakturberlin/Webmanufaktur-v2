@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Send, Loader2, Building2, Globe, Wrench, Briefcase, Mail, Check } from 'lucide-react';
 import { Reveal } from './Reveal';
 import { useI18n } from '../i18n';
+import { CONTACT_EMAIL } from '../constants';
 
 interface CTAProps {
     onNavigate?: (id: string) => void;
@@ -22,7 +23,7 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
     const [copied, setCopied] = useState(false);
 
     const handleCopy = () => {
-        navigator.clipboard.writeText('webmanufaktur.berlin@googlemail.com');
+        navigator.clipboard.writeText(CONTACT_EMAIL);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
@@ -34,7 +35,7 @@ export const CTA: React.FC<CTAProps> = ({ onNavigate }) => {
         setTimeout(() => {
             const subject = encodeURIComponent(`Project Request: ${formData.projectType.toUpperCase()} - ${formData.businessName}`);
             const body = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nBusiness: ${formData.businessName} (${formData.businessType})\nProject Type: ${formData.projectType}\nWebsite Goal: ${formData.websiteType}\n\nMessage:\n${formData.message}`);
-            window.location.href = `mailto:webmanufaktur.berlin@googlemail.com?subject=${subject}&body=${body}`;
+            window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
             setLoading(false);
         }, 800);
     };

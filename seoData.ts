@@ -1,5 +1,5 @@
 type Lang = 'de' | 'en';
-type View = 'home' | 'service-detail' | 'about' | 'impressum' | 'ki-labor' | 'references';
+type View = 'home' | 'service-detail' | 'about' | 'impressum' | 'ki-labor' | 'references' | 'not-found';
 
 interface SeoEntry {
   title: string;
@@ -79,6 +79,18 @@ const seoData: Record<View, Record<Lang, SeoEntry>> = {
     en: {
       title: 'WebManufaktur Berlin — Web Design, Content & AI Agency',
       description: 'WebManufaktur Berlin — Premium web design, content strategy, and AI integration. Engineering high-performance digital infrastructure for ambitious brands.',
+      path: '/en/',
+    },
+  },
+  'not-found': {
+    de: {
+      title: '404 — Seite nicht gefunden | WebManufaktur Berlin',
+      description: 'Die gesuchte Seite existiert nicht oder wurde verschoben.',
+      path: '/',
+    },
+    en: {
+      title: '404 — Page not found | WebManufaktur Berlin',
+      description: 'The page you are looking for does not exist or has been moved.',
       path: '/en/',
     },
   },

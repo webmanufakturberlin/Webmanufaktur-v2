@@ -148,6 +148,15 @@ const translations: Record<string, Record<Lang, string>> = {
     'process.timeline.step4.title': { en: 'Launch', de: 'Launch' },
     'process.timeline.step4.heading': { en: 'Launch & Growth', de: 'Launch & Growth' },
     'process.timeline.step4.desc': { en: 'Deployment on global CDNs, analytics setup, and continuous optimization. We stay on as your growth partner long after go-live.', de: 'Deployment auf globalen CDNs, Analytics-Setup und kontinuierliche Optimierung. Wir bleiben als Ihr Wachstumspartner auch nach dem Go-Live.' },
+    'process.timeline.step1.tags': { en: 'Market Analysis,Audience Research,Content Audit,Competitor Analysis', de: 'Marktanalyse,Zielgruppen-Research,Content-Audit,Wettbewerbsanalyse' },
+    'process.timeline.step2.tags': { en: 'UI/UX Design,Wireframes,Prototyping,User Testing', de: 'UI/UX Design,Wireframes,Prototyping,User Testing' },
+    'process.timeline.step3.tags': { en: 'React / Next.js,TypeScript,Tailwind CSS,Performance', de: 'React / Next.js,TypeScript,Tailwind CSS,Performance' },
+    'process.timeline.step4.tags': { en: 'Deployment,Analytics,SEO Setup,Continuous Optimization', de: 'Deployment,Analytics,SEO-Setup,Kontinuierliche Optimierung' },
+
+    'notFound.title': { en: 'Page not found.', de: 'Seite nicht gefunden.' },
+    'notFound.desc': { en: 'The page you are looking for does not exist or has been moved.', de: 'Die gesuchte Seite existiert nicht oder wurde verschoben.' },
+    'notFound.backHome': { en: 'Back to Home', de: 'Zur Startseite' },
+    'notFound.goBack': { en: 'Go back', de: 'Zurück' },
 
     'process.step1.title': { en: 'Discovery', de: 'Analyse' },
     'process.step1.desc': { en: 'We deep dive into your business model, audience, and goals.', de: 'Wir tauchen tief in Ihr Geschäftsmodell, Ihre Zielgruppe und Ihre Ziele ein.' },
